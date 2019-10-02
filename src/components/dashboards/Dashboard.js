@@ -5,12 +5,14 @@ import { connect} from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import {compose} from 'redux'
 import {Redirect} from 'react-router-dom'
-import {functions} from 'firebase'
+import { functions } from 'firebase'
+import { signOut } from '../../store/actions/authActions'
 
 class Dashboard extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
+
         const adminUID = document.querySelector('#admin-uid').value;
         const addAdminRole = functions().httpsCallable('addAdminRole');
         addAdminRole({ uid: adminUID }).then(result => {
@@ -20,9 +22,14 @@ class Dashboard extends Component {
 
     render(){
         
-        const { projects, auth, notifications } = this.props;
+        const { projects, auth, profile } = this.props;
         
         if(!auth.uid) return <Redirect to='/singin'></Redirect>
+        if (!profile.isEmpty) {
+            if(!profile.token.claims.admin){
+                this.props.signOut();
+            }
+        }
         // auth.getIdTokenResult()
         //     .then((idTokenResult) => {
         //         // Confirm the user is an Admin.
@@ -65,17 +72,27 @@ class Dashboard extends Component {
 //     }
 // });
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        signOut: () => dispatch(signOut())
+    }
+}
+
 const mapStateToProps = (state) => {
-    console.log(state.firebase.profile.token);
-    
+    // if (!state.firebase.profile.isEmpty)
+    // {
+    //     console.log(state.firebase.profile.token.claims);
+    // }
+
     return {
         projects:  state.firestore.ordered.missions,
         auth: state.firebase.auth,
+        profile: state.firebase.profile
     }
 }
 
 export default compose(
-    connect(mapStateToProps),
+    connect(mapStateToProps, mapDispatchToProps),
     firestoreConnect([
       { collection: 'missions', orderBy: ['title', 'desc']}
     ])

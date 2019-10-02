@@ -3,16 +3,15 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 
 exports.addAdminRole = functions.https.onCall((data, context) => {
-    //get user and add custom claim (admin)
-    return admin.auth().getUser(data.uid).then(user => {
-        return admin.auth.setCustomUserClaims(user.uid, {
-            admin: true
-        });
+    return admin.auth().setCustomUserClaims(data.uid, {
+        admin: true
     }).then(() => {
         return {
-            message: 'Success admin role added'
+            message: 'Usuario asignado a administrador con exito.'
         }
     }).catch(err => {
-        return err;
+        return {
+            error: err
+        }
     });
 });

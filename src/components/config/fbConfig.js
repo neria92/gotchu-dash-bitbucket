@@ -2,6 +2,7 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/auth'
 import 'firebase/database'
+import 'firebase/functions'
 
 const firebaseConfig = {
     apiKey: "AIzaSyCkd6L4-_sN73EXBq5eVsEv0JJmafVEfio",
@@ -11,9 +12,9 @@ const firebaseConfig = {
     storageBucket: "gchgame.appspot.com",
     messagingSenderId: "795495414711",
     appId: "1:795495414711:web:07f6c1a2b1ebe0c7"
-
   };
 
   firebase.initializeApp(firebaseConfig);
+  firebase.functions()
 
   export default firebase;
