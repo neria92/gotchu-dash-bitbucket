@@ -38,3 +38,33 @@ export const createProject = (project) =>{
     }
 };
 
+export const editProject = (project) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+
+        //make asyn call
+
+        const firestore = getFirestore();
+
+        firestore.collection('missions').doc(project.missionID).update({
+            antecedentes: project.st.antecedentes,
+            complejidad: project.st.complejidad,
+            mision: project.st.mision,
+            radio: project.st.radio,
+            recompensa: project.st.recompensa,
+            tipo: project.st.tipo,
+            title: project.st.title,
+            ubicacionNombre: project.st.ubicacionNombre,
+        }).then(ref => {
+            dispatch({
+                type: 'EDIT_PROJECT',
+                payload: {
+                    id: ref.id
+                }
+            });
+        }).catch((err) => {
+            dispatch({ type: 'EDIT_PROJECT_ERROR', err });
+        })
+
+    }
+};
+

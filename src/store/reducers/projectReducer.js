@@ -14,6 +14,10 @@ const projectReducer =(state = initState,action) => {
             };
         case 'CREATE_PROJECT_ERROR':
             return state;
+        case 'EDIT_PROJECT':
+            return state;
+        case 'EDIT_PROJECT_ERROR':
+            return state;
         default:
             return state;
     }

@@ -5,15 +5,44 @@ import { connect} from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import {compose} from 'redux'
 import {Redirect} from 'react-router-dom'
+import {functions} from 'firebase'
 
 class Dashboard extends Component {
+
+    handleSubmit = (e) => {
+        e.preventDefault();
+        const adminUID = document.querySelector('#admin-uid').value;
+        const addAdminRole = functions().httpsCallable('linkUIDWithToken');
+        addAdminRole({ uid: adminUID }).then(result => {
+            console.log(result);
+        });
+    }
+
     render(){
         const { projects, auth, notifications } = this.props;
         
         if(!auth.uid) return <Redirect to='/singin'></Redirect>
+        // auth.currentUser.getIdTokenResult()
+        //     .then((idTokenResult) => {
+        //         // Confirm the user is an Admin.
+        //         if (!!idTokenResult.claims.admin) {
+        //             // Show admin UI.
+        //             //showAdminUI();
+        //         } else {
+        //             // Show regular user UI.
+        //             return <Redirect to='/singin'></Redirect>
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         console.log(error);
+        //     });
         //if(auth.uid) return <Redirect to='/create'></Redirect>
         return (
             <div className="dashboard container">
+                <form onSubmit={this.handleSubmit} class="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
+                    <input placeholder="uid" id="admin-uid" required />
+                    <button type="submit" value="Guardar" class="btn-small">Make admin</button>
+                </form>
                 <div className ="row">
                     <div className="col s12 m6">
                         <ProjectList projects={projects}/>
@@ -27,11 +56,21 @@ class Dashboard extends Component {
     }
 }
 
+// const adminForm = document.querySelector('.admin-actions');
+// adminForm.addEventListener('submit', (e) => {
+//     e.preventDefault();
+//     const adminUID = document.querySelector('#admin-uid').value;
+//     const addAdminRole = functions.httpsCallable('addAdminRole');
+//     addAdminRole({uid: adminUID}).then(result => {
+//         console.log(result);
+//     });
+// });
+
 const mapStateToProps = (state) => {
-    console.log(state);
+    console.log(state.firebase.auth);
     return {
         projects:  state.firestore.ordered.missions,
-        auth: state.firebase.auth
+        auth: state.firebase.auth,
     }
 }
 
