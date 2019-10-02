@@ -12,25 +12,28 @@ class Dashboard extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
         const adminUID = document.querySelector('#admin-uid').value;
-        const addAdminRole = functions().httpsCallable('linkUIDWithToken');
+        const addAdminRole = functions().httpsCallable('addAdminRole');
         addAdminRole({ uid: adminUID }).then(result => {
             console.log(result);
         });
     }
 
     render(){
+        
         const { projects, auth, notifications } = this.props;
         
         if(!auth.uid) return <Redirect to='/singin'></Redirect>
-        // auth.currentUser.getIdTokenResult()
+        // auth.getIdTokenResult()
         //     .then((idTokenResult) => {
         //         // Confirm the user is an Admin.
         //         if (!!idTokenResult.claims.admin) {
         //             // Show admin UI.
         //             //showAdminUI();
+        //             console.log("admin");
         //         } else {
         //             // Show regular user UI.
-        //             return <Redirect to='/singin'></Redirect>
+        //             // return <Redirect to='/singin'></Redirect>
+        //             console.log("no admin");
         //         }
         //     })
         //     .catch((error) => {
@@ -39,9 +42,9 @@ class Dashboard extends Component {
         //if(auth.uid) return <Redirect to='/create'></Redirect>
         return (
             <div className="dashboard container">
-                <form onSubmit={this.handleSubmit} class="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
+                <form onSubmit={this.handleSubmit} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
                     <input placeholder="uid" id="admin-uid" required />
-                    <button type="submit" value="Guardar" class="btn-small">Make admin</button>
+                    <button type="submit" value="Guardar" >Make admin</button>
                 </form>
                 <div className ="row">
                     <div className="col s12 m6">
@@ -56,18 +59,15 @@ class Dashboard extends Component {
     }
 }
 
-// const adminForm = document.querySelector('.admin-actions');
-// adminForm.addEventListener('submit', (e) => {
-//     e.preventDefault();
-//     const adminUID = document.querySelector('#admin-uid').value;
-//     const addAdminRole = functions.httpsCallable('addAdminRole');
-//     addAdminRole({uid: adminUID}).then(result => {
-//         console.log(result);
-//     });
+// firebase.auth.onAuthStateChanged(user => {
+//     if (user) {
+//         console.log("si user");
+//     }
 // });
 
 const mapStateToProps = (state) => {
-    console.log(state.firebase.auth);
+    console.log(state.firebase.profile.token);
+    
     return {
         projects:  state.firestore.ordered.missions,
         auth: state.firebase.auth,
