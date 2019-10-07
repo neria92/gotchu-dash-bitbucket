@@ -7,7 +7,7 @@ import {editProject} from '../../store/actions/projectActions'
 import { debug } from 'util'
 
 
-class ProjectDetails extends Component {
+class UserDetails extends Component {
 
   state = {
     antecedentes: null,
@@ -157,4 +157,4 @@ export default compose(
   firestoreConnect([{
     collection: 'missions'
   }])
-)(ProjectDetails)
+)(UserDetails)
