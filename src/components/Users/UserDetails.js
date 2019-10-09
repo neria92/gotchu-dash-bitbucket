@@ -48,19 +48,19 @@ class UserDetails extends Component {
   }
   
   render() {
-    const { project, auth } = this.props;
+    const { user, auth } = this.props;
     if (!auth.uid) return <Redirect to='/singin' /> 
-    if (project) {
+    if (user) {
       return (
         <div className="container section project-details">
           <div className="card z-depth-0">
             <div className="card-content">
               <form onSubmit={this.handleSubmit}>
                 <label>
-                  Antecedentes:
-                <textarea defaultValue={project.antecedentes} id="antecedentes" onChange={this.handleChange} />
+                  Username:
+                <textarea defaultValue={user.username} id="antecedentes" onChange={this.handleChange} />
                 </label>
-                <label>
+                {/* <label>
                   Complejidad:
                 <input defaultValue={project.complejidad} id="complejidad" onChange={this.handleChange} />
                 </label>
@@ -107,7 +107,7 @@ class UserDetails extends Component {
                 <label>
                   Nombre de ubicacion:
                 <textarea defaultValue={project.ubicacionNombre} id="ubicacionNombre" onChange={this.handleChange} />
-                </label>
+                </label> */}
                 <input type="submit" value="Guardar" />
               </form>
 
@@ -117,16 +117,16 @@ class UserDetails extends Component {
               <button className="btn black lighten-1 z-depth-0">Submit Capture</button>
               </form> */}
             </div>
-            <div className="card-action grey lighten-4 grey-text">
+            {/* <div className="card-action grey lighten-4 grey-text">
               <div>Mission by {project.creator}</div>
-            </div>
+            </div> */}
           </div>
         </div>
       )
     } else {
       return (
         <div className="container center">
-          <p>Loading project...</p>
+          <p>Loading user...</p>
         </div>
       )
     }
@@ -135,13 +135,13 @@ class UserDetails extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const id = ownProps.match.params.id;
-  const captures = state.firestore.data.missions;
-  const project = captures ? captures[id] : null;
-  console.log(project);
+  const users = state.firestore.data.users;
+  const user = users ? users[id] : null;
+  console.log(user);
   
   return {
     id: id,
-    project: project,
+    user: user,
     auth: state.firebase.auth
   }
 }
@@ -155,6 +155,6 @@ const mapDispathToProps = (dispatch) => {
 export default compose(
   connect(mapStateToProps, mapDispathToProps),
   firestoreConnect([{
-    collection: 'missions'
+    collection: 'users'
   }])
 )(UserDetails)

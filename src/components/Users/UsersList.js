@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom'
 const UsersList = ({users}) => {
     return (
       <div className="project-list section">
-        { users && users.map(project => {
+        { users && users.map(user => {
           return (
-            <Link to={'/user/' + project.id} key={project.id}>
-              <UserSummary project={project} />
+            <Link to={'/user/' + user.id} key={user.id}>
+              <UserSummary user={user} />
             </Link>
           )
         })}  

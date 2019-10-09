@@ -6,6 +6,7 @@ import ProjectDetails from './components/projects/ProjectDetails'
 import SingIn from './components/auth/SingIn'
 import SingUp from './components/auth/SingUp'
 import Users from './components/Users/Users'
+import UserDetails from './components/Users/UserDetails'
 import CreateProject from './components/projects/CreateProject'
 
 function App() {

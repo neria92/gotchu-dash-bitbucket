@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import Notifications from './Notifications'
-import ProjectList from'../projects/ProjectList'
+import UsersList from'../Users/UsersList'
 import { connect} from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import {compose} from 'redux'
@@ -22,7 +21,7 @@ class Users extends Component {
 
     render(){
         
-        const { projects, auth, profile } = this.props;
+        const { users, auth, profile } = this.props;
         
         if(!auth.uid) return <Redirect to='/singin'></Redirect>
         if (!profile.isEmpty) {
@@ -55,11 +54,11 @@ class Users extends Component {
                 </form>
                 <div className ="row">
                     <div className="col s12 m6">
-                        <ProjectList projects={projects}/>
+                        <UsersList users={users}/>
                     </div>
-                    <div className="col s12 m5 offset-m1">
+                    {/* <div className="col s12 m5 offset-m1">
                         <Notifications />
-                    </div>
+                    </div> */}
                 </div>
             </div>
         )
@@ -83,9 +82,9 @@ const mapStateToProps = (state) => {
     // {
     //     console.log(state.firebase.profile.token.claims);
     // }
-
+    console.log(state.firestore.ordered.users);
     return {
-        projects:  state.firestore.ordered.missions,
+        users:  state.firestore.ordered.users,
         auth: state.firebase.auth,
         profile: state.firebase.profile
     }
@@ -94,6 +93,6 @@ const mapStateToProps = (state) => {
 export default compose(
     connect(mapStateToProps, mapDispatchToProps),
     firestoreConnect([
-      { collection: 'missions', orderBy: ['title', 'desc']}
+      { collection: 'users', orderBy: ['username', 'desc']}
     ])
   )(Users)
