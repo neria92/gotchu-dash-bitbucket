@@ -21,11 +21,6 @@ class Dashboard extends Component {
         });
     }
 
-    loginWithGoogle() {
-        console.log("trying")
-        return <Redirect to='/project/new'></Redirect>
-    }
-
     render(){
         
         const { projects, auth, profile } = this.props;

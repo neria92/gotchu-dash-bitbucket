@@ -4,7 +4,8 @@ import { firestoreConnect } from 'react-redux-firebase'
 import { compose } from 'redux'
 import { Redirect } from 'react-router-dom'
 import {editProject} from '../../store/actions/projectActions'
-import {createProject} from '../../store/actions/projectActions'
+import {addProject} from '../../store/actions/projectActions'
+import {deleteProject} from '../../store/actions/projectActions'
 import { debug } from 'util'
 
 
@@ -59,6 +60,12 @@ class ProjectDetails extends Component {
       this.props.editProject({ missionID, st });
     }
   }
+
+  handleDelete = (e) => {
+    e.preventDefault();
+    const missionID = this.props.id;
+    this.props.deleteProject(missionID);
+  }
   
   render() {
     const { project, auth } = this.props;
@@ -66,6 +73,9 @@ class ProjectDetails extends Component {
     if (project) {
       return (
         <div className="container section project-details">
+          <button onClick={this.handleDelete}>
+          Delete
+          </button>
           <div className="card z-depth-0">
             <div className="card-content">
               <form onSubmit={this.handleSubmit}>
@@ -179,7 +189,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispathToProps = (dispatch) => {
   return {
     editProject: (capture) => dispatch(editProject(capture)),
-    createProject: (capture) => dispatch(createProject(capture))
+    createProject: (capture) => dispatch(addProject(capture)),
+    deleteProject: (capture) => dispatch(deleteProject(capture))
   }
 }
 

@@ -18,6 +18,10 @@ const projectReducer =(state = initState,action) => {
             return state;
         case 'EDIT_PROJECT_ERROR':
             return state;
+        case 'DELETE_PROJECT':
+            return state;
+        case 'DELETE_PROJECT_ERROR':
+            return state;
         default:
             return state;
     }
