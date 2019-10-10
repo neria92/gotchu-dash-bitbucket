@@ -4,24 +4,27 @@ import { firestoreConnect } from 'react-redux-firebase'
 import { compose } from 'redux'
 import { Redirect } from 'react-router-dom'
 import {editProject} from '../../store/actions/projectActions'
+import {createProject} from '../../store/actions/projectActions'
 import { debug } from 'util'
 
 
 class ProjectDetails extends Component {
-
-  state = {
-    antecedentes: null,
-    complejidad: null,
-    missionID: null,
-    mision: null,
-    radio: 0,
-    recompensa: 0,
-    request: null,
-    startDate: null,
-    timer: 0,
-    title: null,
-    ubicacion: null,
-    ubicacionNombre: null,
+  constructor(props) {
+    super(props);
+    this.state = {
+      antecedentes: '',
+      complejidad: '',
+      mision: '',
+      radio: 0,
+      recompensa: 0,
+      request: '',
+      startDate: {seconds: 0},
+      timer: 0,
+      tipo: '',
+      title: '',
+      ubicacion: {latitude: 0, longitude: 0},
+      ubicacionNombre:'',
+    };
   }
 
   handleChange = (e) => {
@@ -33,18 +36,28 @@ class ProjectDetails extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     const missionID = this.props.id;
-    this.setState({
-      antecedentes: this.props.antecedentes,
-      complejidad: this.props.complejidad,
-      mision: this.props.mision,
-      radio: this.props.radio,
-      recompensa: this.props.recompensa,
-      tipo: this.props.tipo,
-      title: this.props.title,
-      ubicacionNombre: this.props.ubicacionNombre,
-    })
+    
+    // this.setState({
+    //   antecedentes: this.props.antecedentes,
+    //   complejidad: this.props.complejidad,
+    //   mision: this.props.mision,
+    //   radio: this.props.radio,
+    //   recompensa: this.props.recompensa,
+    //   request: this.props.request,
+    //   startDate: {seconds: this.props.startDate},
+    //   timer: this.props.timer,
+    //   tipo: this.props.tipo,
+    //   title: this.props.title,
+    //   ubicacion: {latitude: this.props.ubicacionLatitude, longitude: this.props.ubicacionLongitude },
+    //   ubicacionNombre: this.props.ubicacionNombre,
+    // })
     const st = this.state;
-    this.props.editProject({ missionID, st });
+    if(missionID == 'new'){
+      console.log(st);
+      this.props.createProject(st);
+    } else {
+      this.props.editProject({ missionID, st });
+    }
   }
   
   render() {
@@ -82,7 +95,7 @@ class ProjectDetails extends Component {
                 </label>
                 <label>
                   Fecha de inicio:
-                <input type="number" defaultValue={project.startDate.seconds} id="startdate" onChange={this.handleChange} />
+                <input type="number" defaultValue={project.startDate.seconds} id="startDate" onChange={this.handleChange} />
                 </label>
                 <label>
                   Timer:
@@ -98,11 +111,11 @@ class ProjectDetails extends Component {
                 </label>
                 <label>
                   Ubicacion latitude:
-                <input type="number" defaultValue={project.ubicacion.latitude} id="ubicacionlatitude" onChange={this.handleChange} />
+                <input type="number" defaultValue={project.ubicacion.latitude} id="ubicacionLatitude" onChange={this.handleChange} />
                 </label>
                 <label>
                   Ubicacion longitud:
-                <input type="number" defaultValue={project.ubicacion.longitude} id="ubicacionlongitude" onChange={this.handleChange} />
+                <input type="number" defaultValue={project.ubicacion.longitude} id="ubicacionLongitude" onChange={this.handleChange} />
                 </label>
                 <label>
                   Nombre de ubicacion:
@@ -135,9 +148,26 @@ class ProjectDetails extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const id = ownProps.match.params.id;
-  const captures = state.firestore.data.missions;
-  const project = captures ? captures[id] : null;
-  console.log(project);
+  var project;
+  if(id == 'new'){
+    project = {
+      antecedentes: '',
+      complejidad: '',
+      mision: '',
+      radio: 0,
+      recompensa: 0,
+      request: '',
+      startDate: {seconds: 0},
+      timer: 0,
+      tipo: '',
+      title: '',
+      ubicacion: {latitude: 0, longitude: 0},
+      ubicacionNombre:'',
+    }
+  } else {
+    const captures = state.firestore.data.missions;
+    project = captures ? captures[id] : null;
+  }
   
   return {
     id: id,
@@ -148,7 +178,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispathToProps = (dispatch) => {
   return {
-    editProject: (capture) => dispatch(editProject(capture))
+    editProject: (capture) => dispatch(editProject(capture)),
+    createProject: (capture) => dispatch(createProject(capture))
   }
 }
 

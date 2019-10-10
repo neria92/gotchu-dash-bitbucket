@@ -7,6 +7,7 @@ import {compose} from 'redux'
 import {Redirect} from 'react-router-dom'
 import { functions } from 'firebase'
 import { signOut } from '../../store/actions/authActions'
+import { Link } from 'react-router-dom'
 
 class Dashboard extends Component {
 
@@ -18,6 +19,11 @@ class Dashboard extends Component {
         addAdminRole({ uid: adminUID }).then(result => {
             console.log(result);
         });
+    }
+
+    loginWithGoogle() {
+        console.log("trying")
+        return <Redirect to='/project/new'></Redirect>
     }
 
     render(){
@@ -54,6 +60,7 @@ class Dashboard extends Component {
                     <button type="submit" value="Guardar" >Make admin</button>
                 </form>
                 <div className ="row">
+                    <Link to="/project/new"><button>New</button></Link>
                     <div className="col s12 m6">
                         <ProjectList projects={projects}/>
                     </div>
