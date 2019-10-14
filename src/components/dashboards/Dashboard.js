@@ -11,15 +11,15 @@ import { Link } from 'react-router-dom'
 
 class Dashboard extends Component {
 
-    handleSubmit = (e) => {
-        e.preventDefault();
+    // handleSubmit = (e) => {
+    //     e.preventDefault();
 
-        const adminUID = document.querySelector('#admin-uid').value;
-        const addAdminRole = functions().httpsCallable('addAdminRole');
-        addAdminRole({ uid: adminUID }).then(result => {
-            console.log(result);
-        });
-    }
+    //     const adminUID = document.querySelector('#admin-uid').value;
+    //     const addAdminRole = functions().httpsCallable('addAdminRole');
+    //     addAdminRole({ uid: adminUID }).then(result => {
+    //         console.log(result);
+    //     });
+    // }
 
     render(){
         
@@ -50,10 +50,10 @@ class Dashboard extends Component {
         //if(auth.uid) return <Redirect to='/create'></Redirect>
         return (
             <div className="dashboard container">
-                <form onSubmit={this.handleSubmit} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
+                {/* <form onSubmit={this.handleSubmit} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
                     <input placeholder="uid" id="admin-uid" required />
                     <button type="submit" value="Guardar" >Make admin</button>
-                </form>
+                </form> */}
                 <div className ="row">
                     <Link to="/project/new"><button>Nueva mission</button></Link>
                     <div className="col s12 m6">
