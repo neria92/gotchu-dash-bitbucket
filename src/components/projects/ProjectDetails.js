@@ -13,18 +13,19 @@ class ProjectDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      antecedentes: '',
-      complejidad: '',
-      mision: '',
-      radio: 0,
-      recompensa: 0,
-      request: '',
-      startDate: {seconds: 0},
-      timer: 0,
-      tipo: '',
-      title: '',
-      ubicacion: {latitude: 0, longitude: 0},
-      ubicacionNombre:'',
+      complexity: { es: '' },
+      description: { es: '' },
+      durationSecs: 0,
+      fixed: true,
+      language: '',
+      locationName: { es: '' },
+      locationPoints: { es: '' },
+      missionType: { es: '' },
+      objetive: { es: '' },
+      reward: { GP: 0 },
+      startDate: 0,
+      title: { es: '' },
+      type: ''
     };
   }
 
@@ -80,56 +81,56 @@ class ProjectDetails extends Component {
             <div className="card-content">
               <form onSubmit={this.handleSubmit}>
                 <label>
-                  Antecedentes:
-                <textarea defaultValue={project.antecedentes} id="antecedentes" onChange={this.handleChange} />
+                  Titulo:
+                <input defaultValue={project.title.es} id="titleES" onChange={this.handleChange} />
                 </label>
                 <label>
                   Complejidad:
-                <input defaultValue={project.complejidad} id="complejidad" onChange={this.handleChange} />
+                <input defaultValue={project.complexity.es} id="complexityES" onChange={this.handleChange} />
                 </label>
                 <label>
-                  Mision:
-                <textarea defaultValue={project.mision} id="mision" onChange={this.handleChange} />
+                  Descripcion:
+                <textarea defaultValue={project.description.es} id="descriptionES" onChange={this.handleChange} />
                 </label>
                 <label>
-                  Radio:
-                <input type="number" defaultValue={project.radio} id="radio" onChange={this.handleChange} />
+                  Duracion segundos:
+                <input type="number" defaultValue={project.durationSecs} id="durationSecs" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Fixed:
+                <input defaultValue={project.fixed} id="Fixed" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Idioma:
+                <input defaultValue={project.language} id="language" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Locacion nombre:
+                <input defaultValue={project.locationName.es} id="locationNameES" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Locacion puntos:
+                <input defaultValue={project.locationPoints.es} id="locationPointsES" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Tipo de mision:
+                <input defaultValue={project.missionType.es} id="missionTypeES" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Objetivo:
+                <textarea value={project.objective.es} id="objetiveES" onChange={this.handleChange} />
                 </label>
                 <label>
                   Recompensa:
-                <input type="number" defaultValue={project.recompensa} id="recompensa" onChange={this.handleChange} />
+                <input type="number" defaultValue={project.reward.GP} id="rewardGP" onChange={this.handleChange} />
                 </label>
                 <label>
-                  Request:
-                <input defaultValue={project.request} id="request" onChange={this.handleChange} />
-                </label>
-                <label>
-                  Fecha de inicio:
-                <input type="number" defaultValue={project.startDate.seconds} id="startDate" onChange={this.handleChange} />
-                </label>
-                <label>
-                  Timer:
-                <input type="number" defaultValue={project.timer} id="timer" onChange={this.handleChange} />
+                  Fecha inicio:
+                <input type="number" defaultValue={project.startDate} id="startDate" onChange={this.handleChange} />
                 </label>
                 <label>
                   Tipo:
-                <input value={project.tipo} id="tipo" onChange={this.handleChange} />
-                </label>
-                <label>
-                  Titulo:
-                <input defaultValue={project.title} id="title" onChange={this.handleChange} />
-                </label>
-                <label>
-                  Ubicacion latitude:
-                <input type="number" defaultValue={project.ubicacion.latitude} id="ubicacionLatitude" onChange={this.handleChange} />
-                </label>
-                <label>
-                  Ubicacion longitud:
-                <input type="number" defaultValue={project.ubicacion.longitude} id="ubicacionLongitude" onChange={this.handleChange} />
-                </label>
-                <label>
-                  Nombre de ubicacion:
-                <textarea defaultValue={project.ubicacionNombre} id="ubicacionNombre" onChange={this.handleChange} />
+                <input defaultValue={project.type} id="type" onChange={this.handleChange} />
                 </label>
                 <input type="submit" value="Guardar" />
               </form>
@@ -161,18 +162,19 @@ const mapStateToProps = (state, ownProps) => {
   var project;
   if(id == 'new'){
     project = {
-      antecedentes: '',
-      complejidad: '',
-      mision: '',
-      radio: 0,
-      recompensa: 0,
-      request: '',
-      startDate: {seconds: 0},
-      timer: 0,
-      tipo: '',
-      title: '',
-      ubicacion: {latitude: 0, longitude: 0},
-      ubicacionNombre:'',
+      complexity: { es: '' },
+      description: { es: '' },
+      durationSecs: 0,
+      fixed: true,
+      language: '',
+      locationName: { es: '' },
+      locationPoints: { es: '' },
+      missionType: { es: '' },
+      objetive: { es: '' },
+      reward: { GP: 0 },
+      startDate: 0,
+      title: { es: '' },
+      type: ''
     }
   } else {
     const captures = state.firestore.data.missions;
