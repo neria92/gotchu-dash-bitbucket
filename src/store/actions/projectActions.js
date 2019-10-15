@@ -84,19 +84,24 @@ export const editProject = (project) => {
         const firestore = getFirestore();
 
         firestore.collection('missions').doc(project.missionID).update({
-            antecedentes: project.st.antecedentes,
-            complejidad: project.st.complejidad,
-            mision: project.st.mision,
-            radio: project.st.radio,
-            recompensa: project.st.recompensa,
-            tipo: project.st.tipo,
-            title: project.st.title,
-            ubicacionNombre: project.st.ubicacionNombre,
-        }).then(ref => {
+            complexity: { es: project.st.complexityES},
+            description: { es: project.st.descriptionES},
+            durationSecs: project.st.durationSecs,
+            fixed: project.st.fixed,
+            language: project.st.language,
+            locationName: { es: project.st.locationNameES },
+            locationPoints: { es: project.st.locationPointsES},
+            missionType: { es: project.st.missionTypeES },
+            objetive: { es: project.st.objetiveES},
+            reward: { GP: project.st.rewardGP},
+            startDate: project.st.startDate,
+            title: { es: project.st.titleES},
+            type: project.st.type
+        }).then(function() {
             dispatch({
-                type: 'EDIT_PROJECT',
+                type: 'Project_Saved',
                 payload: {
-                    id: ref.id
+                    id: project.missionID
                 }
             });
         }).catch((err) => {

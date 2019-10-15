@@ -1,7 +1,8 @@
 import { getLocation } from "../actions/geoActions";
 
 const initState={
-    captureCreated: null
+    captureCreated: null,
+    projectSaved: null,
 }
 
 const projectReducer =(state = initState,action) => {
@@ -10,14 +11,25 @@ const projectReducer =(state = initState,action) => {
         case 'CREATE_PROJECT':
             return {
                 ...state,
-                captureCreated:'Project Created with id: ' + action.payload.id
+                captureCreated: action.payload.id
             };
         case 'CREATE_PROJECT_ERROR':
             return state;
-        case 'EDIT_PROJECT':
-            return state;
-        case 'EDIT_PROJECT_ERROR':
-            return state;
+        case 'Project_Saved':
+            return {
+                ...state,
+                projectSaved: action.payload.id
+            };
+        case 'Reset_Saved_Project':
+            return {
+                ...state,
+                projectSaved: null,
+            }
+        case 'Project_Saved_Error':
+            return {
+                ...state,
+                projectSaved: action.err
+            }
         case 'DELETE_PROJECT':
             return state;
         case 'DELETE_PROJECT_ERROR':

@@ -55,7 +55,7 @@ class Dashboard extends Component {
                     <button type="submit" value="Guardar" >Make admin</button>
                 </form> */}
                 <div className ="row">
-                    <Link to="/project/new"><button>Nueva mission</button></Link>
+                    {/* <Link to="/project/new"><button>Nueva mission</button></Link> */}
                     <div className="col s12 m6">
                         <ProjectList projects={projects}/>
                     </div>

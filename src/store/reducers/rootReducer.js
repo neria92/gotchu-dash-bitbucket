@@ -8,7 +8,7 @@ import serverReducer from './serverReducer';
 
 const rootReducer = combineReducers({
     auth: authReducer,
-    project: projectReducer,
+    projectReducer: projectReducer,
     geo: geoReducer,
     server: serverReducer,
     firestore: firestoreReducer,
