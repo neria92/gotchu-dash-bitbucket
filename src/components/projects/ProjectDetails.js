@@ -8,83 +8,11 @@ import { editProject, addProject, deleteProject} from '../../store/actions/proje
 class ProjectDetails extends Component {
 
   state = {
-    // complexityES: this.props.project.complexity.es,
-    // descriptionES: this.props.project.description.es,
-    // durationSecs: this.props.project.durationSecs,
-    // fixed: this.props.project.fixed,
-    // language: this.props.project.language,
-    // locationNameES: this.props.project.locationName.es,
-    // locationPointsES: this.props.project.locationPoints.es,
-    // missionTypeES: this.props.project.missionType.es,
-    // objetiveES: this.props.project.objetive.es,
-    // rewardGP: this.props.project.reward.GP,
-    // startDate: this.props.project.startDate,
-    // titleES: this.props.project.title.es,
-    // type: this.props.project.type,
     savingChanges: false,
-    projectLoaded: true
+    projectLoaded: true,
+    deletingProject: false
   };
 
-  // state = {
-  //   complexityES: '',
-  //   descriptionES: '',
-  //   durationSecs: 0,
-  //   fixed: true,
-  //   language: '',
-  //   locationNameES: '',
-  //   locationPointsES: '',
-  //   missionTypeES: '',
-  //   objetiveES: '',
-  //   rewardGP: 0,
-  //   startDate: 0,
-  //   titleES: '',
-  //   type: '',
-  //   savingChanges: false,
-  //   projectLoaded: false
-  // };
-
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     complexityES: this.props.project.complexity.es,
-  //     descriptionES: this.props.project.description.es,
-  //     durationSecs: this.props.project.durationSecs,
-  //     fixed: this.props.project.fixed,
-  //     language: this.props.project.language,
-  //     locationNameES: this.props.project.locationName.es,
-  //     locationPointsES: this.props.project.locationPoints.es,
-  //     missionTypeES: this.props.project.missionType.es,
-  //     objetiveES: this.props.project.objetive.es,
-  //     rewardGP: this.props.project.reward.GP,
-  //     startDate: this.props.project.startDate,
-  //     titleES: this.props.project.title.es,
-  //     type: this.props.project.type,
-  //     savingChanges: false,
-  //     projectLoaded: true
-  //   };
-  //   // const { project } = this.props;
-  //   // console.log(project);
-  //   // if (project && !this.state.projectLoaded) {
-  //   //   this.state = {
-  //   //     complexityES: project.complexity.es,
-  //   //     descriptionES: project.description.es,
-  //   //     durationSecs: project.durationSecs,
-  //   //     fixed: project.fixed,
-  //   //     language: project.language,
-  //   //     locationNameES: project.locationName.es,
-  //   //     locationPointsES: project.locationPoints.es,
-  //   //     missionTypeES: project.missionType.es,
-  //   //     objetiveES: project.objetive.es,
-  //   //     rewardGP: project.reward.GP,
-  //   //     startDate: project.startDate,
-  //   //     titleES: project.title.es,
-  //   //     type: project.type,
-  //   //     savingChanges: false,
-  //   //     projectLoaded: true
-  //   //   };
-  //   // }
-
-  // }
 
   handleChange = (e) => {
     this.setState({
@@ -99,15 +27,15 @@ class ProjectDetails extends Component {
     const st = {
       complexityES: this.refs.complexityES.value,
       descriptionES: this.refs.descriptionES.value,
-      durationSecs: this.refs.durationSecs.value,
-      fixed: this.refs.fixed.value,
+      durationSecs: parseInt(this.refs.durationSecs.value),
+      fixed: this.refs.fixed.checked,
       language: this.refs.language.value,
       locationNameES: this.refs.locationNameES.value,
       locationPointsES: this.refs.locationPointsES.value,
       missionTypeES: this.refs.missionTypeES.value,
       objetiveES: this.refs.objetiveES.value,
-      rewardGP: this.refs.rewardGP.value,
-      startDate: this.refs.startDate.value,
+      rewardGP: parseInt(this.refs.rewardGP.value),
+      startDate: parseInt(this.refs.startDate.value),
       titleES: this.refs.titleES.value,
       type: this.refs.type.value,
     };
@@ -116,9 +44,10 @@ class ProjectDetails extends Component {
       savingChanges: true
     })
     if(missionID == 'new'){
-      //console.log(st);
-      //this.props.createProject(st);
+      console.log(st);
+      this.props.addProject(st);
     } else {
+      console.log(st);
       this.props.editProject({ missionID, st });
     }
   }
@@ -126,14 +55,20 @@ class ProjectDetails extends Component {
   handleDelete = (e) => {
     e.preventDefault();
     const missionID = this.props.id;
+    this.setState({
+      ...this.state,
+      deletingProject: true
+    })
     this.props.deleteProject(missionID);
   }
   
   render() {
     const { project, auth, projectActions } = this.props;
-    console.log(projectActions);
     if (this.state.savingChanges && projectActions.projectSaved){
       return <Redirect to='/' /> 
+    }
+    if (this.state.deletingProject && projectActions.projectDeleted) {
+      return <Redirect to='/' />
     }
 
     if (!auth.uid) return <Redirect to='/singin' /> 
@@ -142,12 +77,10 @@ class ProjectDetails extends Component {
 
       return (
         <div className="container section project-details">
-          <button onClick={this.handleDelete}>
-          Delete
-          </button>
+          <button className="btn waves-effect waves-light" onClick={this.handleDelete}>Eliminar</button>
           <div className="card z-depth-0">
             <div className="card-content">
-              <form onSubmit={this.handleSubmit}>
+              <form onSubmit={this.handleSubmit} style={{ marginTop: "0px auto" }}>
                 <label>
                   Titulo:
                 <input defaultValue={project.title[lang]} ref="titleES" onChange={this.handleChange} />
@@ -164,10 +97,12 @@ class ProjectDetails extends Component {
                   Duracion segundos:
                 <input type="number" defaultValue={project.durationSecs} ref="durationSecs" onChange={this.handleChange} />
                 </label>
+                <p>
                 <label>
-                  Fixed:
-                <input defaultValue={project.fixed} ref="fixed" onChange={this.handleChange} />
+                <input type="checkbox" defaultChecked={project.fixed} id="fixed" ref="fixed" onChange={this.handleChange} />
+                <span>Fixed</span>
                 </label>
+                </p>
                 <label>
                   Idioma:
                 <input defaultValue={project.language} ref="language" onChange={this.handleChange} />
@@ -186,7 +121,7 @@ class ProjectDetails extends Component {
                 </label>
                 <label>
                   Objetivo:
-                <textarea value={project.objective[lang]} ref="objetiveES" onChange={this.handleChange} />
+                <textarea defaultValue={project.objective[lang]} ref="objetiveES" onChange={this.handleChange} />
                 </label>
                 <label>
                   Recompensa:
@@ -200,7 +135,8 @@ class ProjectDetails extends Component {
                   Tipo:
                 <input defaultValue={project.type} ref="type" onChange={this.handleChange} />
                 </label>
-                <input type="submit" value="Guardar" />
+                {/* <input type="submit" value="Guardar" /> */}
+                <button className="btn waves-effect waves-light" type="submit" name="action">Guardar</button>
               </form>
 
               {/* <form onSubmit={this.handleSubmit} className="white">
@@ -234,11 +170,11 @@ const mapStateToProps = (state, ownProps) => {
       description: { es: '' },
       durationSecs: 0,
       fixed: true,
-      language: '',
+      language: 'es',
       locationName: { es: '' },
       locationPoints: { es: '' },
       missionType: { es: '' },
-      objetive: { es: '' },
+      objective: { es: '' },
       reward: { GP: 0 },
       startDate: 0,
       title: { es: '' },
@@ -260,7 +196,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispathToProps = (dispatch) => {
   return {
     editProject: (capture) => dispatch(editProject(capture)),
-    createProject: (capture) => dispatch(addProject(capture)),
+    addProject: (capture) => dispatch(addProject(capture)),
     deleteProject: (capture) => dispatch(deleteProject(capture)),
     resetSavedProject: () => dispatch({ type: "Reset_Saved_Project" }),
   }

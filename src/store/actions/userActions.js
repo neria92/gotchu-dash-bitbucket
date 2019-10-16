@@ -1,5 +1,3 @@
-import getLocation from '../actions/geoActions'
-import { debug } from 'util';
 
 // mas bien createCapture
 export const createProject = (project) =>{
@@ -31,7 +29,6 @@ export const createProject = (project) =>{
             payload: {
                 id: ref.id
             }});
-            dispatch(getLocation(ref.id,project.km,project.missionID,data));
         }).catch((err) =>{
             dispatch({ type: 'CREATE_PROJECT_ERROR', err});
         })
@@ -90,37 +87,26 @@ export const deleteProject = (project) =>{
     }
 };
 
-export const editProject = (project) => {
+export const editUser = (info) => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
 
         //make asyn call
 
         const firestore = getFirestore();
 
-        firestore.collection('missions').doc(project.missionID).update({
-            complexity: { es: project.st.complexityES},
-            description: { es: project.st.descriptionES},
-            durationSecs: project.st.durationSecs,
-            fixed: project.st.fixed,
-            language: project.st.language,
-            locationName: { es: project.st.locationNameES },
-            locationPoints: { es: project.st.locationPointsES},
-            missionType: { es: project.st.missionTypeES },
-            objetive: { es: project.st.objetiveES},
-            reward: { GP: project.st.rewardGP},
-            startDate: project.st.startDate,
-            title: { es: project.st.titleES},
-            type: project.st.type
+        firestore.collection('users').doc(info.userID).update({
+            username: info.user.username,
+            blocked: info.user.blocked,
+            avatarParts: [info.user.p0, info.user.p1, info.user.p2, info.user.p3, info.user.p4, info.user.p5 ]
         }).then(function() {
             dispatch({
-                type: 'Project_Saved',
+                type: 'User_Saved',
                 payload: {
-                    id: project.missionID
+                    id: info.userID
                 }
             });
         }).catch((err) => {
-            dispatch({ type: 'Project_Saved_Error', err });
+            dispatch({ type: 'User_Saved_Error', err });
         })
-
     }
 };

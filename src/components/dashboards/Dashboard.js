@@ -11,15 +11,15 @@ import { Link } from 'react-router-dom'
 
 class Dashboard extends Component {
 
-    // handleSubmit = (e) => {
-    //     e.preventDefault();
-
-    //     const adminUID = document.querySelector('#admin-uid').value;
-    //     const addAdminRole = functions().httpsCallable('addAdminRole');
-    //     addAdminRole({ uid: adminUID }).then(result => {
-    //         console.log(result);
-    //     });
-    // }
+    handleSubmit = (e) => {
+        e.preventDefault();
+        console.log("submited");
+        // const adminUID = document.querySelector('#admin-uid').value;
+        // const addAdminRole = functions().httpsCallable('addAdminRole');
+        // addAdminRole({ uid: adminUID }).then(result => {
+        //     console.log(result);
+        // });
+    }
 
     render(){
         
@@ -48,23 +48,34 @@ class Dashboard extends Component {
         //         console.log(error);
         //     });
         //if(auth.uid) return <Redirect to='/create'></Redirect>
-        return (
-            <div className="dashboard container">
-                {/* <form onSubmit={this.handleSubmit} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
-                    <input placeholder="uid" id="admin-uid" required />
-                    <button type="submit" value="Guardar" >Make admin</button>
-                </form> */}
-                <div className ="row">
-                    {/* <Link to="/project/new"><button>Nueva mission</button></Link> */}
-                    <div className="col s12 m6">
-                        <ProjectList projects={projects}/>
+        if(projects){
+            return (
+                <div className="dashboard container">
+                    <form onSubmit={this.handleSubmit} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
+                        <input placeholder="Busqueda" id="busqueda" required />
+                        {/* <button type="submit" value="Guardar" >Make admin</button> */}
+                    </form>
+                 
+                    <div className ="row">
+                        {/* <Link to="/project/new"><button>Nueva mission</button></Link> */}
+                        <div className="col s12 m6">
+                            <Link to="/project/new"><button className="btn waves-effect waves-light" type="submit" name="action">Nueva Mission</button></Link>
+
+                            <ProjectList projects={projects}/>
+                        </div>
+                        {/* <div className="col s12 m5 offset-m1">
+                            <Notifications />
+                        </div> */}
                     </div>
-                    {/* <div className="col s12 m5 offset-m1">
-                        <Notifications />
-                    </div> */}
                 </div>
-            </div>
-        )
+            )
+        } else {
+            return (
+                <div className="container center">
+                    <p>Loading projects...</p>
+                </div>
+            )
+        }
     }
 }
 

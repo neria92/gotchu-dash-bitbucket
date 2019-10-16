@@ -5,10 +5,12 @@ import {firestoreReducer} from 'redux-firestore'
 import {firebaseReducer} from 'react-redux-firebase'
 import geoReducer from './geoReducer';
 import serverReducer from './serverReducer';
+import userReducer from './userReducer';
 
 const rootReducer = combineReducers({
     auth: authReducer,
     projectReducer: projectReducer,
+    userReducer, userReducer,
     geo: geoReducer,
     server: serverReducer,
     firestore: firestoreReducer,

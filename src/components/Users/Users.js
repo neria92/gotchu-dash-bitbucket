@@ -4,20 +4,19 @@ import { connect} from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import {compose} from 'redux'
 import {Redirect} from 'react-router-dom'
-import { functions } from 'firebase'
 import { signOut } from '../../store/actions/authActions'
 
 class Users extends Component {
 
-    handleSubmit = (e) => {
-        e.preventDefault();
+    // handleSubmit = (e) => {
+    //     e.preventDefault();
 
-        const adminUID = document.querySelector('#admin-uid').value;
-        const addAdminRole = functions().httpsCallable('addAdminRole');
-        addAdminRole({ uid: adminUID }).then(result => {
-            console.log(result);
-        });
-    }
+    //     const adminUID = document.querySelector('#admin-uid').value;
+    //     const addAdminRole = functions().httpsCallable('addAdminRole');
+    //     addAdminRole({ uid: adminUID }).then(result => {
+    //         console.log(result);
+    //     });
+    // }
 
     render(){
         
@@ -48,10 +47,6 @@ class Users extends Component {
         //if(auth.uid) return <Redirect to='/create'></Redirect>
         return (
             <div className="dashboard container">
-                <form onSubmit={this.handleSubmit} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
-                    <input placeholder="uid" id="admin-uid" required />
-                    <button type="submit" value="Guardar" >Make admin</button>
-                </form>
                 <div className ="row">
                     <div className="col s12 m6">
                         <UsersList users={users}/>
@@ -82,7 +77,6 @@ const mapStateToProps = (state) => {
     // {
     //     console.log(state.firebase.profile.token.claims);
     // }
-    console.log(state.firestore.ordered.users);
     return {
         users:  state.firestore.ordered.users,
         auth: state.firebase.auth,
