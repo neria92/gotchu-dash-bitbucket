@@ -10,6 +10,11 @@ import { signOut } from '../../store/actions/authActions'
 import { Link } from 'react-router-dom'
 
 class Dashboard extends Component {
+    state = {
+        projectsLoaded: false,
+        busqueda: ""
+    };
+    filteredProjects= null
 
     handleSubmit = (e) => {
         e.preventDefault();
@@ -19,6 +24,20 @@ class Dashboard extends Component {
         // addAdminRole({ uid: adminUID }).then(result => {
         //     console.log(result);
         // });
+    }
+
+    handleChange = (e) => {
+        this.setState({
+            [e.target.id]: e.target.value
+        })
+    }
+
+    setStartProjects(){
+        this.setState({
+            ...this.state,
+            projectsLoaded: true
+        })
+        this.filteredProjects = this.props.projects;
     }
 
     render(){
@@ -48,11 +67,10 @@ class Dashboard extends Component {
         //         console.log(error);
         //     });
         //if(auth.uid) return <Redirect to='/create'></Redirect>
-        if(projects){
             return (
                 <div className="dashboard container">
                     <form onSubmit={this.handleSubmit} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
-                        <input placeholder="Busqueda" id="busqueda" required />
+                        <input placeholder="Busqueda" onChange={this.handleChange} id="busqueda" required  />
                         {/* <button type="submit" value="Guardar" >Make admin</button> */}
                     </form>
                  
@@ -61,7 +79,7 @@ class Dashboard extends Component {
                         <div className="col s12 m6">
                             <Link to="/project/new"><button className="btn waves-effect waves-light" type="submit" name="action">Nueva Mission</button></Link>
 
-                            <ProjectList projects={projects}/>
+                            <ProjectList filter={this.state.busqueda}/>
                         </div>
                         {/* <div className="col s12 m5 offset-m1">
                             <Notifications />
@@ -69,13 +87,7 @@ class Dashboard extends Component {
                     </div>
                 </div>
             )
-        } else {
-            return (
-                <div className="container center">
-                    <p>Loading projects...</p>
-                </div>
-            )
-        }
+        
     }
 }
 
@@ -92,21 +104,14 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 const mapStateToProps = (state) => {
-    // if (!state.firebase.profile.isEmpty)
-    // {
-    //     console.log(state.firebase.profile.token.claims);
-    // }
-
     return {
-        projects:  state.firestore.ordered.missions,
         auth: state.firebase.auth,
         profile: state.firebase.profile
     }
 }
 
 export default compose(
+    
     connect(mapStateToProps, mapDispatchToProps),
-    firestoreConnect([
-      { collection: 'missions', orderBy: ['title', 'desc']}
-    ])
+
   )(Dashboard)
