@@ -7,6 +7,16 @@ import {Redirect} from 'react-router-dom'
 import { signOut } from '../../store/actions/authActions'
 
 class Users extends Component {
+    state = {
+        projectsLoaded: false,
+        busqueda: ""
+    };
+
+    handleChange = (e) => {
+        this.setState({
+            [e.target.id]: e.target.value
+        })
+    }
 
     // handleSubmit = (e) => {
     //     e.preventDefault();
@@ -47,9 +57,13 @@ class Users extends Component {
         //if(auth.uid) return <Redirect to='/create'></Redirect>
         return (
             <div className="dashboard container">
+                <form onSubmit={this.handleSubmit} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
+                    <input placeholder="Busqueda" onChange={this.handleChange} id="busqueda" required />
+                    {/* <button type="submit" value="Guardar" >Make admin</button> */}
+                </form>
                 <div className ="row">
                     <div className="col s12 m6">
-                        <UsersList users={users}/>
+                        <UsersList filter={this.state.busqueda}/>
                     </div>
                     {/* <div className="col s12 m5 offset-m1">
                         <Notifications />
@@ -78,7 +92,6 @@ const mapStateToProps = (state) => {
     //     console.log(state.firebase.profile.token.claims);
     // }
     return {
-        users:  state.firestore.ordered.users,
         auth: state.firebase.auth,
         profile: state.firebase.profile
     }
@@ -86,7 +99,4 @@ const mapStateToProps = (state) => {
 
 export default compose(
     connect(mapStateToProps, mapDispatchToProps),
-    firestoreConnect([
-      { collection: 'users', orderBy: ['username', 'desc']}
-    ])
   )(Users)
