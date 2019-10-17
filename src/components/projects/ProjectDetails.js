@@ -28,10 +28,15 @@ class ProjectDetails extends Component {
       complexityES: this.refs.complexityES.value,
       descriptionES: this.refs.descriptionES.value,
       durationSecs: parseInt(this.refs.durationSecs.value),
-      fixed: this.refs.fixed.checked,
+      evidenceType: parseInt(this.refs.evidenceType.value),
+      image0: this.refs.image0.value,
+      image1: this.refs.image1.value,
+      image2: this.refs.image2.value,
       language: this.refs.language.value,
       locationNameES: this.refs.locationNameES.value,
-      locationPointsES: this.refs.locationPointsES.value,
+      locationPoint0Lat: this.refs.locationPoint0Lat.value,
+      locationPoint0Long: this.refs.locationPoint0Long.value,
+      locationPoint0Radius: this.refs.locationPoint0Radius.value,
       missionTypeES: this.refs.missionTypeES.value,
       objetiveES: this.refs.objetiveES.value,
       rewardGP: parseInt(this.refs.rewardGP.value),
@@ -97,12 +102,22 @@ class ProjectDetails extends Component {
                   Duracion segundos:
                 <input type="number" defaultValue={project.durationSecs} ref="durationSecs" onChange={this.handleChange} />
                 </label>
-                <p>
                 <label>
-                <input type="checkbox" defaultChecked={project.fixed} id="fixed" ref="fixed" onChange={this.handleChange} />
-                <span>Fixed</span>
+                  Tipo de evidencia:
+                <input type="number" defaultValue={project.evidenceType} ref="evidenceType" onChange={this.handleChange} />
                 </label>
-                </p>
+                <label>
+                  Imagen 0:
+                <input defaultValue={project.images[0]} ref="image0" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Imagen 1:
+                <input defaultValue={project.images[1]} ref="image1" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Imagen 2:
+                <input defaultValue={project.images[2]} ref="image2" onChange={this.handleChange} />
+                </label>
                 <label>
                   Idioma:
                 <input defaultValue={project.language} ref="language" onChange={this.handleChange} />
@@ -112,8 +127,16 @@ class ProjectDetails extends Component {
                 <input defaultValue={project.locationName[lang]} ref="locationNameES" onChange={this.handleChange} />
                 </label>
                 <label>
-                  Locacion puntos:
-                <input defaultValue={project.locationPoints[lang]} ref="locationPointsES" onChange={this.handleChange} />
+                  Locacion puntos 0 latitud:
+                <input defaultValue={project.locationPoints[0].coord.lat} ref="locationPoint0Lat" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Locacion puntos 0 longitud:
+                <input defaultValue={project.locationPoints[0].coord.long} ref="locationPoint0Long" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Locacion puntos 0 radio:
+                <input defaultValue={project.locationPoints[0].radius} ref="locationPoint0Radius" onChange={this.handleChange} />
                 </label>
                 <label>
                   Tipo de mision:
@@ -125,7 +148,7 @@ class ProjectDetails extends Component {
                 </label>
                 <label>
                   Recompensa:
-                <input type="number" defaultValue={project.reward.GP} ref="rewardGP" onChange={this.handleChange} />
+                <input type="number" defaultValue={project.reward.QP} ref="rewardGP" onChange={this.handleChange} />
                 </label>
                 <label>
                   Fecha inicio:
@@ -184,7 +207,7 @@ const mapStateToProps = (state, ownProps) => {
     const captures = state.firestore.data.missions;
     project = captures ? captures[id] : null;
   }
-  
+  console.log(project);
   return {
     id: id,
     project: project,
