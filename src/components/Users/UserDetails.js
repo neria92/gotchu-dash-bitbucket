@@ -9,7 +9,8 @@ import { functions } from 'firebase'
 class UserDetails extends Component {
 
   state = {
-    savingChanges: false
+    savingChanges: false,
+    admin:false
   }
 
   handleChange = (e) => {
@@ -24,6 +25,7 @@ class UserDetails extends Component {
     const addAdminRole = functions().httpsCallable('addAdminRole');
     addAdminRole({ uid: adminUID }).then(result => {
       console.log(result);
+      this.setState({admin:true})
     });
   }
 
@@ -92,10 +94,14 @@ class UserDetails extends Component {
                 </label>
                 <p>
                   <label>
-                    <input type="checkbox" defaultChecked={user.blocked} id="blocked" ref="blocked" onChange={this.handleChange} />
+                    <input type="checkbox" defaultChecked={user.blocked!=null?user.blocked:false} id="blocked" ref="blocked" onChange={this.handleChange} />
                     <span>Bloqueado</span>
                   </label>
                 </p>
+                {this.state.admin &&
+                 <label>
+                 Usuario es Administrador!
+               </label>}
                 <button className="btn waves-effect waves-light" type="submit" name="action">Guardar</button>
               </form>
             </div>
