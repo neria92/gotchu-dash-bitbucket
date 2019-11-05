@@ -59,7 +59,8 @@ class ProjectDetails extends Component {
         title: { es: '' },
         type: '',
         images:[],
-        evidenceType: 1
+        evidenceType: 1,
+        generic: ""
       }
       
     this.setState({ddLang:{ label: "Español", value: "es" }});
@@ -84,14 +85,26 @@ class ProjectDetails extends Component {
         _mission.locationName = mission.locationName != null && mission.locationName[_mission.language] != null ? mission.locationName : {[_mission.language]:""}
         _mission.title        = mission.title        != null && mission.title[_mission.language]        != null ? mission.title        : {[_mission.language]:""}
         _mission.complexity   = mission.complexity   != null && mission.complexity[_mission.language]   != null ? mission.complexity   : {[_mission.language]:""}
+        
+        var assigned = false
 
         if(_mission.complexity[_mission.language] =="Alta")
+        {
           this.setState({ddCom:{ label: "Alta", value: "Alta" }});
+          assigned = true
+        }
         if(_mission.complexity[_mission.language] =="Media")
+        {
           this.setState({ddCom:{ label: "Media", value: "Media" }});
+          assigned = true
+        }
         if(_mission.complexity[_mission.language] =="Baja")
+        {
           this.setState({ddCom:{ label: "Baja", value: "Baja" }});
-
+          assigned = true
+        }
+        if(!assigned)
+          this.setState({ddCom:{ label: "Baja", value: "Baja" }});
       }
       
       _mission.evidenceType = mission.evidenceType != null ? mission.evidenceType : 2
@@ -107,6 +120,7 @@ class ProjectDetails extends Component {
       this.setState({ddEv})
 
       _mission.type         = mission.type         != null ? mission.type         : ""
+      _mission.generic      = mission.generic      != null ? mission.generic      : ""
       _mission.fixed        = mission.fixed        != null ? mission.fixed        : false
       _mission.durationSecs = mission.durationSecs != null ? mission.durationSecs : 0
       _mission.startDate    = mission.startDate    != null ? mission.startDate    : 0
@@ -241,10 +255,7 @@ class ProjectDetails extends Component {
       return <Redirect to='/' />
     }
     if (!auth.uid) return <Redirect to='/singin' /> 
-
-      _generic      = mission.generic      != null ? mission.generic : ""
-    
-
+  
     if (mission) {
       const lang = mission.language;
       return (
@@ -305,7 +316,10 @@ class ProjectDetails extends Component {
                
                   <Select isMulti value={ddEv} options={ evidencias } onChange={ddEv => {this.setState({ddEv})} } />
                 </label>
-               
+                <label>
+                  Path de mision generica:
+                <input defaultValue={mission.generic} ref="generic" onChange={this.handleChange} />
+                </label>
                 <label>
                   Imagen 1:
                 <input defaultValue={mission.images[0]==null?"":mission.images[0]} ref="image1" onChange={this.handleChange} />
@@ -389,7 +403,6 @@ class ProjectDetails extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const id = ownProps.match.params.id;
-      generic: '',
   return {
     id: id,
     auth: state.firebase.auth,
