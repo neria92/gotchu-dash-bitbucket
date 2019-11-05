@@ -7,6 +7,8 @@ import SingIn from './components/auth/SingIn'
 import SingUp from './components/auth/SingUp'
 import Users from './components/Users/Users'
 import UserDetails from './components/Users/UserDetails'
+import Captures from './components/captures/Captures'
+import CaptureDetails from './components/captures/CaptureDetails'
 import CreateProject from './components/projects/CreateProject'
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
           <Route path='/singup' component={SingUp}/>
           <Route path='/users' component={Users}/>
           <Route path='/user/:id' component={UserDetails} />
+          <Route path='/captures' component={Captures} />
+          <Route path='/capture/:id' component={CaptureDetails} />
         </Switch>
       </div>
     </BrowserRouter>

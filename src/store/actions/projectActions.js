@@ -89,7 +89,7 @@ export const editProject = (missionID,project) => {
             dispatch({
                 type: 'Project_Saved',
                 payload: {
-                    id: project.missionID
+                    id: missionID
                 }
             });
         }).catch((err) => {

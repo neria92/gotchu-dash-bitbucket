@@ -3,16 +3,16 @@ import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import { compose } from 'redux'
 import { Redirect } from 'react-router-dom'
-import { editProject, addProject, deleteProject} from '../../store/actions/projectActions'
+import {editUser} from '../../store/actions/userActions'
+import { functions } from 'firebase'
 
-class ProjectDetails extends Component {
+class CaptureDetails extends Component {
 
   state = {
     savingChanges: false,
     projectLoaded: true,
     deletingProject: false
   };
-
 
   handleChange = (e) => {
     this.setState({
@@ -30,7 +30,7 @@ class ProjectDetails extends Component {
       fixed: false,
       language: this.refs.language.value,
       locationName: { es: this.refs.locationNameES.value },
-      locationPoints: [ { coord:{ lat:Number(this.refs.locationPoint0Lat.value),long:Number(this.refs.locationPoint0Long.value)}, radius:Number(this.refs.locationPoint0Radius.value)} ],
+      locationPoints: [{ coord: { lat: Number(this.refs.locationPoint0Lat.value), long: Number(this.refs.locationPoint0Long.value) }, radius: Number(this.refs.locationPoint0Radius.value) }],
       missionType: { es: this.refs.missionTypeES.value },
       objective: { es: this.refs.objetiveES.value },
       reward: { GP: parseInt(this.refs.rewardGP.value) },
@@ -38,7 +38,7 @@ class ProjectDetails extends Component {
       title: { es: this.refs.titleES.value },
       type: this.refs.type.value,
       generic: this.refs.generic.value,
-      images:[this.refs.image1.value,this.refs.image2.value],
+      images: [this.refs.image1.value, this.refs.image2.value],
       evidenceType: parseInt(this.refs.evidenceType.value)
     }
 
@@ -46,96 +46,59 @@ class ProjectDetails extends Component {
       ...this.state,
       savingChanges: true
     })
-    if(missionID == 'new'){
+    if (missionID == 'new') {
       this.props.addProject(st);
     } else {
-      this.props.editProject(missionID, st );
+      this.props.editProject(missionID, st);
     }
-  }
-
-  handleDelete = (e) => {
-    e.preventDefault();
-    const missionID = this.props.id;
-    this.setState({
-      ...this.state,
-      deletingProject: true
-    })
-    this.props.deleteProject(missionID);
   }
   
   render() {
-    const { project, auth, projectActions } = this.props;
-    console.log("saving: " + this.state.savingChanges + " reducer: " + projectActions.projectSaved)
-    if (this.state.savingChanges && projectActions.projectSaved){
-      return <Redirect to='/' /> 
-    }
-    if (this.state.deletingProject && projectActions.projectDeleted) {
+    const { capture, auth, captureActions } = this.props;
+    console.log("saving: " + this.state.savingChanges + " reducer: " + captureActions.projectSaved)
+    if (this.state.savingChanges && captureActions.captureSaved) {
       return <Redirect to='/' />
     }
-    if (!auth.uid) return <Redirect to='/singin' /> 
+    if (this.state.deletingProject && captureActions.captureDeleted) {
+      return <Redirect to='/' />
+    }
+    if (!auth.uid) return <Redirect to='/singin' />
 
-    //Cosas con Idioma
-    var _complexity="",_description="",_locationName="",_missionType="",_objective="",_title="";
     //Objetos
-    var _lat=0,_long=0,_radius=0,_rewardGP=0;
+    var _lat = 0, _long = 0
     //Directos
-    var _startDate=0,_durationSecs=0,_evidenceType=2,_fixed=false,lang="es",_type="", _generic=""
-    //Arreglos
-    var _images=[]
-    
-    const mission = project;
+    var _createdAt = 0, _photo = "", _sound = "", _text = ""
 
-    if(mission != null)
-    {
-      if(mission.language!=null)
-        lang = mission.language
-      
-      _missionType  = mission.missionType  != null && mission.missionType[lang]  != null ? mission.missionType[lang]  : ""
-      _description  = mission.description  != null && mission.description[lang]  != null ? mission.description[lang]  : ""
-      _objective    = mission.objective    != null && mission.objective[lang]    != null ? mission.objective[lang]    : ""
-      _locationName = mission.locationName != null && mission.locationName[lang] != null ? mission.locationName[lang] : ""
-      _title        = mission.title        != null && mission.title[lang]        != null ? mission.title[lang]        : ""
-      _complexity   = mission.complexity   != null && mission.complexity[lang]   != null ? mission.complexity[lang]   : ""
-      _generic      = mission.generic      != null ? mission.generic : ""
+    const _capture = capture;
 
-      _evidenceType = mission.evidenceType != null ? mission.evidenceType : 2
-      _type         = mission.type         != null ? mission.type         : ""
-      _fixed        = mission.fixed        != null ? mission.fixed        : false
-      _durationSecs = mission.durationSecs != null ? mission.durationSecs : 0
-      _startDate    = mission.startDate    != null ? mission.startDate    : 0
+    if (_capture != null) {
 
-      _startDate    = Number(_startDate)
-      _durationSecs = Number(_durationSecs)
-      if(isNaN(Number(_startDate)))
-      _startDate  = 0 
-      if(isNaN(Number(_durationSecs)))
-      _durationSecs = 0
-   
+      _photo = _capture.evidence != null && _capture.evidence.photo != null ? _capture.evidence.photo : ""
+      _sound = _capture.evidence != null && _capture.evidence.sound != null ? _capture.evidence.sound : ""
+      _text = _capture.evidence != null && _capture.evidence.text != null ? _capture.evidence.text : ""
+
+      _createdAt = _capture.createdAt != null ? _capture.createdAt : 0
+
+      _createdAt = Number(_createdAt)
+      if (isNaN(Number(_createdAt)))
+        _createdAt = 0
+
       //Por mientras solo usaremos 1 location. Hacer que esto despues sea como _images
 
-      if(mission.locationPoints != null && mission.locationPoints[0]!=null)
-      {
-        _lat    = mission.locationPoints[0].coord     != null && mission.locationPoints[0].coord.lat  != null ? mission.locationPoints[0].coord.lat  : 0
-        _long   = mission.locationPoints[0].coord     != null && mission.locationPoints[0].coord.long != null ? mission.locationPoints[0].coord.long : 0
-        _radius = mission.locationPoints[0].radius    != null ?  mission.locationPoints[0].radius : 0
+      if (_capture.coords != null) {
+        _lat = _capture.coords.lat != null ? _capture.coords.lat : 0
+        _long = _capture.coords.long != null ? _capture.coords.long : 0
 
-        _lat    = Number(_lat)
-        _long   = Number(_long)
-        _radius = Number(_radius)
-        if(isNaN(Number(_lat)))
-          _lat  = 0 
-        if(isNaN(Number(_long)))
+        _lat = Number(_lat)
+        _long = Number(_long)
+        if (isNaN(Number(_lat)))
+          _lat = 0
+        if (isNaN(Number(_long)))
           _long = 0
-        if(isNaN(Number(_radius)))
-        _radius = 0
       }
-
-      _rewardGP = mission.reward != null && mission.reward.GP != null ? mission.reward.GP : 0
-      _images   = mission.images != null ? mission.images : []
-
     }
 
-    if (project) {
+    if (_capture) {
 
       return (
         <div className="container section project-details">
@@ -143,7 +106,7 @@ class ProjectDetails extends Component {
           <div className="card z-depth-0">
             <div className="card-content">
               <form onSubmit={this.handleSubmit} style={{ marginTop: "0px auto" }}>
-                <label>
+                {/* <label>
                   Titulo:
                 <input defaultValue={_title} ref="titleES" onChange={this.handleChange} />
                 </label>
@@ -167,14 +130,14 @@ class ProjectDetails extends Component {
                   Tipo de evidencia:
                 <input type="number" defaultValue={_evidenceType} ref="evidenceType" onChange={this.handleChange} />
                 </label>
-                
+
                 <label>
                   Imagen 1:
-                <input defaultValue={_images[0]==null?"":_images[0]} ref="image1" onChange={this.handleChange} />
+                <input defaultValue={_images[0] == null ? "" : _images[0]} ref="image1" onChange={this.handleChange} />
                 </label>
                 <label>
                   Imagen 2:
-                <input defaultValue={_images[1]==null?"":_images[1]} ref="image2" onChange={this.handleChange} />
+                <input defaultValue={_images[1] == null ? "" : _images[1]} ref="image2" onChange={this.handleChange} />
                 </label>
 
                 <label>
@@ -218,7 +181,7 @@ class ProjectDetails extends Component {
                 <input defaultValue={_type} ref="type" onChange={this.handleChange} />
                 </label>
                 {/* <input type="submit" value="Guardar" /> */}
-                <button className="btn waves-effect waves-light" type="submit" name="action">Guardar</button>
+                <button className="btn waves-effect waves-light" type="submit" name="action">Guardar</button> */}
               </form>
 
               {/* <form onSubmit={this.handleSubmit} className="white">
@@ -228,7 +191,7 @@ class ProjectDetails extends Component {
               </form> */}
             </div>
             <div className="card-action grey lighten-4 grey-text">
-              <div>Mission by {project.creator}</div>
+              {/* <div>Mission by {project.creator}</div> */}
             </div>
           </div>
         </div>
@@ -236,7 +199,7 @@ class ProjectDetails extends Component {
     } else {
       return (
         <div className="container center">
-          <p>Loading project...</p>
+          <p>Loading capture...</p>
         </div>
       )
     }
@@ -245,50 +208,26 @@ class ProjectDetails extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const id = ownProps.match.params.id;
-  var project;
-  if(id == 'new'){
-    project = {
-      complexity: { es: '' },
-      description: { es: '' },
-      durationSecs: 0,
-      fixed: false,
-      language: 'es',
-      locationName: { es: '' },
-      locationPoints: [ { coord:{ lat:0,long:0}, radius:0} ],
-      missionType: { es: '' },
-      objective: { es: '' },
-      reward: { GP: 0 },
-      startDate: 0,
-      title: { es: '' },
-      type: '',
-      generic: '',
-      images:[],
-      evidenceType: 2
-    }
-  } else {
-    const captures = state.firestore.data.missions;
-    project = captures ? captures[id] : null;
-  }
+  const captures = state.firestore.data.captures;
+  const capture = captures ? captures[id] : null;
+  
   return {
     id: id,
-    project: project,
+    capture: capture,
     auth: state.firebase.auth,
-    projectActions: state.projectReducer
+    captureActions: state.captureReducer
   }
 }
 
 const mapDispathToProps = (dispatch) => {
   return {
-    editProject: (id,capture) => dispatch(editProject(id,capture)),
-    addProject: (capture) => dispatch(addProject(capture)),
-    deleteProject: (capture) => dispatch(deleteProject(capture)),
-    resetSavedProject: () => dispatch({ type: "Reset_Saved_Project" }),
+    editUser: (capture) => dispatch(editUser(capture))
   }
 }
 
 export default compose(
   connect(mapStateToProps, mapDispathToProps),
   firestoreConnect([{
-    collection: 'missions'
+    collection: 'captures'
   }])
-)(ProjectDetails)
+)(CaptureDetails)
