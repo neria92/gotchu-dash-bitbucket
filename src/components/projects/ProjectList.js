@@ -12,7 +12,7 @@ class ProjectList extends Component {
         <div className="project-list section">
           {this.props.projects.map(project => {
             return (
-              <Link to={'/project/' + project.id} key={project.id}>
+              <Link to={{pathname:'/project/' + project.id, state:project}} key={project.id}>
                 <ProjectSummary project={project} />
               </Link>
             )

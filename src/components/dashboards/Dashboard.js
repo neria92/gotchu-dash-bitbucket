@@ -77,7 +77,7 @@ class Dashboard extends Component {
                     <div className ="row">
                         {/* <Link to="/project/new"><button>Nueva mission</button></Link> */}
                         <div className="col s12 m6">
-                            <Link to="/project/new"><button className="btn waves-effect waves-light" type="submit" name="action">Nueva Mission</button></Link>
+                            <Link to={{pathname:"/project/new", state:{id:"new"}}}><button className="btn waves-effect waves-light" type="submit" name="action">Nueva Mission</button></Link>
 
                             <ProjectList filter={this.state.busqueda}/>
                         </div>
