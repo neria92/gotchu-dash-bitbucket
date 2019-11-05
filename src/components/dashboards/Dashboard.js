@@ -12,7 +12,8 @@ import { Link } from 'react-router-dom'
 class Dashboard extends Component {
     state = {
         projectsLoaded: false,
-        busqueda: ""
+        busqueda: "",
+        activePage: 1
     };
     filteredProjects= null
 
@@ -39,10 +40,9 @@ class Dashboard extends Component {
         })
         this.filteredProjects = this.props.projects;
     }
-
     render(){
         
-        const { projects, auth, profile } = this.props;
+        const { auth, profile } = this.props;
         
         if(!auth.uid) return <Redirect to='/singin'></Redirect>
         if (!profile.isEmpty) {
@@ -69,17 +69,35 @@ class Dashboard extends Component {
         //if(auth.uid) return <Redirect to='/create'></Redirect>
             return (
                 <div className="dashboard container">
-                    <form onSubmit={this.handleSubmit} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
+                    <form onSubmit={this.handleSubmit} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
                         <input placeholder="Busqueda" onChange={this.handleChange} id="busqueda" required  />
                         {/* <button type="submit" value="Guardar" >Make admin</button> */}
                     </form>
-                 
+                    
                     <div className ="row">
                         {/* <Link to="/project/new"><button>Nueva mission</button></Link> */}
                         <div className="col s12 m6">
                             <Link to={{pathname:"/project/new", state:{id:"new"}}}><button className="btn waves-effect waves-light" type="submit" name="action">Nueva Mission</button></Link>
 
-                            <ProjectList filter={this.state.busqueda}/>
+                            {/* <div class="row" style={{ width: "560px auto", backgroundColor: "white" }}>
+                                <div class="col s12 m12 l12" >
+                                    <ul class="pagination">
+                                        <li class="disabled"><a href="#!">
+                                            <i >&larr;</i></a></li>
+                                        <li class="active"><a href="#!">1</a></li>
+                                        <li class="waves-effect"><a href="#!">2</a></li>
+                                        <li class="waves-effect"><a href="#!">3</a></li>
+                                        <li class="waves-effect"><a href="#!">4</a></li>
+                                        <li class="waves-effect"><a href="#!">5</a></li>
+                                        <li class="waves-effect"><a href="#!">
+                                            <i >&rarr;</i></a></li>
+                                    </ul>
+                                </div>
+                            </div>       */}
+
+                            
+                  
+                            <ProjectList filter={this.state.busqueda} />
                         </div>
                         {/* <div className="col s12 m5 offset-m1">
                             <Notifications />
@@ -90,6 +108,8 @@ class Dashboard extends Component {
         
     }
 }
+
+
 
 // firebase.auth.onAuthStateChanged(user => {
 //     if (user) {

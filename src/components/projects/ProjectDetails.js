@@ -182,6 +182,7 @@ class ProjectDetails extends Component {
       startDate: Number(this.state.timeInit/1000.0),
       title: { [lang]: this.refs.title.value },
       type: this.refs.type.value,
+      generic: this.refs.generic.value,
       images:[this.refs.image1.value,this.refs.image2.value],
       evidenceType: Number(evidenceType)
     }
@@ -241,6 +242,7 @@ class ProjectDetails extends Component {
     }
     if (!auth.uid) return <Redirect to='/singin' /> 
 
+      _generic      = mission.generic      != null ? mission.generic : ""
     
 
     if (mission) {
@@ -387,6 +389,7 @@ class ProjectDetails extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const id = ownProps.match.params.id;
+      generic: '',
   return {
     id: id,
     auth: state.firebase.auth,
