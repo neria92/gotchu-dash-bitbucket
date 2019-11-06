@@ -162,7 +162,7 @@ class ProjectDetails extends Component {
       _mission.images   = mission.images != null ? mission.images : []
 
     }
-    console.log(id,_mission)
+    //console.log(id,_mission)
     this.setState({id:id,mission:_mission})
   }
 

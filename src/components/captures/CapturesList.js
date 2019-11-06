@@ -12,7 +12,7 @@ class CapturesList extends Component {
         <div className="project-list section">
           {this.props.captures.map(capture => {
             return (
-              <Link to={'/capture/' + capture.id} key={capture.id}>
+              <Link to={{pathname:'/capture/' + capture.id, state:capture}} key={capture.id}>
                 <CaptureSummary capture={capture} />
               </Link>
             )
