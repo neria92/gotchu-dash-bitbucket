@@ -18,9 +18,7 @@ class ProjectList extends Component {
     };
   }
 
-
   handlePageChange = (pageNumber) => {
-    console.log(`active page is ${pageNumber}`);
     this.setState({ activePage: pageNumber });
   }
 
