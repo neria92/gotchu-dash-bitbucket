@@ -58,7 +58,7 @@ class Users extends Component {
         return (
             <div className="dashboard container">
                 <form onSubmit={this.handleSubmit} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
-                    <input placeholder="Busqueda" onChange={this.handleChange} id="busqueda" required />
+                    <input placeholder="Username" onChange={this.handleChange} id="busqueda" required />
                     {/* <button type="submit" value="Guardar" >Make admin</button> */}
                 </form>
                 <div className ="row">

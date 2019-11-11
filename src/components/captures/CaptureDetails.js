@@ -7,6 +7,12 @@ import { editCapture} from '../../store/actions/captureActions'
 import { functions } from 'firebase'
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css";
+import Select from 'react-select';
+
+const status = [
+  { label: "Rejected", value: "Rejected" },
+  { label: "Accepted", value: "Accepted" },
+];
 
 class CaptureDetails extends Component {
 
@@ -17,6 +23,7 @@ class CaptureDetails extends Component {
 
     id: null,
     capture: null,
+    ddStatus: null,
 
     lat: 0,
     long: 0,
@@ -31,6 +38,7 @@ class CaptureDetails extends Component {
       createdAt: 0,
       evidence: { photo: "", sound: "", text: ""},
       mission: "",
+      status: "",
       userId: "",
     }
 
@@ -43,7 +51,7 @@ class CaptureDetails extends Component {
     if (capture != null) {
       _capture.coords.lat = capture.coords != null && capture.coords.lat != null ? capture.coords.lat : "" 
       _capture.coords.long = capture.coords != null && capture.coords.long != null ? capture.coords.long : "" 
-      _capture.createdAt = capture.createdAt != null ? capture.createdAt.seconds : 0
+      _capture.createdAt = capture.createdAt != null ? capture.createdAt : 0
       _capture.createdAt = Number(_capture.createdAt)
       if (isNaN(Number(_capture.createdAt)))
         _capture.createdAt = 0
@@ -55,6 +63,21 @@ class CaptureDetails extends Component {
       _capture.evidence.text = capture.evidence != null && capture.evidence.text != null ? capture.evidence.text : "" 
       _capture.mission = capture.mission != null ? capture.mission : ""
       _capture.userId = capture.userId != null ? capture.userId : "" 
+      _capture.status = capture.status != null ? capture.status : ""
+
+      var assigned = false
+
+      if(_capture.status == "Rejected")
+      {
+        this.setState({ddStatus:{label: "Rejected", value: "Rejected"}});
+        assigned = true;
+      }
+      if (_capture.status == "Accepted") {
+        this.setState({ ddStatus: { label: "Accepted", value: "Accepted" } });
+        assigned = true;
+      }
+      if (!assigned)
+        this.setState({ ddStatus: { label: "Rejected", value: "Rejected" } });
     }
     console.log(id, _capture)
     this.setState({ id: id, capture: _capture })
@@ -68,12 +91,14 @@ class CaptureDetails extends Component {
     e.preventDefault();
 
     const { id } = this.state
+    const status = this.state.ddStatus.value
 
     const capture = {
       coords: { lat: Number(this.state.lat), long: Number(this.state.long) },
       createdAt: Number(this.state.timeCreatedAt / 1000.0),
       evidence: { photo: this.refs.photo.value, sound: this.refs.sound.value, text: this.refs.text.value },
       mission: this.refs.mission.value,
+      status: status,
       userId: this.refs.userId.value,
     }
     this.setState({
@@ -95,7 +120,7 @@ class CaptureDetails extends Component {
   
   render() {
     const { auth, projectActions } = this.props;
-    const { capture, lat, long, timeCreatedAt } = this.state
+    const { capture, lat, long, timeCreatedAt, ddStatus } = this.state
     if (this.state.savingChanges) {
       return <Redirect to='/captures' />
     }
@@ -134,6 +159,10 @@ class CaptureDetails extends Component {
                     dateFormat="MMMM d, yyyy h:mm aa"
                   />
                 </div>
+                <label>
+                  Status:
+                <Select value={ddStatus} options={status} onChange={ddStatus => { this.setState({ ddStatus }) }} />
+                </label>
                 <label>
                   Photo evidencia:
                 <input defaultValue={capture.evidence.photo} ref="photo" onChange={this.handleChange} />
