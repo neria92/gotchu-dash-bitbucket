@@ -10,12 +10,22 @@ class CapturesList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activePage: 1
+      activePage: 1,
+      showOnlyPending: false,
+
     };
   }
 
   handlePageChange = (pageNumber) => {
     this.setState({ activePage: pageNumber });
+  }
+
+  handleshowOnlyPending = (e) => {
+    var sop = false
+    if (this.refs.showOnlyPending.checked)
+      sop = true
+
+    this.setState({ showOnlyPending: sop})
   }
 
   render(){
@@ -31,14 +41,26 @@ class CapturesList extends Component {
               onChange={this.handlePageChange}
             />
           </div>
+          <label>
+            
+              <input type="checkbox" defaultChecked={this.state.showOnlyPending} id="showOnlyPending" ref="showOnlyPending" onChange={this.handleshowOnlyPending} />
+            <span>Mostrar solo pendientes</span>
+          </label>
           <div className="project-list section">
             {this.props.captures.map((capture, id) => {
               if ((10 * (this.state.activePage - 1)) <= id && id < (10 * this.state.activePage))
-              return (
-                <Link to={{pathname:'/capture/' + capture.id, state:capture}} key={capture.id}>
-                  <CaptureSummary capture={capture} />
-                </Link>
-              )
+                if(!this.state.showOnlyPending)
+                  return (
+                    <Link to={{pathname:'/capture/' + capture.id, state:capture}} key={capture.id}>
+                      <CaptureSummary capture={capture} />
+                    </Link>
+                  )
+                else if (capture.status == "Pending")
+                  return (
+                    <Link to={{ pathname: '/capture/' + capture.id, state: capture }} key={capture.id}>
+                      <CaptureSummary capture={capture} />
+                    </Link>
+                  )
             })}
           </div>
         </div>

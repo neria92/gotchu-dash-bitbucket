@@ -12,6 +12,7 @@ import Select from 'react-select';
 const status = [
   { label: "Rejected", value: "Rejected" },
   { label: "Accepted", value: "Accepted" },
+  { label: "Pending", value: "Pending" },
 ];
 
 class CaptureDetails extends Component {
@@ -74,6 +75,10 @@ class CaptureDetails extends Component {
       }
       if (_capture.status == "Accepted") {
         this.setState({ ddStatus: { label: "Accepted", value: "Accepted" } });
+        assigned = true;
+      }
+      if (_capture.status == "Pending") {
+        this.setState({ ddStatus: { label: "Pending", value: "Pending" } });
         assigned = true;
       }
       if (!assigned)
