@@ -32,7 +32,7 @@ class ProjectList extends Component {
             activePage={this.state.activePage}
             itemsCountPerPage={10}
               totalItemsCount={this.props.projects.length}
-            pageRangeDisplayed={9}
+            pageRangeDisplayed={7}
             onChange={this.handlePageChange}
           />
         </div>

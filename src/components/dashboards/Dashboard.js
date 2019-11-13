@@ -8,6 +8,8 @@ import {Redirect} from 'react-router-dom'
 import { functions } from 'firebase'
 import { signOut } from '../../store/actions/authActions'
 import { Link } from 'react-router-dom'
+//import { addMultipleProjects } from '../../store/actions/projectActions'
+import { reduxFirestore, getFirestore } from 'redux-firestore'
 
 class Dashboard extends Component {
     state = {
@@ -20,6 +22,25 @@ class Dashboard extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
         console.log("submited");
+        // const adminUID = document.querySelector('#admin-uid').value;
+        // const addAdminRole = functions().httpsCallable('addAdminRole');
+        // addAdminRole({ uid: adminUID }).then(result => {
+        //     console.log(result);
+        // });
+    }
+
+    handleSubmitUploadJson = (e) => {
+        e.preventDefault();
+        const text = this.refs.JsonText.value
+        var obj = JSON.parse(text)
+        console.log(obj);
+        const firestore = getFirestore();
+        const size = obj.length;
+        for (var i = 0; i < size; i++) {
+            firestore.collection('missions').add(obj[i]);
+        }
+        window.location.reload();
+        //this.props.addMultipleProjects(obj);
         // const adminUID = document.querySelector('#admin-uid').value;
         // const addAdminRole = functions().httpsCallable('addAdminRole');
         // addAdminRole({ uid: adminUID }).then(result => {
@@ -98,6 +119,11 @@ class Dashboard extends Component {
                             
                   
                             <ProjectList filter={this.state.busqueda} />
+                            <form onSubmit={this.handleSubmitUploadJson} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
+                                <textarea onChange={this.handleChange} ref="JsonText" required style={{ height: 200 }}/>
+                                <button className="btn waves-effect waves-light" type="submit" name="Subir" style={{ backgroundColor: "red" }}>Subir JSON</button>
+                                {/* <button type="submit" value="Guardar" >Make admin</button> */}
+                            </form>
                         </div>
                         {/* <div className="col s12 m5 offset-m1">
                             <Notifications />
@@ -119,7 +145,8 @@ class Dashboard extends Component {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        signOut: () => dispatch(signOut())
+        signOut: () => dispatch(signOut()),
+        //addMultipleProjects: (projects) => dispatch(addMultipleProjects(projects)),
     }
 }
 

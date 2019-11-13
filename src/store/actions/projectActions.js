@@ -57,6 +57,18 @@ export const addProject = (project) =>{
     }
 };
 
+// export const addMultipleProjects = (projects) => {
+//     return (dispatch, getState, { getFirebase, getFirestore }) => {
+
+//         const size = projects.length;
+//         for (var i = 0; i < size; i++) {
+//             const firestore = getFirestore();
+//             console.log(projects[i])
+//             firestore.collection('missions').add(projects[i]);
+//         }
+//     }
+// };
+
 // mas bien createCapture
 export const deleteProject = (project) =>{
     return (dispatch,getState,{getFirebase,getFirestore}) => {
