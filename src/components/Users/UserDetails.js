@@ -35,12 +35,24 @@ class UserDetails extends Component {
 
     const user = {
       username: this.refs.username.value,
-      p0: parseInt(this.refs.p0.value),
-      p1: parseInt(this.refs.p1.value),
-      p2: parseInt(this.refs.p2.value),
-      p3: parseInt(this.refs.p3.value),
-      p4: parseInt(this.refs.p4.value),
-      p5: parseInt(this.refs.p5.value),
+      state: this.refs.state.value,
+      points: parseInt(this.refs.points.value),
+      avatarParts: [
+        parseInt(this.refs.p0.value),
+        parseInt(this.refs.p1.value),
+        parseInt(this.refs.p2.value),
+        parseInt(this.refs.p3.value),
+        parseInt(this.refs.p4.value),
+        parseInt(this.refs.p5.value),
+        parseInt(this.refs.p6.value),
+        parseInt(this.refs.p7.value),
+        parseInt(this.refs.p8.value),
+        parseInt(this.refs.p9.value),
+         parseInt(this.refs.p10.value),
+         parseInt(this.refs.p11.value),
+         parseInt(this.refs.p12.value),
+         parseInt(this.refs.p13.value),
+      ],
       blocked: this.refs.blocked.checked,
     };
     this.setState({
@@ -69,6 +81,14 @@ class UserDetails extends Component {
                 <input defaultValue={user.username} ref="username" onChange={this.handleChange} />
                 </label>
                 <label>
+                  State:
+                <input defaultValue={user.state} ref="state" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Points:
+                <input defaultValue={user.points} ref="points" onChange={this.handleChange} />
+                </label>
+                <label>
                   Pieze 0:
                 <input defaultValue={user.avatarParts[0]} ref="p0" onChange={this.handleChange} />
                 </label>
@@ -91,6 +111,38 @@ class UserDetails extends Component {
                 <label>
                   Pieze 5:
                 <input defaultValue={user.avatarParts[5]} ref="p5" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Pieze 6:
+                <input defaultValue={user.avatarParts[6]} ref="p6" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Pieze 7:
+                <input defaultValue={user.avatarParts[7]} ref="p7" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Pieze 8:
+                <input defaultValue={user.avatarParts[8]} ref="p8" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Pieze 9:
+                <input defaultValue={user.avatarParts[9]} ref="p9" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Pieze 10:
+                <input defaultValue={user.avatarParts[10]} ref="p10" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Pieze 11:
+                <input defaultValue={user.avatarParts[11]} ref="p11" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Pieze 12:
+                <input defaultValue={user.avatarParts[12]} ref="p12" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Pieze 13:
+                <input defaultValue={user.avatarParts[13]} ref="p13" onChange={this.handleChange} />
                 </label>
                 <p>
                   <label>

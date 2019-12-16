@@ -94,11 +94,9 @@ export const editUser = (info) => {
 
         const firestore = getFirestore();
 
-        firestore.collection('users').doc(info.userID).update({
-            username: info.user.username,
-            blocked: info.user.blocked,
-            avatarParts: [info.user.p0, info.user.p1, info.user.p2, info.user.p3, info.user.p4, info.user.p5 ]
-        }).then(function() {
+        firestore.collection('users').doc(info.userID).update(
+            info.user
+        ).then(function() {
             dispatch({
                 type: 'User_Saved',
                 payload: {
