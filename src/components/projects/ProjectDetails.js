@@ -38,7 +38,8 @@ class ProjectDetails extends Component {
 
     timeInit:null,
     timeFinish:null,
-    timeDuration:0
+    timeDuration:0,
+    hashtags: []
   };
 
   componentDidMount()
@@ -60,7 +61,8 @@ class ProjectDetails extends Component {
         type: '',
         images:[],
         evidenceType: 1,
-        generic: ""
+        generic: "",
+        hashtags: []
       }
       
     this.setState({ddLang:{ label: "Español", value: "es" }});
@@ -162,6 +164,9 @@ class ProjectDetails extends Component {
       _mission.reward.points = mission.reward != null && mission.reward.points != null ? mission.reward.points : 0
       _mission.images   = mission.images != null ? mission.images : []
 
+      console.log(mission.images);
+      _mission.hashtags = mission.hashtags != null ? mission.hashtags : [""]
+      this.setState({ hashtags: _mission.hashtags})
     }
     //console.log(id,_mission)
     this.setState({id:id,mission:_mission})
@@ -173,6 +178,9 @@ class ProjectDetails extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
+
+    const { hashtags } = this.state;
+    //alert(`hay ${hashtags.length} hashtags`);
     
     const {id,ddEv} = this.state
     const lang = this.state.ddLang.value
@@ -199,7 +207,8 @@ class ProjectDetails extends Component {
       type: this.refs.type.value,
       generic: this.refs.generic.value,
       images:[this.refs.image1.value,this.refs.image2.value],
-      evidenceType: Number(evidenceType)
+      evidenceType: Number(evidenceType),
+      hashtags: hashtags
     }
     this.setState({
       ...this.state,
@@ -245,6 +254,33 @@ class ProjectDetails extends Component {
       timeDuration:tD/1000.0
     })
   }
+
+  handleShareholderNameChange = idx => evt => {
+    const newHashtags = this.state.hashtags.map((hashtag, sidx) => {
+      if (idx !== sidx) return hashtag;
+      //console.log(evt.target.value);
+      return evt.target.value ;
+    });
+
+    this.setState({ hashtags: newHashtags });
+  };
+
+  handleSubmitShareHolders = evt => {
+    const { name, shareholders } = this.state;
+    alert(`Incorporated: ${name} with ${shareholders.length} shareholders`);
+  };
+
+  handleAddShareholder = () => {
+    this.setState({
+      hashtags: this.state.hashtags.concat([ "" ])
+    });
+  };
+
+  handleRemoveShareholder = idx => () => {
+    this.setState({
+      hashtags: this.state.hashtags.filter((s, sidx) => idx !== sidx)
+    });
+  };
 
   render() {
     const { auth, projectActions } = this.props;
@@ -378,7 +414,42 @@ class ProjectDetails extends Component {
                 <input  defaultValue={mission.fixed} ref="fixed" onChange={this.handleChange} />
                 </div>
                 </label>
+                
                 </div>
+                <form onSubmit={this.handleSubmitShareHolders}>
+                  {/* ... */}
+                  {/* <h4>Shareholders</h4> */}
+
+                  {this.state.hashtags.map((hashtag, idx) => (
+                    <div className="shareholder">
+                      <label>
+                        Hashtag #{idx + 1}:
+                      <input
+                        type="text"
+                        placeholder={`Hashtag #${idx + 1}`}
+                          value={hashtag}
+                        onChange={this.handleShareholderNameChange(idx)}
+                          style={{ width: "auto" }}
+                      />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={this.handleRemoveShareholder(idx)}
+                        className="small"
+                      >
+                        -
+            </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={this.handleAddShareholder}
+                    className="small"
+                  >
+                    Agregar Hashtag
+        </button>
+                  {/* <button>Incorporate</button> */}
+                </form>
                 {/* <input type="submit" value="Guardar" /> */}
                 <button className="btn waves-effect waves-light" type="submit" name="action">Guardar</button>
               </form>
@@ -389,11 +460,15 @@ class ProjectDetails extends Component {
               <button className="btn black lighten-1 z-depth-0">Submit Capture</button>
               </form> */}
             </div>
+            
             <div className="card-action grey lighten-4 grey-text">
               <div>Mission by USER</div>
             </div>
+            
           </div>
+          
         </div>
+        
       )
     } else {
       return (
