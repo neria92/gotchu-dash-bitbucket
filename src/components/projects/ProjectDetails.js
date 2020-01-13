@@ -230,9 +230,9 @@ class ProjectDetails extends Component {
       images:[this.refs.image1.value,this.refs.image2.value],
       evidenceType: Number(evidenceType),
       hashtags: hashtags,
-      rally: { prevMission: this.refs.rallyPrevMission, nextMission: this.refs.rallyNextMission, position: this.refs.rallyPosition, total: this.refs.rallyTotal, isRally: this.refs.rallyIsRally.checked },
+      rally: { prevMission: this.refs.rallyPrevMission.value, nextMission: this.refs.rallyNextMission.value, position: parseInt(this.refs.rallyPosition.value), total: parseInt(this.refs.rallyTotal.value), isRally: this.refs.rallyIsRally.checked },
       pinned: this.refs.pinned.checked,
-      validatorProperties: this.refs.validatorProperties
+      validatorProperties: this.refs.validatorProperties.value
     }
     this.setState({
       ...this.state,
@@ -241,6 +241,7 @@ class ProjectDetails extends Component {
     if(id == 'new'){
       this.props.addProject(mission);
     } else {
+      console.log(mission)
       this.props.editProject(id, mission );
     }
   }
