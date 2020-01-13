@@ -200,23 +200,23 @@ class ProjectDetails extends Component {
     for(var i =0;i<ddEv.length;i++)
       evidenceType = evidenceType*ddEv[i].value
 
-    var fixed = false;
-    if(this.refs.fixed.value=="true")
-      fixed = true;
+    // var fixed = false;
+    // if(this.refs.fixed.value=="true")
+    //   fixed = true;
 
-    var isRally = false;
-    if (this.refs.rallyIsRally.value == "true")
-      isRally = true;
+    // var isRally = false;
+    // if (this.refs.rallyIsRally.value == "true")
+    //   isRally = true;
 
-    var pinned = false;
-    if (this.refs.pinned.value == "true")
-      pinned = true;
+    // var pinned = false;
+    // if (this.refs.pinned.value == "true")
+    //   pinned = true;
 
     const mission = {
       complexity: { [lang]: complexity },
       description: { [lang]: this.refs.description.value },
       durationSecs: Number(this.state.timeDuration),
-      fixed: fixed,
+      fixed: this.refs.fixed.checked,
       language: lang,
       locationName: { [lang]: this.refs.locationName.value },
       locationPoints: [ { coord:{ lat:Number(this.refs.locationPoint0Lat.value),long:Number(this.refs.locationPoint0Long.value)}, radius:Number(this.refs.locationPoint0Radius.value)} ],
@@ -230,8 +230,8 @@ class ProjectDetails extends Component {
       images:[this.refs.image1.value,this.refs.image2.value],
       evidenceType: Number(evidenceType),
       hashtags: hashtags,
-      rally: {prevMission: this.refs.rallyPrevMission, nextMission: this.refs.rallyNextMission, position: this.refs.rallyPosition, total: this.refs.rallyTotal, isRally: isRally },
-      pinned: pinned,
+      rally: { prevMission: this.refs.rallyPrevMission, nextMission: this.refs.rallyNextMission, position: this.refs.rallyPosition, total: this.refs.rallyTotal, isRally: this.refs.rallyIsRally.checked },
+      pinned: this.refs.pinned.checked,
       validatorProperties: this.refs.validatorProperties
     }
     this.setState({
@@ -432,12 +432,12 @@ class ProjectDetails extends Component {
                 <input defaultValue={mission.type} ref="type" onChange={this.handleChange} />
                 </label>
                 <div>
-                <label>
-                  Fixed [true,false]. Si esta en true, la mision no tendra URL de servicio, tiempo ni ubicación:
-                <div>
-                <input  defaultValue={mission.fixed} ref="fixed" onChange={this.handleChange} />
-                </div>
-                </label>
+                  <p>
+                    <label>
+                      <input type="checkbox" defaultChecked={mission.fixed } id="fixed" ref="fixed" onChange={this.handleChange} />
+                      <span>Fixed</span>
+                    </label>
+                  </p>
                   <label>
                     Rally Mission anterior:
                 <input defaultValue={mission.rally.prevMission} ref="rallyPrevMission" onChange={this.handleChange} />
@@ -454,18 +454,18 @@ class ProjectDetails extends Component {
                     Rally total:
                 <input type="number" defaultValue={mission.rally.total} ref="rallyTotal" onChange={this.handleChange} />
                   </label>
+                  <p>
                     <label>
-                      Es rally:
-                <div>
-                        <input defaultValue={mission.rally.isRally} ref="rallyIsRally" onChange={this.handleChange} />
-                      </div>
+                      <input type="checkbox" defaultChecked={mission.rally.isRally} id="rallyIsRally" ref="rallyIsRally" onChange={this.handleChange} />
+                      <span>Es rally</span>
                     </label>
+                  </p>
+                  <p>
                     <label>
-                      Fijado:
-                <div>
-                        <input defaultValue={mission.pinned} ref="pinned" onChange={this.handleChange} />
-                      </div>
+                      <input type="checkbox" defaultChecked={mission.pinned} id="pinned" ref="pinned" onChange={this.handleChange} />
+                      <span>Fijado</span>
                     </label>
+                  </p>
                     <label>
                       ValidatorProperties:
                 <textarea defaultValue={mission.validatorProperties} ref="validatorProperties" onChange={this.handleChange} />
