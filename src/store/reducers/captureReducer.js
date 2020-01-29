@@ -4,6 +4,7 @@ const initState={
     captureCreated: null,
     captureSaved: null,
     projectDeleted: null,
+    captureDeleted: null,
     error: null
 }
 
@@ -42,6 +43,16 @@ const captureReducer =(state = initState,action) => {
                 projectDeleted: action.payload.id,
             }
         case 'Project_Deleted_Error':
+            return {
+                ...state,
+                error: action.err,
+            }
+        case 'Capture_Deleted':
+            return {
+                ...state,
+                captureDeleted: action.payload.id,
+            }
+        case 'Capture_Deleted_Error':
             return {
                 ...state,
                 error: action.err,

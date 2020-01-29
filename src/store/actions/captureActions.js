@@ -98,3 +98,22 @@ export const editCapture = (captureID,capture) => {
 
     }
 };
+
+export const deleteCapture = (capture) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+
+        //make asyn call
+        const firestore = getFirestore();
+        firestore.collection('capture').doc(capture).delete().then(function () {
+            dispatch({
+                type: 'Capture_Deleted',
+                payload: {
+                    id: capture
+                }
+            });
+            //dispatch(getLocation(ref.id,project.km,project.missionID,data));
+        }).catch((err) => {
+            dispatch({ type: 'Capture_Deleted_Error', err });
+        })
+    }
+};

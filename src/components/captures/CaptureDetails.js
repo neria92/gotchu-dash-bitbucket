@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import { compose } from 'redux'
 import { Redirect } from 'react-router-dom'
-import { editCapture} from '../../store/actions/captureActions'
+import { editCapture, deleteCapture } from '../../store/actions/captureActions'
 import { functions } from 'firebase'
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css";
@@ -20,7 +20,7 @@ class CaptureDetails extends Component {
   state = {
     savingChanges: false,
     projectLoaded: true,
-    deletingProject: false,
+    deletingCapture: false,
 
     id: null,
     capture: null,
@@ -35,7 +35,7 @@ class CaptureDetails extends Component {
     const id = this.props.location.state.id
     console.log(this.props.location)
     var _capture = {
-      coords: {lat: 0, long:0},
+      coord: {lat: 0, long:0},
       createdAt: 0,
       evidence: { photo: "", sound: "", text: ""},
       mission: "",
@@ -50,8 +50,8 @@ class CaptureDetails extends Component {
     this.setState({ createdAt: t0  })
     
     if (capture != null) {
-      _capture.coords.lat = capture.coords != null && capture.coords.lat != null ? capture.coords.lat : "" 
-      _capture.coords.long = capture.coords != null && capture.coords.long != null ? capture.coords.long : "" 
+      _capture.coord.lat = capture.coord != null && capture.coord.lat != null ? capture.coord.lat : "" 
+      _capture.coord.long = capture.coord != null && capture.coord.long != null ? capture.coord.long : "" 
       _capture.createdAt = capture.createdAt != null ? capture.createdAt : 0
       _capture.createdAt = Number(_capture.createdAt)
       if (isNaN(Number(_capture.createdAt)))
@@ -92,6 +92,16 @@ class CaptureDetails extends Component {
     e.preventDefault();
   }
 
+  handleDelete = (e) => {
+    e.preventDefault();
+    const { id } = this.state
+    this.setState({
+      ...this.state,
+      deletingCapture: true
+    })
+    this.props.deleteProject(id);
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
 
@@ -99,7 +109,7 @@ class CaptureDetails extends Component {
     const status = this.state.ddStatus.value
 
     const capture = {
-      coords: { lat: Number(this.state.lat), long: Number(this.state.long) },
+      coord: { lat: Number(this.state.lat), long: Number(this.state.long) },
       createdAt: Number(this.state.timeCreatedAt / 1000.0),
       evidence: { photo: this.refs.photo.value, sound: this.refs.sound.value, text: this.refs.text.value },
       mission: this.refs.mission.value,
@@ -129,7 +139,7 @@ class CaptureDetails extends Component {
     if (this.state.savingChanges) {
       return <Redirect to='/captures' />
     }
-    if (this.state.deletingProject) {
+    if (this.state.deletingCapture) {
       return <Redirect to='/' />
     }
     if (!auth.uid) return <Redirect to='/singin' />
@@ -144,11 +154,11 @@ class CaptureDetails extends Component {
               <form onSubmit={this.handleSubmit} style={{ marginTop: "0px auto" }}>
                 <label>
                   Latitude:
-                <input type="number" defaultValue={capture.coords.lat} ref="lat" onChange={this.handleChange} />
+                <input type="number" defaultValue={capture.coord.lat} ref="lat" onChange={this.handleChange} />
                 </label>
                 <label>
                   Longitud:
-                <input type="number" defaultValue={capture.coords.long} ref="long" onChange={this.handleChange} />
+                <input type="number" defaultValue={capture.coord.long} ref="long" onChange={this.handleChange} />
                 </label>
                 <div>
                   <label>
@@ -226,7 +236,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispathToProps = (dispatch) => {
   return {
-    editCapture: (id, capture) => dispatch(editCapture(id, capture))
+    editCapture: (id, capture) => dispatch(editCapture(id, capture)),
+    deleteCapture: (capture) => dispatch(deleteCapture(capture)),
   }
 }
 
