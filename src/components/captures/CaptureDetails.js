@@ -99,7 +99,7 @@ class CaptureDetails extends Component {
       ...this.state,
       deletingCapture: true
     })
-    this.props.deleteProject(id);
+    this.props.deleteCapture(id);
   }
 
   handleSubmit = (e) => {
