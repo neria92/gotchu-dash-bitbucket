@@ -140,7 +140,7 @@ class CaptureDetails extends Component {
       return <Redirect to='/captures' />
     }
     if (this.state.deletingCapture) {
-      return <Redirect to='/' />
+      return <Redirect to='/captures' />
     }
     if (!auth.uid) return <Redirect to='/singin' />
 
