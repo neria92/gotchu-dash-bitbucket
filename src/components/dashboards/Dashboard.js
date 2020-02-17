@@ -37,14 +37,21 @@ class Dashboard extends Component {
         const firestore = getFirestore();
         const size = obj.length;
         for (var i = 0; i < size; i++) {
-            firestore.collection('missions').add(obj[i]);
+            firestore.collection('missions').add(obj[i]).then((res) => {
+
+                console.log("Upload complete : ", res.id)
+
+            })
+                .catch(error => {
+                    console.log("error : ", error)
+                });
         }
-        window.location.reload();
+        //window.location.reload();
         //this.props.addMultipleProjects(obj);
         // const adminUID = document.querySelector('#admin-uid').value;
         // const addAdminRole = functions().httpsCallable('addAdminRole');
         // addAdminRole({ uid: adminUID }).then(result => {
-        //     console.log(result);
+        // console.log(result);
         // });
     }
 
