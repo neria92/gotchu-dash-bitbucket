@@ -85,10 +85,10 @@ const mapDispathToProps = (dispatch) => {
 export default compose(
   connect(mapStateToProps, mapDispathToProps),
   firestoreConnect(props => {
-    console.log(props.filter.charAt(0).toUpperCase() + props.filter.slice(1))
+    //console.log(props.filter.charAt(0).toUpperCase() + props.filter.slice(1))
     return [
       {
-        collection: 'missions', limit:0, where: [['title.es', '>=', props.filter.charAt(0).toUpperCase() + props.filter.slice(1)]], orderBy: ['title.es', 'asc'] }
+        collection: 'missions', limit:0, orderBy: ['title.es', 'asc'] }
     ]
   }),
 )(ProjectList)

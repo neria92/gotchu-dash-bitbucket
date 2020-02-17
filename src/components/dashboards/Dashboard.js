@@ -56,9 +56,46 @@ class Dashboard extends Component {
     }
 
     handleChange = (e) => {
+        e.preventDefault();
         this.setState({
             [e.target.id]: e.target.value
         })
+    }
+
+    handleSubmitSearch = (e) => {
+        e.preventDefault();
+        console.log(this.state.busqueda);
+        fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardSearch", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                UID: "0",
+                startIndex: 0,
+                numberOfFeeds: 500,
+                sortBy: "date",
+                filter: { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [this.state.busqueda]}
+            }),
+        }).then(response => {
+            const statusCode = response.status;
+            const data = response.json();
+            return Promise.all([statusCode, data]);
+        })
+            .then(res => {
+                if (res[0] == 200) {
+                    // Hacer algo con lo que regresa el server = res[1].newsfeed
+                    console.log(res);
+                } else {
+                    // Hubo un error en el server
+                    console.log("error");
+                }
+            })
+            .catch(error => {
+                // Hubo un error en el server
+                console.log("error");
+            });
     }
 
     setStartProjects(){
@@ -97,7 +134,7 @@ class Dashboard extends Component {
         //if(auth.uid) return <Redirect to='/create'></Redirect>
             return (
                 <div className="dashboard container">
-                    <form onSubmit={this.handleSubmit} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
+                    <form onSubmit={this.handleSubmitSearch} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
                         <input placeholder="Titulo" onChange={this.handleChange} id="busqueda" required  />
                         {/* <button type="submit" value="Guardar" >Make admin</button> */}
                     </form>
@@ -125,7 +162,7 @@ class Dashboard extends Component {
 
                             
                   
-                            <ProjectList filter={this.state.busqueda} />
+                            <ProjectList/>
                             <form onSubmit={this.handleSubmitUploadJson} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
                                 <textarea onChange={this.handleChange} ref="JsonText" required style={{ height: 200 }}/>
                                 <button className="btn waves-effect waves-light" type="submit" name="Subir" style={{ backgroundColor: "red" }}>Subir JSON</button>
