@@ -5,7 +5,8 @@ const initState={
     captureSaved: null,
     projectDeleted: null,
     captureDeleted: null,
-    error: null
+    error: null,
+    showOnlyPending: false
 }
 
 const captureReducer =(state = initState,action) => {

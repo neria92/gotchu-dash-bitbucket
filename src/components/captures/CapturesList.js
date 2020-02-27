@@ -12,7 +12,8 @@ class CapturesList extends Component {
     this.state = {
       activePage: 1,
       showOnlyPending: false,
-
+      capturesToShow: [], 
+      lastCaptures: []
     };
   }
 
@@ -24,8 +25,33 @@ class CapturesList extends Component {
     var sop = false
     if (this.refs.showOnlyPending.checked)
       sop = true
+    var captureAux = []
+    if (sop) {
+      for (var i = 0; i < this.props.captures.length; i++) {
+        if (this.props.captures[i].status == "Pending") {
+          captureAux.push(this.props.captures[i]);
+        }
+      }
+    } else {
+      captureAux = [...this.props.captures]
+    }
+    this.setState({ capturesToShow: captureAux, lastCaptures: this.props.captures, showOnlyPending: sop })
+  }
 
-    this.setState({ showOnlyPending: sop})
+  componentDidUpdate() {
+    if(this.props.captures == this.state.lastCaptures)
+      return
+    var captureAux = []
+    if(this.state.showOnlyPending) {
+      for (var i = 0; i < this.props.captures.length; i++ ){
+        if (this.props.captures[i].status == "Pending") {
+          captureAux.push(this.props.captures[i]);
+        }
+      } 
+    } else {
+      captureAux = [...this.props.captures]
+    }
+    this.setState({capturesToShow: captureAux, lastCaptures: this.props.captures})
   }
 
   render(){
@@ -36,7 +62,7 @@ class CapturesList extends Component {
             <Pagination
               activePage={this.state.activePage}
               itemsCountPerPage={10}
-              totalItemsCount={this.props.captures.length}
+              totalItemsCount={this.state.capturesToShow.length}
               pageRangeDisplayed={9}
               onChange={this.handlePageChange}
             />
@@ -47,17 +73,10 @@ class CapturesList extends Component {
             <span>Mostrar solo pendientes</span>
           </label>
           <div className="project-list section">
-            {this.props.captures.map((capture, id) => {
+            {this.state.capturesToShow.map((capture, id) => {
               if ((10 * (this.state.activePage - 1)) <= id && id < (10 * this.state.activePage))
-                if(!this.state.showOnlyPending)
                   return (
                     <Link to={{pathname:'/capture/' + capture.id, state:capture}} key={capture.id}>
-                      <CaptureSummary capture={capture} />
-                    </Link>
-                  )
-                else if (capture.status == "Pending")
-                  return (
-                    <Link to={{ pathname: '/capture/' + capture.id, state: capture }} key={capture.id}>
                       <CaptureSummary capture={capture} />
                     </Link>
                   )
@@ -84,7 +103,6 @@ const mapStateToProps = (state) => {
 export default compose(
   connect(mapStateToProps),
   firestoreConnect(props => {
-    //console.log(props.filter.charAt(0).toUpperCase() + props.filter.slice(1))
     return [
       { collection: 'capture', where: [['userId', '>=', props.filter]], orderBy: ['userId', 'asc'] }
     ]
