@@ -86,7 +86,7 @@ class Dashboard extends Component {
             .then(res => {
                 if (res[0] == 200) {
                     // Hacer algo con lo que regresa el server = res[1].newsfeed
-                    console.log(res);
+                    console.log(res[1].result);
                 } else {
                     // Hubo un error en el server
                     console.log("error");
@@ -105,6 +105,12 @@ class Dashboard extends Component {
         })
         this.filteredProjects = this.props.projects;
     }
+
+    getSearchResults(search){
+        var result;
+        
+    }
+
     render(){
         
         const { auth, profile } = this.props;
@@ -135,7 +141,7 @@ class Dashboard extends Component {
             return (
                 <div className="dashboard container">
                     <form onSubmit={this.handleSubmitSearch} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
-                        <input placeholder="Titulo" onChange={this.handleChange} id="busqueda" required  />
+                        <input placeholder="Titulo" onChange={this.handleChange} id="busqueda" />
                         {/* <button type="submit" value="Guardar" >Make admin</button> */}
                     </form>
                     
@@ -162,7 +168,7 @@ class Dashboard extends Component {
 
                             
                   
-                            <ProjectList/>
+                            <ProjectList /* pasar resultado de busqueda *//>
                             <form onSubmit={this.handleSubmitUploadJson} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
                                 <textarea onChange={this.handleChange} ref="JsonText" required style={{ height: 200 }}/>
                                 <button className="btn waves-effect waves-light" type="submit" name="Subir" style={{ backgroundColor: "red" }}>Subir JSON</button>
