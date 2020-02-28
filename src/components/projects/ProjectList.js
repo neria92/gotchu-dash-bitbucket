@@ -23,6 +23,7 @@ class ProjectList extends Component {
   }
 
   render() {
+    console.log(this.props.projects)
     if (this.props.projects) {
       console.log(this.props.projects.length)
       return (
