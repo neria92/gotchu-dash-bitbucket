@@ -83,9 +83,11 @@ class MicrotaskDetails extends Component {
     }
 
     var _microtaskInfo = {
-      publishDate: 0,
       acceptedAgent: { id: '', name: '' },
-      agentHistory: [{ evidences: { photo: '', sound: '', text: ''}, captureDate: 0, location: { lat: 0, long: 0 }, verdict: '', agentAppeal: '', creatorAppeal: '' }]
+      //agentHistory: [{ evidences: { photo: '', sound: '', text: ''}, captureDate: 0, location: { lat: 0, long: 0 }, verdict: '', agentAppeal: '', creatorAppeal: '' }]
+      agentHistory: [{ coord: { lat: 0, long: 0 }, createdAt: 0, evidence: { photo: '', sound: '', text: '', video: ''}}],
+      status: '',
+      statusResponse: ''
     }
 
     this.setState({ ddLang: { label: "Español", value: "es" } });
@@ -104,9 +106,8 @@ class MicrotaskDetails extends Component {
         // });
       //}
       var mt = {
-        publishDate: 0,
-        acceptedAgent: { id: '', name: '' },
-        agentHistory: [{ evidence: { photo: '', sound: '', text: '' }, createdAt: 0, coords: { lat: 0, long: 0 }, verdict: '', agentAppeal: '', creatorAppeal: '' }]
+        acceptedAgent: { id: '', name: 'Agent' },
+        agentHistory: [{ coord: { lat: 21.0136777, long: -101.2648758 }, createdAt: 1579743780, evidence: { photo: 'https://firebasestorage.googleapis.com/v0/b/gchgame.appspot.com/o/image%2FThu%20Nov%2014%202019%2022%3A32%3A41%20GMT-0600%20(CST)?alt=media&token=7fdc56cc-9cc2-4319-bf43-49eb1cccd32f', sound: '', text: '', video: '' }, status: '', statusResponse: '' }]
       }
       //this.setState({microtaskInfo: mt })
       //console.log(this.state)
@@ -220,17 +221,12 @@ class MicrotaskDetails extends Component {
     this.setState({ id: id, mission: _mission })
     
     if(microtaskInfo != null){
-      var t1 = new Date()
-      t1.setTime(microtaskInfo.publishDate * 1000.0)
-      this.setState({ microtaskPublishDate: t1 })
-
       var t2 = new Date()
       t2.setTime(microtaskInfo.agentHistory[0].createdAt * 1000.0)
       this.setState({ agentHistoryCurrentCaptureDate: t2 })
 
-      _microtaskInfo.publishDate = microtaskInfo.publishDate != null ? microtaskInfo.publishDate : 0 
-      _microtaskInfo.acceptedAgent = microtaskInfo.acceptedAgent != null ? microtaskInfo.acceptedAgent : { id: 'id', name: 'name'}
-      _microtaskInfo.agentHistory = microtaskInfo.agentHistory != null ? microtaskInfo.agentHistory : [{ evidence: { photo: 'photo', sound: 'sound', text: 'text' }, createdAt: 0, coords: { lat: 0, long: 0 }, verdict: 'verdict', agentAppeal: 'agentAppeal', creatorAppeal: 'creatorAppeal' }]
+      _microtaskInfo.acceptedAgent = microtaskInfo.acceptedAgent != null ? microtaskInfo.acceptedAgent : { id: '', name: ''}
+      _microtaskInfo.agentHistory = microtaskInfo.agentHistory != null ? microtaskInfo.agentHistory : [{ coord: { lat: 0, long: 0 }, createdAt: 0, evidence: { photo: '', sound: '', text: '', video: '' }, status: '', statusResponse: '' }]
       this.setState({ microtaskInfo: _microtaskInfo })
     }
   }
@@ -399,6 +395,20 @@ class MicrotaskDetails extends Component {
                 </div> */}
                 <div>
                   <label>
+                    Fecha de Inicio.
+                </label>
+                </div>
+                <div>
+                  <DatePicker readOnly selected={timeInit}
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    timeCaption="time"
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                  />
+                </div>
+                <div>
+                  <label>
                     Fecha de terminación.
                 </label>
                 </div>
@@ -441,14 +451,6 @@ class MicrotaskDetails extends Component {
                 <label>
                   Imagen 2:
                 <input readOnly defaultValue={mission.images[1] == null ? "" : mission.images[1]} ref="image2" onChange={this.handleChange} />
-                </label>
-                <label>
-                  Referencia de Imagen 1:
-                <input readOnly defaultValue={mission.imagesRef[0] == null ? "" : mission.imagesRef[0]} ref="imageRef11" onChange={this.handleChange} />
-                </label>
-                <label>
-                  Referencia de Imagen 2:
-                <input readOnly defaultValue={mission.imagesRef[1] == null ? "" : mission.imagesRef[1]} ref="imageref2" onChange={this.handleChange} />
                 </label>
 
                 {/* <label>
@@ -571,20 +573,7 @@ class MicrotaskDetails extends Component {
                   {/* <button>Incorporate</button> */}
                 </form>
 
-                <div>
-                  <label>
-                    Fecha de publicacion de mision.
-                </label>
-                </div>
-                <div>
-                  <DatePicker readOnly selected={microtaskPublishDate}
-                    showTimeSelect
-                    timeFormat="HH:mm"
-                    timeIntervals={15}
-                    timeCaption="time"
-                    dateFormat="MMMM d, yyyy h:mm aa"
-                  />
-                </div>
+                
 
 
 
@@ -593,20 +582,24 @@ class MicrotaskDetails extends Component {
                 <input readOnly defaultValue={microtaskInfo.acceptedAgent.name} ref="title" onChange={this.handleChange} />
                 </label>
 
-
                 <label>
-                  Captura n evidencia foto:
+                  Evidencia foto:
                 <input readOnly defaultValue={microtaskInfo.agentHistory[0].evidence.photo} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
-                  Captura n evidencia sonido:
+                  Evidencia sonido:
                 <input readOnly defaultValue={microtaskInfo.agentHistory[0].evidence.sound} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
-                  Captura n evidencia foto :
+                  Evidencia Texto:
                 <input readOnly defaultValue={microtaskInfo.agentHistory[0].evidence.text} ref="title" onChange={this.handleChange} />
+                </label>
+
+                <label>
+                  Evidencia Video:
+                <input readOnly defaultValue={microtaskInfo.agentHistory[0].evidence.video} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <div>
@@ -626,27 +619,22 @@ class MicrotaskDetails extends Component {
                 
                 <label>
                   Captura n latitud:
-                <input readOnly defaultValue={microtaskInfo.agentHistory[0].coords.lat} ref="title" onChange={this.handleChange} />
+                <input readOnly defaultValue={microtaskInfo.agentHistory[0].coord.lat} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Captura n longitud:
-                <input readOnly defaultValue={microtaskInfo.agentHistory[0].coords.long} ref="title" onChange={this.handleChange} />
-                </label>
-
-                <label>
-                  Veredicto del creador:
-                <input readOnly defaultValue={microtaskInfo.verdict} ref="title" onChange={this.handleChange} />
-                </label>
-
-                <label>
-                  Apelacion creador:
-                <textarea readOnly defaultValue={microtaskInfo.creatorAppeal} ref="objetive" onChange={this.handleChange} />
+                <input readOnly defaultValue={microtaskInfo.agentHistory[0].coord.long} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Apelacion agente:
-                <textarea readOnly defaultValue={microtaskInfo.agentAppeal} ref="objetive" onChange={this.handleChange} />
+                <textarea readOnly defaultValue={microtaskInfo.status} ref="objetive" onChange={this.handleChange} />
+                </label>
+
+                <label>
+                  Respuesta creador:
+                <textarea readOnly defaultValue={microtaskInfo.response} ref="objetive" onChange={this.handleChange} />
                 </label>
 
                 

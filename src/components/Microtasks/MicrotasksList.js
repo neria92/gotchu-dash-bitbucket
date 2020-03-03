@@ -25,7 +25,7 @@ class MicrotasksList extends Component {
   }
 
   componentDidUpdate() {
-    console.log("Microtasks did update")
+    //console.log("Microtasks did update")
 
     if(this.props.projects){
       if (this.props.projects == this.state.lastCaptures)
@@ -42,7 +42,7 @@ class MicrotasksList extends Component {
   }
 
   componentDidMount() {
-    console.log("Microtasks did mount")
+    //console.log("Microtasks did mount")
 
     // if (this.props.projects == this.state.lastCaptures)
     //   return
@@ -59,7 +59,7 @@ class MicrotasksList extends Component {
 
   render() {
     if (this.props.projects) {
-      console.log(this.props.projects.length)
+      //console.log(this.props.projects.length)
       return (
         <div>
           <div>
@@ -120,7 +120,7 @@ const mapDispathToProps = (dispatch) => {
 export default compose(
   connect(mapStateToProps, mapDispathToProps),
   firestoreConnect(props => {
-    console.log(props.filter.charAt(0).toUpperCase() + props.filter.slice(1))
+    //console.log(props.filter.charAt(0).toUpperCase() + props.filter.slice(1))
     return [
       {
         collection: 'missions', limit: 0, where: [['title.es', '>=', props.filter.charAt(0).toUpperCase() + props.filter.slice(1)]], orderBy: ['title.es', 'asc']
