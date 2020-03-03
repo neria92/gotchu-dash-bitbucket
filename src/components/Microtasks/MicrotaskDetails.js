@@ -7,6 +7,8 @@ import { editProject, addProject, deleteProject } from '../../store/actions/proj
 import Select from 'react-select';
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css";
+import { functions } from 'firebase'
+
 const idiomas = [
   { label: "Español", value: "es" },
   { label: "English", value: "en" }
@@ -31,6 +33,7 @@ class MicrotaskDetails extends Component {
 
     id: null,
     mission: null,
+    microtaskInfo: null,
 
     ddLang: null,
     ddEv: [],
@@ -39,8 +42,19 @@ class MicrotaskDetails extends Component {
     timeInit: null,
     timeFinish: null,
     timeDuration: 0,
-    hashtags: []
+    hashtags: [],
+
+    microtaskPublishDate: null,
+    agentHistoryCurrentCaptureDate: null
   };
+
+  // getMicrotaskInfo(id){
+  //   const getMicrotaskInfo = functions().httpsCallable('getMicrotaskInfo');
+  //   getMicrotaskInfo({ uid: id }).then(result => {
+  //     console.log(result);
+  //     this.setState({ microtaskInfo: result })
+  //   });
+  // }
 
   componentDidMount() {
     const id = this.props.location.state.id
@@ -59,6 +73,7 @@ class MicrotaskDetails extends Component {
       title: { es: '' },
       type: '',
       images: [],
+      imagesRef: [],
       evidenceType: 1,
       generic: "",
       hashtags: [],
@@ -67,10 +82,38 @@ class MicrotaskDetails extends Component {
       validatorProperties: ''
     }
 
+    var _microtaskInfo = {
+      publishDate: 0,
+      acceptedAgent: { id: '', name: '' },
+      agentHistory: [{ evidences: { photo: '', sound: '', text: ''}, captureDate: 0, location: { lat: 0, long: 0 }, verdict: '', agentAppeal: '', creatorAppeal: '' }]
+    }
+
     this.setState({ ddLang: { label: "Español", value: "es" } });
     var mission = null
-    if (id != null && id != "new")
+    var microtaskInfo = null
+
+    if (id != null && id != "new"){
       mission = this.props.location.state
+
+      //getMicrotaskInfo(id);
+      //getMicrotaskInfo(id){
+        // const getMicrotaskInfo = functions().httpsCallable('getMicrotaskInfo');
+        // getMicrotaskInfo({ uid: id }).then(result => {
+        //   console.log(result);
+        //   this.setState({ microtaskInfo: result })
+        // });
+      //}
+      var mt = {
+        publishDate: 0,
+        acceptedAgent: { id: '', name: '' },
+        agentHistory: [{ evidence: { photo: '', sound: '', text: '' }, createdAt: 0, coords: { lat: 0, long: 0 }, verdict: '', agentAppeal: '', creatorAppeal: '' }]
+      }
+      //this.setState({microtaskInfo: mt })
+      //console.log(this.state)
+
+      microtaskInfo = mt
+    }
+
     var t0 = new Date();
     this.setState({ timeInit: t0, timeFinish: t0, timeDuration: 0 })
     if (mission != null) {
@@ -159,6 +202,7 @@ class MicrotaskDetails extends Component {
       _mission.reward.GP = mission.reward != null && mission.reward.GP != null ? mission.reward.GP : 0
       _mission.reward.points = mission.reward != null && mission.reward.points != null ? mission.reward.points : 0
       _mission.images = mission.images != null ? mission.images : []
+      _mission.imagesRef = mission.imagesRef != null ? mission.imagesRef : []
 
       _mission.rally.prevMission = mission.rally != null && mission.rally.prevMission != null ? mission.rally.prevMission : ''
       _mission.rally.nextMission = mission.rally != null && mission.rally.nextMission != null ? mission.rally.nextMission : ''
@@ -168,12 +212,27 @@ class MicrotaskDetails extends Component {
       _mission.pinned = mission.pinned != null ? mission.pinned : false
       _mission.validatorProperties = mission.validatorProperties != null ? mission.validatorProperties : ""
 
-      console.log(mission.images);
+      //console.log(mission.images);
       _mission.hashtags = mission.hashtags != null ? mission.hashtags : [""]
       this.setState({ hashtags: _mission.hashtags })
     }
-    //console.log(id,_mission)
+
     this.setState({ id: id, mission: _mission })
+    
+    if(microtaskInfo != null){
+      var t1 = new Date()
+      t1.setTime(microtaskInfo.publishDate * 1000.0)
+      this.setState({ microtaskPublishDate: t1 })
+
+      var t2 = new Date()
+      t2.setTime(microtaskInfo.agentHistory[0].createdAt * 1000.0)
+      this.setState({ agentHistoryCurrentCaptureDate: t2 })
+
+      _microtaskInfo.publishDate = microtaskInfo.publishDate != null ? microtaskInfo.publishDate : 0 
+      _microtaskInfo.acceptedAgent = microtaskInfo.acceptedAgent != null ? microtaskInfo.acceptedAgent : { id: 'id', name: 'name'}
+      _microtaskInfo.agentHistory = microtaskInfo.agentHistory != null ? microtaskInfo.agentHistory : [{ evidence: { photo: 'photo', sound: 'sound', text: 'text' }, createdAt: 0, coords: { lat: 0, long: 0 }, verdict: 'verdict', agentAppeal: 'agentAppeal', creatorAppeal: 'creatorAppeal' }]
+      this.setState({ microtaskInfo: _microtaskInfo })
+    }
   }
 
   handleChange = (e) => {
@@ -221,6 +280,7 @@ class MicrotaskDetails extends Component {
       type: this.refs.type.value,
       generic: this.refs.generic.value,
       images: [this.refs.image1.value, this.refs.image2.value],
+      imagesRef: [this.refs.imageRef1.value, this.refs.imageRef2.value],
       evidenceType: Number(evidenceType),
       hashtags: hashtags,
       rally: { prevMission: this.refs.rallyPrevMission.value, nextMission: this.refs.rallyNextMission.value, position: parseInt(this.refs.rallyPosition.value), total: parseInt(this.refs.rallyTotal.value), isRally: this.refs.rallyIsRally.checked },
@@ -234,7 +294,6 @@ class MicrotaskDetails extends Component {
     if (id == 'new') {
       this.props.addProject(mission);
     } else {
-      console.log(mission)
       this.props.editProject(id, mission);
     }
   }
@@ -302,7 +361,7 @@ class MicrotaskDetails extends Component {
 
   render() {
     const { auth, projectActions } = this.props;
-    const { mission, ddLang, ddEv, ddCom, timeInit, timeFinish, timeDuration } = this.state
+    const { mission, ddLang, ddEv, ddCom, timeInit, timeFinish, microtaskInfo, microtaskPublishDate, agentHistoryCurrentCaptureDate } = this.state
     if (this.state.savingChanges) {
       return <Redirect to='/' />
     }
@@ -382,6 +441,14 @@ class MicrotaskDetails extends Component {
                 <label>
                   Imagen 2:
                 <input readOnly defaultValue={mission.images[1] == null ? "" : mission.images[1]} ref="image2" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Referencia de Imagen 1:
+                <input readOnly defaultValue={mission.imagesRef[0] == null ? "" : mission.imagesRef[0]} ref="imageRef11" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Referencia de Imagen 2:
+                <input readOnly defaultValue={mission.imagesRef[1] == null ? "" : mission.imagesRef[1]} ref="imageref2" onChange={this.handleChange} />
                 </label>
 
                 {/* <label>
@@ -465,8 +532,9 @@ class MicrotaskDetails extends Component {
                 <textarea defaultValue={mission.validatorProperties} ref="validatorProperties" onChange={this.handleChange} />
                   </label> */}
 
-
+                  
                 </div>
+
                 <form onSubmit={this.handleSubmitShareHolders}>
                   {/* ... */}
                   {/* <h4>Shareholders</h4> */}
@@ -492,6 +560,7 @@ class MicrotaskDetails extends Component {
             </button> */}
                     </div>
                   ))}
+
                   {/* <button
                     type="button"
                     onClick={this.handleAddShareholder}
@@ -501,6 +570,86 @@ class MicrotaskDetails extends Component {
         </button> */}
                   {/* <button>Incorporate</button> */}
                 </form>
+
+                <div>
+                  <label>
+                    Fecha de publicacion de mision.
+                </label>
+                </div>
+                <div>
+                  <DatePicker readOnly selected={microtaskPublishDate}
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    timeCaption="time"
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                  />
+                </div>
+
+
+
+                <label>
+                  Agente aceptado:
+                <input readOnly defaultValue={microtaskInfo.acceptedAgent.name} ref="title" onChange={this.handleChange} />
+                </label>
+
+
+                <label>
+                  Captura n evidencia foto:
+                <input readOnly defaultValue={microtaskInfo.agentHistory[0].evidence.photo} ref="title" onChange={this.handleChange} />
+                </label>
+
+                <label>
+                  Captura n evidencia sonido:
+                <input readOnly defaultValue={microtaskInfo.agentHistory[0].evidence.sound} ref="title" onChange={this.handleChange} />
+                </label>
+
+                <label>
+                  Captura n evidencia foto :
+                <input readOnly defaultValue={microtaskInfo.agentHistory[0].evidence.text} ref="title" onChange={this.handleChange} />
+                </label>
+
+                <div>
+                  <label>
+                    Fecha de captura.
+                </label>
+                </div>
+                <div>
+                  <DatePicker readOnly selected={agentHistoryCurrentCaptureDate}
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    timeCaption="time"
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                  />
+                </div>
+                
+                <label>
+                  Captura n latitud:
+                <input readOnly defaultValue={microtaskInfo.agentHistory[0].coords.lat} ref="title" onChange={this.handleChange} />
+                </label>
+
+                <label>
+                  Captura n longitud:
+                <input readOnly defaultValue={microtaskInfo.agentHistory[0].coords.long} ref="title" onChange={this.handleChange} />
+                </label>
+
+                <label>
+                  Veredicto del creador:
+                <input readOnly defaultValue={microtaskInfo.verdict} ref="title" onChange={this.handleChange} />
+                </label>
+
+                <label>
+                  Apelacion creador:
+                <textarea readOnly defaultValue={microtaskInfo.creatorAppeal} ref="objetive" onChange={this.handleChange} />
+                </label>
+
+                <label>
+                  Apelacion agente:
+                <textarea readOnly defaultValue={microtaskInfo.agentAppeal} ref="objetive" onChange={this.handleChange} />
+                </label>
+
+                
                 {/* <input type="submit" value="Guardar" /> */}
                 {/* <button className="btn waves-effect waves-light" type="submit" name="action">Guardar</button> */}
               </form>
@@ -510,7 +659,10 @@ class MicrotaskDetails extends Component {
                 <input type="textArea" defaultValue={project.antecedentes} id="antecedentes" onChange={this.handleChange} />
               <button className="btn black lighten-1 z-depth-0">Submit Capture</button>
               </form> */}
+              
+              
             </div>
+            
 
             <div className="card-action grey lighten-4 grey-text">
               <div>Mission by USER</div>
