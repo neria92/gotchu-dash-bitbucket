@@ -18,8 +18,6 @@ class ProjectList extends Component {
       orderByReports: false,
       missionsToShow: [],
       lastMissions: [],
-      originalList: null,
-      orderedByReportsList: null
     };
   }
 
@@ -33,6 +31,14 @@ class ProjectList extends Component {
       obr = true
     var missionsAux = []
     if (obr) {
+      missionsAux = [...this.props.projects];
+      missionsAux.sort(function (a, b) {
+        if(a.reports != null && b.reports !=null ){
+          return b.reports - a.reports;
+        } else {
+          return a.reports != null ? -1 : 1 ;
+        }
+      });
       // for (var i = 0; i < this.props.projects.length; i++) {
       //   if (this.props.projects[i].status == "Pending") {
       //     missionsAux.push(this.props.projects[i]);
@@ -41,24 +47,24 @@ class ProjectList extends Component {
     } else {
       missionsAux = [...this.props.projects]
     }
-    this.setState({ missionsToShow: missionsAux, lastMissions: this.props.captures, orderByReports: obr })
+    this.setState({ missionsToShow: missionsAux, lastMissions: this.props.projects, orderByReports: obr })
   }
 
   componentDidUpdate() {
     if (this.props.projects == this.state.lastMissions)
       return
     var missionsAux = []
+    var originalListAux = []
+    var o = []
     if (this.state.orderByReports) {
-      if(originalList == null){
-        originalList = this.props.projects;
-        var auxlist = originalList;
-        orderedByReportsList = auxlist.sort(function (a, b) {
-          return a.reports - b.reports;
-        });
-
-      }
-
-      missionsAux = orderedByReportsList;
+      missionsAux = [...this.props.projects];
+      missionsAux.sort(function (a, b) {
+        if (a.reports != null && b.reports != null) {
+          return b.reports - a.reports;
+        } else {
+          return a.reports != null ? -1 : 1;
+        }
+      });
 
       // for (var i = 0; i < this.props.projects.length; i++) {
       //   if (this.props.projects[i].status == "Pending") {
@@ -73,7 +79,6 @@ class ProjectList extends Component {
 
   render() {
     if (this.props.projects) {
-      console.log(this.props.projects.length)
       return (
         <div>
         <div>

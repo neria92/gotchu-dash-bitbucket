@@ -153,6 +153,7 @@ class ProjectDetails extends Component {
       _mission.generic      = mission.generic      != null ? mission.generic      : ""
       _mission.fixed        = mission.fixed        != null ? mission.fixed        : false
       _mission.durationSecs = mission.durationSecs != null ? mission.durationSecs : 0
+      _mission.reports      = mission.reports      != null ? mission.reports      : 0
       _mission.startDate    = mission.startDate    != null ? mission.startDate    : 0
       
       _mission.startDate    = Number(_mission.startDate)
@@ -511,6 +512,10 @@ class ProjectDetails extends Component {
                       ValidatorProperties:
                 <textarea defaultValue={mission.validatorProperties} ref="validatorProperties" onChange={this.handleChange} />
                     </label>
+                  <label>
+                   Reportes:
+                  <input readOnly type="number" value={mission.reports} ref="reports" />
+                  </label>
                   
                 
                 </div>
