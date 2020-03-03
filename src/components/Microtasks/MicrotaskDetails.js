@@ -618,12 +618,12 @@ class MicrotaskDetails extends Component {
                 </div>
                 
                 <label>
-                  Captura n latitud:
+                  Captura latitud:
                 <input readOnly defaultValue={microtaskInfo.agentHistory[0].coord.lat} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
-                  Captura n longitud:
+                  Captura longitud:
                 <input readOnly defaultValue={microtaskInfo.agentHistory[0].coord.long} ref="title" onChange={this.handleChange} />
                 </label>
 
