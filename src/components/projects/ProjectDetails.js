@@ -14,7 +14,8 @@ const idiomas = [
 const evidencias = [
   { label: "Foto", value: 2 },
   { label: "Sonido", value: 3 },
-  { label: "Texto", value: 5 }
+  { label: "Texto", value: 5 },
+  { label: "Video", value: 7 }
 ];
 const complejidad = [
   { label: "Alta",  value:  "Alta" },
@@ -146,6 +147,8 @@ class ProjectDetails extends Component {
         ddEv.push(  { label: "Sonido", value: 3 })
       if(_mission.evidenceType%5 == 0)
         ddEv.push(  { label: "Texto", value: 5 })
+      if (_mission.evidenceType % 7 == 0)
+        ddEv.push({ label: "Video", value: 7 })
 
       this.setState({ddEv})
 
