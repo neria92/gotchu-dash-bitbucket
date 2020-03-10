@@ -37,7 +37,7 @@ class CaptureDetails extends Component {
     var _capture = {
       coord: {lat: 0, long:0},
       createdAt: 0,
-      evidence: { photo: "", sound: "", text: ""},
+      evidence: { photo: "", sound: "", text: "", video: ""},
       mission: "",
       status: "",
       userId: "",
@@ -62,6 +62,7 @@ class CaptureDetails extends Component {
       _capture.evidence.photo = capture.evidence != null && capture.evidence.photo != null ? capture.evidence.photo : "" 
       _capture.evidence.sound = capture.evidence != null && capture.evidence.sound != null ? capture.evidence.sound : "" 
       _capture.evidence.text = capture.evidence != null && capture.evidence.text != null ? capture.evidence.text : "" 
+      _capture.evidence.video = capture.evidence != null && capture.evidence.video != null ? capture.evidence.video : "" 
       _capture.mission = capture.mission != null ? capture.mission : ""
       _capture.userId = capture.userId != null ? capture.userId : "" 
       _capture.status = capture.status != null ? capture.status : ""
@@ -111,7 +112,7 @@ class CaptureDetails extends Component {
     const capture = {
       coord: { lat: Number(this.state.lat), long: Number(this.state.long) },
       createdAt: Number(this.state.timeCreatedAt / 1000.0),
-      evidence: { photo: this.refs.photo.value, sound: this.refs.sound.value, text: this.refs.text.value },
+      evidence: { photo: this.refs.photo.value, sound: this.refs.sound.value, text: this.refs.text.value, video: this.refs.video.value },
       mission: this.refs.mission.value,
       status: status,
       userId: this.refs.userId.value,
@@ -134,6 +135,7 @@ class CaptureDetails extends Component {
   }
   
   render() {
+    console.log(this.state.capture)
     const { auth, projectActions } = this.props;
     const { capture, lat, long, timeCreatedAt, ddStatus } = this.state
     if (this.state.savingChanges) {
@@ -182,6 +184,11 @@ class CaptureDetails extends Component {
                   Photo evidencia:
                 <input defaultValue={capture.evidence.photo} ref="photo" onChange={this.handleChange} />
                 </label>
+
+                {capture.evidence.photo &&
+                  <div><img src={capture.evidence.photo} style={{ maxWidth: "-webkit-fill-available" }} /> </div>
+                }
+
                 <label>
                   Sonido evidencia:
                 <input defaultValue={capture.evidence.sound} ref="sound" onChange={this.handleChange} />
@@ -190,6 +197,15 @@ class CaptureDetails extends Component {
                   Texto evidencia:
                 <input defaultValue={capture.evidence.text} ref="text" onChange={this.handleChange} />
                 </label>
+                <label>
+                  Video evidencia:
+                <input defaultValue={capture.evidence.video} ref="video" onChange={this.handleChange} />
+                </label>
+
+                {capture.evidence.video &&
+                  <div><video controls src={capture.evidence.video} style={{ maxWidth: "-webkit-fill-available" }} /> </div>
+                }
+                
                 <label>
                   missionId:
                 <input defaultValue={capture.mission} ref="mission" onChange={this.handleChange} />

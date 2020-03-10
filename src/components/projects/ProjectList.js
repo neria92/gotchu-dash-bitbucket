@@ -14,7 +14,10 @@ class ProjectList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activePage: 1
+      activePage: 1,
+      orderByReports: false,
+      missionsToShow: [],
+      lastMissions: [],
     };
   }
 
@@ -22,23 +25,78 @@ class ProjectList extends Component {
     this.setState({ activePage: pageNumber });
   }
 
+  handleorderByReports = (e) => {
+    var obr = false
+    if (this.refs.orderByReports.checked)
+      obr = true
+    var missionsAux = []
+    if (obr) {
+      missionsAux = [...this.props.projects];
+      missionsAux.sort(function (a, b) {
+        if(a.reports != null && b.reports !=null ){
+          return b.reports - a.reports;
+        } else {
+          return a.reports != null ? -1 : 1 ;
+        }
+      });
+      // for (var i = 0; i < this.props.projects.length; i++) {
+      //   if (this.props.projects[i].status == "Pending") {
+      //     missionsAux.push(this.props.projects[i]);
+      //   }
+      // }
+    } else {
+      missionsAux = [...this.props.projects]
+    }
+    this.setState({ missionsToShow: missionsAux, lastMissions: this.props.projects, orderByReports: obr })
+  }
+
+  componentDidUpdate() {
+    if (this.props.projects == this.state.lastMissions)
+      return
+    var missionsAux = []
+    var originalListAux = []
+    var o = []
+    if (this.state.orderByReports) {
+      missionsAux = [...this.props.projects];
+      missionsAux.sort(function (a, b) {
+        if (a.reports != null && b.reports != null) {
+          return b.reports - a.reports;
+        } else {
+          return a.reports != null ? -1 : 1;
+        }
+      });
+
+      // for (var i = 0; i < this.props.projects.length; i++) {
+      //   if (this.props.projects[i].status == "Pending") {
+      //     missionsAux.push(this.props.projects[i]);
+      //   }
+      // }
+    } else {
+      missionsAux = [...this.props.projects]
+    }
+    this.setState({ missionsToShow: missionsAux, lastMissions: this.props.projects })
+  }
+
   render() {
     if (this.props.projects) {
-      console.log(this.props.projects.length)
       return (
         <div>
         <div>
           <Pagination
             activePage={this.state.activePage}
             itemsCountPerPage={10}
-              totalItemsCount={this.props.projects.length}
+              totalItemsCount={this.state.missionsToShow.length}
             pageRangeDisplayed={7}
             onChange={this.handlePageChange}
           />
         </div>
+          <label>
 
+            <input type="checkbox" defaultChecked={this.state.orderByReports} id="orderByReports" ref="orderByReports" onChange={this.handleorderByReports} />
+            <span>Ordernar por cantidad de reportes</span>
+          </label>
         <div className="project-list section">
-          {this.props.projects.map((project,id) => {
+            {this.state.missionsToShow.map((project,id) => {
             if ((10 * (this.state.activePage - 1)) <= id && id < (10 *this.state.activePage ))
             return (
               <Link to={{pathname:'/project/' + project.id, state:project}} key={project.id}>

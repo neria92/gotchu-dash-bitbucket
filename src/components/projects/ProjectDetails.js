@@ -14,12 +14,18 @@ const idiomas = [
 const evidencias = [
   { label: "Foto", value: 2 },
   { label: "Sonido", value: 3 },
-  { label: "Texto", value: 5 }
+  { label: "Texto", value: 5 },
+  { label: "Video", value: 7 }
 ];
 const complejidad = [
   { label: "Alta",  value:  "Alta" },
   { label: "Media", value: "Media" },
   { label: "Baja",  value:  "Baja" }
+];
+const tiposUbic = [
+  { label: "show", value: "show" },
+  { label: "hide", value: "hide" },
+  { label: "none", value: "none" }
 ];
 
 class ProjectDetails extends Component {
@@ -35,6 +41,7 @@ class ProjectDetails extends Component {
     ddLang :  null,
     ddEv : [],
     ddCom: null,
+    ddLocType: null,
 
     timeInit:null,
     timeFinish:null,
@@ -52,6 +59,7 @@ class ProjectDetails extends Component {
         fixed: false,
         language: 'es',
         locationName: { es: '' },
+        locationType: '',
         locationPoints: [ { coord:{ lat:0,long:0}, radius:0} ],
         missionType: { es: '' },
         objective: { es: '' },
@@ -60,6 +68,7 @@ class ProjectDetails extends Component {
         title: { es: '' },
         type: '',
         images:[],
+        imagesRef: [],
         evidenceType: 1,
         generic: "",
         hashtags: [],
@@ -88,6 +97,7 @@ class ProjectDetails extends Component {
         _mission.description  = mission.description  != null && mission.description[_mission.language]  != null ? mission.description  : {[_mission.language]:""}
         _mission.objective    = mission.objective    != null && mission.objective[_mission.language]    != null ? mission.objective    : {[_mission.language]:""}
         _mission.locationName = mission.locationName != null && mission.locationName[_mission.language] != null ? mission.locationName : {[_mission.language]:""}
+        _mission.locationType = mission.locationType != null ? mission.locationType : "show" }
         _mission.title        = mission.title        != null && mission.title[_mission.language]        != null ? mission.title        : {[_mission.language]:""}
         _mission.complexity   = mission.complexity   != null && mission.complexity[_mission.language]   != null ? mission.complexity   : {[_mission.language]:""}
         
@@ -110,7 +120,23 @@ class ProjectDetails extends Component {
         }
         if(!assigned)
           this.setState({ddCom:{ label: "Baja", value: "Baja" }});
+
+      assigned = false
+
+      if (_mission.locationType == "show") {
+        this.setState({ ddLocType: { label: "show", value: "show" } });
+        assigned = true
       }
+      if (_mission.locationType == "hide") {
+        this.setState({ ddLocType: { label: "hide", value: "hide" } });
+        assigned = true
+      }
+      if (_mission.locationType == "none") {
+        this.setState({ ddLocType: { label: "none", value: "none" } });
+        assigned = true
+      }
+      if (!assigned)
+        this.setState({ ddCom: { label: "show", value: "show" } });
       
       _mission.evidenceType = mission.evidenceType != null ? mission.evidenceType : 2
 
@@ -121,6 +147,8 @@ class ProjectDetails extends Component {
         ddEv.push(  { label: "Sonido", value: 3 })
       if(_mission.evidenceType%5 == 0)
         ddEv.push(  { label: "Texto", value: 5 })
+      if (_mission.evidenceType % 7 == 0)
+        ddEv.push({ label: "Video", value: 7 })
 
       this.setState({ddEv})
 
@@ -128,6 +156,7 @@ class ProjectDetails extends Component {
       _mission.generic      = mission.generic      != null ? mission.generic      : ""
       _mission.fixed        = mission.fixed        != null ? mission.fixed        : false
       _mission.durationSecs = mission.durationSecs != null ? mission.durationSecs : 0
+      _mission.reports      = mission.reports      != null ? mission.reports      : 0
       _mission.startDate    = mission.startDate    != null ? mission.startDate    : 0
       
       _mission.startDate    = Number(_mission.startDate)
@@ -166,6 +195,7 @@ class ProjectDetails extends Component {
       _mission.reward.GP = mission.reward != null && mission.reward.GP != null ? mission.reward.GP : 0
       _mission.reward.points = mission.reward != null && mission.reward.points != null ? mission.reward.points : 0
       _mission.images   = mission.images != null ? mission.images : []
+      _mission.imagesRef = mission.imagesRef != null ? mission.imagesRef : []
 
       _mission.rally.prevMission = mission.rally != null && mission.rally.prevMission != null ? mission.rally.prevMission : ''
       _mission.rally.nextMission = mission.rally != null && mission.rally.nextMission != null ? mission.rally.nextMission : ''
@@ -175,7 +205,6 @@ class ProjectDetails extends Component {
       _mission.pinned = mission.pinned != null ? mission.pinned : false
       _mission.validatorProperties = mission.validatorProperties != null ? mission.validatorProperties : ""
 
-      console.log(mission.images);
       _mission.hashtags = mission.hashtags != null ? mission.hashtags : [""]
       this.setState({ hashtags: _mission.hashtags})
     }
@@ -196,6 +225,7 @@ class ProjectDetails extends Component {
     const {id,ddEv} = this.state
     const lang = this.state.ddLang.value
     const complexity = this.state.ddCom.value
+    const locationType = this.state.ddLocType.value
     var evidenceType = 1;
     for(var i =0;i<ddEv.length;i++)
       evidenceType = evidenceType*ddEv[i].value
@@ -219,6 +249,7 @@ class ProjectDetails extends Component {
       fixed: this.refs.fixed.checked,
       language: lang,
       locationName: { [lang]: this.refs.locationName.value },
+      locationType: locationType,
       locationPoints: [ { coord:{ lat:Number(this.refs.locationPoint0Lat.value),long:Number(this.refs.locationPoint0Long.value)}, radius:Number(this.refs.locationPoint0Radius.value)} ],
       missionType: { [lang]: this.refs.missionType.value },
       objective: { [lang]: this.refs.objetive.value },
@@ -228,6 +259,7 @@ class ProjectDetails extends Component {
       type: this.refs.type.value,
       generic: this.refs.generic.value,
       images:[this.refs.image1.value,this.refs.image2.value],
+      imagesRef: [this.refs.imageRef1.value, this.refs.imageRef2.value],
       evidenceType: Number(evidenceType),
       hashtags: hashtags,
       rally: { prevMission: this.refs.rallyPrevMission.value, nextMission: this.refs.rallyNextMission.value, position: parseInt(this.refs.rallyPosition.value), total: parseInt(this.refs.rallyTotal.value), isRally: this.refs.rallyIsRally.checked },
@@ -309,7 +341,7 @@ class ProjectDetails extends Component {
 
   render() {
     const { auth, projectActions } = this.props;
-    const {mission,ddLang,ddEv,ddCom,timeInit,timeFinish,timeDuration } = this.state
+    const {mission,ddLang,ddEv,ddCom,ddLocType,timeInit,timeFinish,timeDuration } = this.state
     if (this.state.savingChanges){
       return <Redirect to='/' /> 
     }
@@ -387,8 +419,16 @@ class ProjectDetails extends Component {
                 <input defaultValue={mission.images[0]==null?"":mission.images[0]} ref="image1" onChange={this.handleChange} />
                 </label>
                 <label>
+                  Referencia imagen 1:
+                <input defaultValue={mission.imagesRef[0] == null ? "" : mission.imagesRef[0]} ref="imageRef1" onChange={this.handleChange} />
+                </label>
+                <label>
                   Imagen 2:
-                <input defaultValue={mission.images[1]==null?"":mission.images[1]} ref="image2" onChange={this.handleChange} />
+                <input defaultValue={mission.images[1] == null ? "" : mission.images[1]} ref="image2" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Referencia imagen 2:
+                <input defaultValue={mission.imagesRef[1]==null?"":mission.imagesRef[1]} ref="imageRef2" onChange={this.handleChange} />
                 </label>
 
                 <label>
@@ -399,6 +439,10 @@ class ProjectDetails extends Component {
                 <label>
                   Nombre de la ubicación:
                 <input defaultValue={mission.locationName[lang]} ref="locationName" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Tipo de ubicación:
+                <Select value={ddLocType} options={tiposUbic} onChange={ddLocType => { this.setState({ ddLocType }) }} />
                 </label>
                 <label>
                   Coordenada Latitud:
@@ -471,6 +515,10 @@ class ProjectDetails extends Component {
                       ValidatorProperties:
                 <textarea defaultValue={mission.validatorProperties} ref="validatorProperties" onChange={this.handleChange} />
                     </label>
+                  <label>
+                   Reportes:
+                  <input readOnly type="number" value={mission.reports} ref="reports" />
+                  </label>
                   
                 
                 </div>
