@@ -33,7 +33,6 @@ class CaptureDetails extends Component {
 
   componentDidMount() {
     const id = this.props.location.state.id
-    console.log(this.props.location)
     var _capture = {
       coord: {lat: 0, long:0},
       createdAt: 0,
@@ -66,6 +65,7 @@ class CaptureDetails extends Component {
       _capture.mission = capture.mission != null ? capture.mission : ""
       _capture.userId = capture.userId != null ? capture.userId : "" 
       _capture.status = capture.status != null ? capture.status : ""
+      _capture.reports = capture.reports != null ? capture.reports : 0
 
       var assigned = false
 
@@ -85,7 +85,6 @@ class CaptureDetails extends Component {
       if (!assigned)
         this.setState({ ddStatus: { label: "Rejected", value: "Rejected" } });
     }
-    console.log(id, _capture)
     this.setState({ id: id, capture: _capture })
   }
 
@@ -135,7 +134,6 @@ class CaptureDetails extends Component {
   }
   
   render() {
-    console.log(this.state.capture)
     const { auth, projectActions } = this.props;
     const { capture, lat, long, timeCreatedAt, ddStatus } = this.state
     if (this.state.savingChanges) {
@@ -213,6 +211,10 @@ class CaptureDetails extends Component {
                 <label>
                   userId:
                 <input defaultValue={capture.userId} ref="userId" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Reportes:
+                  <input readOnly type="number" value={capture.reports} ref="reports" />
                 </label>
 
                 <button className="btn waves-effect waves-light" type="submit" name="action">Guardar</button>
