@@ -15,7 +15,8 @@ class Dashboard extends Component {
     state = {
         projectsLoaded: false,
         busqueda: "",
-        activePage: 1
+        activePage: 1,
+        projectsBusqueda: null
     };
     filteredProjects= null
 
@@ -66,49 +67,56 @@ class Dashboard extends Component {
         e.preventDefault();
         console.log(this.state.busqueda);
 
-        const dashboardSearch = functions().httpsCallable('dashboardSearch');
-        dashboardSearch({
-                UID: "0",
-                startIndex: 0,
-                numberOfFeeds: 500,
-                sortBy: "date",
-                filter: { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [this.state.busqueda]}
-            }).then(result => {
-            console.log(result);
-            //this.setState({ admin: true })
-        });
-
-        // fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardSearch", {
-        //     method: 'POST',
-        //     headers: {
-        //         Accept: 'application/json',
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({
+        // const dashboardSearch = functions().httpsCallable('dashboardSearch');
+        // dashboardSearch({
         //         UID: "0",
         //         startIndex: 0,
         //         numberOfFeeds: 500,
         //         sortBy: "date",
         //         filter: { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [this.state.busqueda]}
-        //     }),
-        // }).then(response => {
-        //     const statusCode = response.status;
-        //     const data = response.json();
-        //     return Promise.all([statusCode, data]);
-        // })
-        //     .then(res => {
-        //         if (res[0] == 200) {
-        //             // Hacer algo con lo que regresa el server = res[1].newsfeed
-        //             console.log(res[1].result);
-        //         } else {
-        //             // Hubo un error en el server
-        //             console.log("error");
-        //         }
-        //     })
-        //     .catch(error => {
-        //         // Hubo un error en el server
-        //         console.log("error");
-        //     });
+        //     }).then(result => {
+        //     console.log(result);
+        //     //this.setState({ admin: true })
+        // });
+
+        fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardSearch", {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                UID: "0",
+                startIndex: 0,
+                numberOfFeeds: 500,
+                sortBy: "date",
+                filter: { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [this.state.busqueda]}
+            }),
+        }).then(response => {
+            const statusCode = response.status;
+            const data = response.json();
+            return Promise.all([statusCode, data]);
+        })
+            .then(res => {
+                if (res[0] == 200) {
+                    // Hacer algo con lo que regresa el server = res[1].newsfeed
+                    this.setState({
+                        ...this.state,
+                        projectsBusqueda: res[1].result
+                    })
+                    //console.log(res[1].result);
+                    console.log(this.state.projectsBusqueda);
+
+                } else {
+                    // Hubo un error en el server
+                    console.log("error");
+                }
+            })
+            .catch(error => {
+                // Hubo un error en el server
+                console.log("error");
+            });
     }
 
     setStartProjects(){
