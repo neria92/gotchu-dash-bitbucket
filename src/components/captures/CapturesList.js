@@ -13,7 +13,9 @@ class CapturesList extends Component {
       activePage: 1,
       showOnlyPending: false,
       capturesToShow: [], 
-      lastCaptures: []
+      lastCaptures: [],
+      originalList: null,
+      orderedByReportsList: null
     };
   }
 
@@ -38,6 +40,27 @@ class CapturesList extends Component {
     this.setState({ capturesToShow: captureAux, lastCaptures: this.props.captures, showOnlyPending: sop })
   }
 
+  handleorderByReports = (e) => {
+    var obr = false
+    if (this.refs.orderByReports.checked)
+      obr = true
+    var captureAux = []
+    if (obr) {
+      captureAux = [...this.props.captures];
+      captureAux.sort(function (a, b) {
+        if (a.reports != null && b.reports != null) {
+          return b.reports - a.reports;
+        } else {
+          return a.reports != null ? -1 : 1;
+        }
+      });
+      
+    } else {
+      captureAux = [...this.props.captures]
+    }
+    this.setState({ capturesToShow: captureAux, lastCaptures: this.props.captures, orderByReports: obr })
+  }
+
   componentDidUpdate() {
     if(this.props.captures == this.state.lastCaptures)
       return
@@ -52,6 +75,25 @@ class CapturesList extends Component {
       captureAux = [...this.props.captures]
     }
     this.setState({capturesToShow: captureAux, lastCaptures: this.props.captures})
+
+
+
+    if (this.props.captures == this.state.lastMissions)
+      return
+    var captureAux = []
+    if (this.state.orderByReports) {
+      captureAux = [...this.props.captures];
+      captureAux.sort(function (a, b) {
+        if (a.reports != null && b.reports != null) {
+          return b.reports - a.reports;
+        } else {
+          return a.reports != null ? -1 : 1;
+        }
+      });
+    } else {
+      captureAux = [...this.props.captures]
+    }
+    this.setState({ missionsToShow: captureAux, lastMissions: this.props.captures })
   }
 
   render(){
@@ -67,6 +109,11 @@ class CapturesList extends Component {
               onChange={this.handlePageChange}
             />
           </div>
+          <label>
+
+            <input type="checkbox" defaultChecked={this.state.orderByReports} id="orderByReports" ref="orderByReports" onChange={this.handleorderByReports} />
+            <span>Ordernar por cantidad de reportes</span>
+          </label>
           <label>
             
               <input type="checkbox" defaultChecked={this.state.showOnlyPending} id="showOnlyPending" ref="showOnlyPending" onChange={this.handleshowOnlyPending} />
