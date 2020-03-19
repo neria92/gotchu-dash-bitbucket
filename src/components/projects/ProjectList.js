@@ -99,7 +99,7 @@ class ProjectList extends Component {
             {this.state.missionsToShow.map((project,id) => {
             if ((10 * (this.state.activePage - 1)) <= id && id < (10 *this.state.activePage ))
             return (
-              <Link to={{pathname:'/project/' + project.id, state:project}} key={project.id}>
+              <Link to={{pathname:'/project/' + project._id, state:project}} key={project.id}>
                 <ProjectSummary project={project} />
               </Link>
             );
@@ -110,8 +110,8 @@ class ProjectList extends Component {
     } 
     else {
       return (
-        <div className="container center">
-          <p>Loading projects...</p>
+        <div >
+          <p style={{ color:  "white"}}>Loading projects...</p>
         </div>
       )
     }
@@ -120,7 +120,7 @@ class ProjectList extends Component {
   
 const mapStateToProps = (state) => {
   return {
-    projects: state.firestore.ordered.missions
+    //projects: state.firestore.ordered.missions
   }
 }
 

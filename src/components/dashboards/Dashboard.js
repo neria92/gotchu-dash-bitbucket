@@ -65,6 +65,25 @@ class Dashboard extends Component {
 
     handleSubmitSearch = (e) => {
         e.preventDefault();
+        this.getSearchResults();
+    }
+
+    componentDidMount(){
+        this.setState({
+            busqueda: ''
+        })
+        this.getSearchResults();
+    }
+
+    setStartProjects(){
+        this.setState({
+            ...this.state,
+            projectsLoaded: true
+        })
+        this.filteredProjects = this.props.projects;
+    }
+
+    getSearchResults(){
         console.log(this.state.busqueda);
 
         // const dashboardSearch = functions().httpsCallable('dashboardSearch');
@@ -91,7 +110,7 @@ class Dashboard extends Component {
                 startIndex: 0,
                 numberOfFeeds: 500,
                 sortBy: "date",
-                filter: { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [this.state.busqueda]}
+                filter: { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [this.state.busqueda] }
             }),
         }).then(response => {
             const statusCode = response.status;
@@ -117,18 +136,6 @@ class Dashboard extends Component {
                 // Hubo un error en el server
                 console.log("error");
             });
-    }
-
-    setStartProjects(){
-        this.setState({
-            ...this.state,
-            projectsLoaded: true
-        })
-        this.filteredProjects = this.props.projects;
-    }
-
-    getSearchResults(search){
-        var result;
         
     }
 
@@ -189,7 +196,7 @@ class Dashboard extends Component {
 
                             
                   
-                            <ProjectList /* pasar resultado de busqueda *//>
+                            <ProjectList projects={this.state.projectsBusqueda}/* pasar resultado de busqueda *//>
                             <form onSubmit={this.handleSubmitUploadJson} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
                                 <textarea onChange={this.handleChange} ref="JsonText" required style={{ height: 200 }}/>
                                 <button className="btn waves-effect waves-light" type="submit" name="Subir" style={{ backgroundColor: "red" }}>Subir JSON</button>
