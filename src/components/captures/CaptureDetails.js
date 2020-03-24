@@ -8,6 +8,7 @@ import { functions } from 'firebase'
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select';
+import { getFirestore } from 'redux-firestore'
 
 const status = [
   { label: "Rejected", value: "Rejected" },
@@ -29,6 +30,8 @@ class CaptureDetails extends Component {
     lat: 0,
     long: 0,
     timeCreatedAt: null,
+    missionDescription: '',
+    missionObjective: ''
   };
 
   componentDidMount() {
@@ -86,6 +89,20 @@ class CaptureDetails extends Component {
         this.setState({ ddStatus: { label: "Rejected", value: "Rejected" } });
     }
     this.setState({ id: id, capture: _capture })
+
+    getFirestore().get({ collection: "missions", doc: capture.mission })
+      .then((doc) => {
+        if (doc != undefined && doc.data().description != undefined && doc.data().description.es != null) {
+          this.setState({ missionDescription: doc.data().description.es })
+        }
+        if (doc != undefined && doc.data().objective != undefined && doc.data().objective.es != null) {
+          this.setState({ missionObjective: doc.data().objective.es })
+        }
+      })
+      .catch((error) => {
+        this.setState({ missionDescription: "Error" })
+        this.setState({ missionObjective: "Error" })
+      });  
   }
 
   handleChange = (e) => {
@@ -135,7 +152,7 @@ class CaptureDetails extends Component {
   
   render() {
     const { auth, projectActions } = this.props;
-    const { capture, lat, long, timeCreatedAt, ddStatus } = this.state
+    const { capture, lat, long, timeCreatedAt, ddStatus, missionDescription, missionObjective } = this.state
     if (this.state.savingChanges) {
       return <Redirect to='/captures' />
     }
@@ -144,14 +161,21 @@ class CaptureDetails extends Component {
     }
     if (!auth.uid) return <Redirect to='/singin' />
 
-    if (capture) {
+    if (capture && missionObjective) {
       return (
-
         <div className="container section project-details">
           <button className="btn waves-effect waves-light" onClick={this.handleDelete}>Eliminar</button>
           <div className="card z-depth-0">
             <div className="card-content">
               <form onSubmit={this.handleSubmit} style={{ marginTop: "0px auto" }}>
+                <label>
+                  Descripción de la misión:
+                <textarea readOnly defaultValue={this.state.missionDescription} />
+                </label>
+                <label>
+                  Objetivo de la misión:
+                <textarea readOnly defaultValue={this.state.missionObjective} />
+                </label>
                 <label>
                   Latitude:
                 <input type="number" defaultValue={capture.coord.lat} ref="lat" onChange={this.handleChange} />
