@@ -35,7 +35,7 @@ class UsersList extends Component {
             {this.props.users.map((user, id) => {
               if ((10 * (this.state.activePage - 1)) <= id && id < (10 * this.state.activePage))
               return (
-                <Link to={'/user/' + user.id} key={user.id}>
+                <Link to={'/user/' + user._id} key={user.id}>
                   <UserSummary user={user} />
                 </Link>
               )
@@ -46,7 +46,7 @@ class UsersList extends Component {
     } else {
       return (
         <div className="container center">
-          <p>Loading users...</p>
+          <p style={{ color: "white" }}>Loading users...</p>
         </div>
       )
     }
@@ -55,7 +55,7 @@ class UsersList extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    users: state.firestore.ordered.users,
+    //users: state.firestore.ordered.users,
   }
 }
 
@@ -64,7 +64,7 @@ export default compose(
   firestoreConnect(props => {
     //console.log(props.filter.charAt(0).toUpperCase() + props.filter.slice(1))
     return [
-      { collection: 'users', where: [['username', '>=', props.filter]], orderBy: ['username', 'asc'] }
+      { collection: 'users', orderBy: ['username', 'asc'] }
     ]
   }),
 )(UsersList)

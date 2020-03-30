@@ -9,13 +9,91 @@ import { signOut } from '../../store/actions/authActions'
 class Users extends Component {
     state = {
         projectsLoaded: false,
-        busqueda: ""
+        busqueda: "",
+        usersSearch: null
     };
 
     handleChange = (e) => {
         this.setState({
             [e.target.id]: e.target.value
         })
+    }
+
+    handleSubmitSearch = (e) => {
+        e.preventDefault();
+        this.getSearchResults(false);
+    }
+
+    componentDidMount() {
+        this.setState({
+            busqueda: ''
+        })
+        this.getSearchResults(true);
+    }
+
+    setStartProjects() {
+        this.setState({
+            ...this.state,
+            projectsLoaded: true
+        })
+        this.filteredProjects = this.props.projects;
+    }
+
+    getSearchResults(getAll) {
+        console.log(this.state.busqueda);
+
+        // const dashboardSearch = functions().httpsCallable('dashboardSearch');
+        // dashboardSearch({
+        //         UID: "0",
+        //         startIndex: 0,
+        //         numberOfFeeds: 500,
+        //         sortBy: "date",
+        //         filter: { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [this.state.busqueda]}
+        //     }).then(result => {
+        //     console.log(result);
+        //     //this.setState({ admin: true })
+        // });
+        var fr = getAll ? { contentType: { missions: false, captures: false, users: true, hashtags: false } } : { contentType: { missions: false, captures: false, users: true, hashtags: false }, whiteKeywords: [this.state.busqueda] }
+
+        fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardSearch", {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                UID: "0",
+                startIndex: 0,
+                numberOfFeeds: 500,
+                sortBy: "date",
+                filter: fr
+            }),
+        }).then(response => {
+            const statusCode = response.status;
+            const data = response.json();
+            return Promise.all([statusCode, data]);
+        })
+            .then(res => {
+                if (res[0] == 200) {
+                    // Hacer algo con lo que regresa el server = res[1].newsfeed
+                    this.setState({
+                        ...this.state,
+                        usersSearch: res[1].result
+                    })
+                    //console.log(res[1].result);
+                    console.log(this.state.usersSearch);
+
+                } else {
+                    // Hubo un error en el server
+                    console.log("error");
+                }
+            })
+            .catch(error => {
+                // Hubo un error en el server
+                console.log("error");
+            });
+
     }
 
     // handleSubmit = (e) => {
@@ -57,13 +135,13 @@ class Users extends Component {
         //if(auth.uid) return <Redirect to='/create'></Redirect>
         return (
             <div className="dashboard container">
-                <form onSubmit={this.handleSubmit} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
-                    <input placeholder="Username" onChange={this.handleChange} id="busqueda" required />
+                <form onSubmit={this.handleSubmitSearch} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
+                    <input placeholder="Username" onChange={this.handleChange} id="busqueda" />
                     {/* <button type="submit" value="Guardar" >Make admin</button> */}
                 </form>
                 <div className ="row">
                     <div className="col s12 m6">
-                        <UsersList filter={this.state.busqueda}/>
+                        <UsersList users={this.state.usersSearch}/>
                     </div>
                     {/* <div className="col s12 m5 offset-m1">
                         <Notifications />
