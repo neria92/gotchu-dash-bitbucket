@@ -65,14 +65,14 @@ class Dashboard extends Component {
 
     handleSubmitSearch = (e) => {
         e.preventDefault();
-        this.getSearchResults();
+        this.getSearchResults(false);
     }
 
     componentDidMount(){
         this.setState({
             busqueda: ''
         })
-        this.getSearchResults();
+        this.getSearchResults(true);
     }
 
     setStartProjects(){
@@ -83,8 +83,7 @@ class Dashboard extends Component {
         this.filteredProjects = this.props.projects;
     }
 
-    getSearchResults(){
-        console.log(this.state.busqueda);
+    getSearchResults(getAll){
 
         // const dashboardSearch = functions().httpsCallable('dashboardSearch');
         // dashboardSearch({
@@ -98,6 +97,7 @@ class Dashboard extends Component {
         //     //this.setState({ admin: true })
         // });
 
+        var fr = getAll ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [this.state.busqueda] }
         fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardSearch", {
             method: 'POST',
             mode: 'cors',
@@ -110,7 +110,7 @@ class Dashboard extends Component {
                 startIndex: 0,
                 numberOfFeeds: 500,
                 sortBy: "date",
-                filter: { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [this.state.busqueda] }
+                filter: fr
             }),
         }).then(response => {
             const statusCode = response.status;
