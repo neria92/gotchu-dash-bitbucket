@@ -123,7 +123,7 @@ class CapturesList extends Component {
             {this.state.capturesToShow.map((capture, id) => {
               if ((10 * (this.state.activePage - 1)) <= id && id < (10 * this.state.activePage))
                   return (
-                    <Link to={{pathname:'/capture/' + capture.id, state:capture}} key={capture.id}>
+                    <Link to={{pathname:'/capture/' + capture._id, state:capture}} key={capture._id}>
                       <CaptureSummary capture={capture} />
                     </Link>
                   )
@@ -134,7 +134,7 @@ class CapturesList extends Component {
     } else {
       return (
         <div className="container center">
-          <p>Loading captures...</p>
+          <p style={{ color: "white" }}>Loading captures...</p>
         </div>
       )
     }
@@ -143,7 +143,7 @@ class CapturesList extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    captures: state.firestore.ordered.capture,
+    //captures: state.firestore.ordered.capture,
   }
 }
 
@@ -151,7 +151,7 @@ export default compose(
   connect(mapStateToProps),
   firestoreConnect(props => {
     return [
-      { collection: 'capture', where: [['userId', '>=', props.filter]], orderBy: ['userId', 'asc'] }
+      { collection: 'capture', orderBy: ['userId', 'asc'] }
     ]
   }),
 )(CapturesList)

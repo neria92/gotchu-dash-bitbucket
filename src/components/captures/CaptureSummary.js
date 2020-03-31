@@ -8,6 +8,7 @@ class CaptureSummary extends Component {
   }
 
   componentDidMount(){
+    console.log(this.props.capture.mission)
     getFirestore().get({ collection: "users", doc: this.props.capture.userId })
       .then((doc) => {
         if (doc != undefined && doc.data().username != null) {
@@ -18,6 +19,7 @@ class CaptureSummary extends Component {
 
         this.setState({ username:"Error - No Existe Usuario" })
       });
+      
     getFirestore().get({ collection: "missions", doc: this.props.capture.mission })
       .then((doc) => {
         if (doc != undefined && doc.data().title.es != null) {
