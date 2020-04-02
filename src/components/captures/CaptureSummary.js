@@ -8,7 +8,7 @@ class CaptureSummary extends Component {
   }
 
   componentDidMount(){
-    console.log(this.props.capture.mission)
+    console.log(this.props.capture)
     getFirestore().get({ collection: "users", doc: this.props.capture.userId })
       .then((doc) => {
         if (doc != undefined && doc.data().username != null) {

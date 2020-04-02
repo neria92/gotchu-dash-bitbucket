@@ -35,7 +35,7 @@ class CaptureDetails extends Component {
   };
 
   componentDidMount() {
-    const id = this.props.location.state.id
+    const id = this.props.location.state._id
     var _capture = {
       coord: {lat: 0, long:0},
       createdAt: 0,
@@ -45,6 +45,7 @@ class CaptureDetails extends Component {
       userId: "",
     }
 
+    console.log(this.props.location.state)
     var capture = null
     if (id != null && id != "new")
       capture = this.props.location.state
@@ -90,6 +91,7 @@ class CaptureDetails extends Component {
     }
     this.setState({ id: id, capture: _capture })
 
+    console.log(capture)
     getFirestore().get({ collection: "missions", doc: capture.mission })
       .then((doc) => {
         if (doc != undefined && doc.data().description != undefined && doc.data().description.es != null) {
