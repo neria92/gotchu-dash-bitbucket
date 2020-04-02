@@ -51,7 +51,7 @@ class ProjectDetails extends Component {
 
   componentDidMount()
   {
-    const id=this.props.location.state.id
+    const id=this.props.location.state._id
     var _mission = {
         complexity: { es: '' },
         description: { es: '' },

@@ -35,7 +35,7 @@ class UsersList extends Component {
             {this.props.users.map((user, id) => {
               if ((10 * (this.state.activePage - 1)) <= id && id < (10 * this.state.activePage))
               return (
-                <Link to={'/user/' + user._id} key={user.id}>
+                <Link to={'/user/' + user._id} key={user._id}>
                   <UserSummary user={user} />
                 </Link>
               )

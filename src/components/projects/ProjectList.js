@@ -99,7 +99,7 @@ class ProjectList extends Component {
             {this.state.missionsToShow.map((project,id) => {
             if ((10 * (this.state.activePage - 1)) <= id && id < (10 *this.state.activePage ))
             return (
-              <Link to={{pathname:'/project/' + project._id, state:project}} key={project.id}>
+              <Link to={{pathname:'/project/' + project._id, state:project}} key={project._id}>
                 <ProjectSummary project={project} />
               </Link>
             );

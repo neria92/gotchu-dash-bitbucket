@@ -98,7 +98,7 @@ class Dashboard extends Component {
         // });
 
         var fr = getAll ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [this.state.busqueda] }
-        fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardSearch", {
+        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/dashboardSearch", {
             method: 'POST',
             mode: 'cors',
             headers: {
