@@ -57,7 +57,7 @@ class ProjectDetails extends Component {
         description: { es: '' },
         durationSecs: 0,
         fixed: false,
-        hasLocation: false,
+        hasLocation: true,
         language: 'es',
         locationName: { es: '' },
         locationType: '',
@@ -156,7 +156,7 @@ class ProjectDetails extends Component {
       _mission.type         = mission.type         != null ? mission.type         : ""
       _mission.generic      = mission.generic      != null ? mission.generic      : ""
       _mission.fixed        = mission.fixed        != null ? mission.fixed        : false
-      _mission.hasLocation = mission.hasLocation   != null ? mission.hasLocation  : false
+      _mission.hasLocation = mission.hasLocation   != null ? mission.hasLocation  : true
       _mission.durationSecs = mission.durationSecs != null ? mission.durationSecs : 0
       _mission.reports      = mission.reports      != null ? mission.reports      : 0
       _mission.startDate    = mission.startDate    != null ? mission.startDate    : 0
