@@ -57,6 +57,7 @@ class ProjectDetails extends Component {
         description: { es: '' },
         durationSecs: 0,
         fixed: false,
+        hasLocation: false,
         language: 'es',
         locationName: { es: '' },
         locationType: '',
@@ -155,6 +156,7 @@ class ProjectDetails extends Component {
       _mission.type         = mission.type         != null ? mission.type         : ""
       _mission.generic      = mission.generic      != null ? mission.generic      : ""
       _mission.fixed        = mission.fixed        != null ? mission.fixed        : false
+      _mission.hasLocation = mission.hasLocation   != null ? mission.hasLocation  : false
       _mission.durationSecs = mission.durationSecs != null ? mission.durationSecs : 0
       _mission.reports      = mission.reports      != null ? mission.reports      : 0
       _mission.startDate    = mission.startDate    != null ? mission.startDate    : 0
@@ -247,6 +249,7 @@ class ProjectDetails extends Component {
       description: { [lang]: this.refs.description.value },
       durationSecs: Number(this.state.timeDuration),
       fixed: this.refs.fixed.checked,
+      hasLocation: this.refs.hasLocation.checked,
       language: lang,
       locationName: { [lang]: this.refs.locationName.value },
       locationType: locationType,
@@ -485,6 +488,12 @@ class ProjectDetails extends Component {
                     <label>
                       <input type="checkbox" defaultChecked={mission.fixed } id="fixed" ref="fixed" onChange={this.handleChange} />
                       <span>Fixed</span>
+                    </label>
+                  </p>
+                  <p>
+                    <label>
+                      <input type="checkbox" defaultChecked={mission.hasLocation} id="hasLocation" ref="hasLocation" onChange={this.handleChange} />
+                      <span>Has location</span>
                     </label>
                   </p>
                   <label>
