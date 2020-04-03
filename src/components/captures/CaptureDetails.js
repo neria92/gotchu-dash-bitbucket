@@ -128,7 +128,7 @@ class CaptureDetails extends Component {
     const status = this.state.ddStatus.value
 
     const capture = {
-      coord: { lat: Number(this.state.lat), long: Number(this.state.long) },
+      coord: { lat: Number(this.refs.lat.value), long: Number(this.refs.long.value) },
       createdAt: Number(this.state.timeCreatedAt / 1000.0),
       evidence: { photo: this.refs.photo.value, sound: this.refs.sound.value, text: this.refs.text.value, video: this.refs.video.value },
       mission: this.refs.mission.value,

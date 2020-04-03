@@ -31,7 +31,8 @@ class UserDetails extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const userID = this.props._id;
+    console.log(this.props)
+    const userID = this.props.id;
 
     const user = {
       username: this.refs.username.value,
