@@ -16,7 +16,8 @@ class Dashboard extends Component {
         projectsLoaded: false,
         busqueda: "",
         activePage: 1,
-        projectsBusqueda: null
+        projectsBusqueda: null,
+        searching: false
     };
     filteredProjects= null
 
@@ -65,6 +66,7 @@ class Dashboard extends Component {
 
     handleSubmitSearch = (e) => {
         e.preventDefault();
+        this.setState({searching: true})
         this.getSearchResults(false);
     }
 
@@ -122,7 +124,8 @@ class Dashboard extends Component {
                     // Hacer algo con lo que regresa el server = res[1].newsfeed
                     this.setState({
                         ...this.state,
-                        projectsBusqueda: res[1].result
+                        projectsBusqueda: res[1].result,
+                        searching: false
                     })
                     //console.log(res[1].result);
                     console.log(this.state.projectsBusqueda);
@@ -196,7 +199,7 @@ class Dashboard extends Component {
 
                             
                   
-                            <ProjectList projects={this.state.projectsBusqueda}/* pasar resultado de busqueda *//>
+                            <ProjectList projects={this.state.projectsBusqueda} searching={this.state.searching}/* pasar resultado de busqueda *//>
                             <form onSubmit={this.handleSubmitUploadJson} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
                                 <textarea onChange={this.handleChange} ref="JsonText" required style={{ height: 200 }}/>
                                 <button className="btn waves-effect waves-light" type="submit" name="Subir" style={{ backgroundColor: "red" }}>Subir JSON</button>

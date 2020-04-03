@@ -19,37 +19,47 @@ class UsersList extends Component {
   }
 
   render(){
-    if(this.props.users){
+    if (this.props.searching) {
       return (
-        <div>
-          <div>
-            <Pagination
-              activePage={this.state.activePage}
-              itemsCountPerPage={10}
-              totalItemsCount={this.props.users.length}
-              pageRangeDisplayed={9}
-              onChange={this.handlePageChange}
-            />
-          </div>
-          <div className="project-list section">
-            {this.props.users.map((user, id) => {
-              if ((10 * (this.state.activePage - 1)) <= id && id < (10 * this.state.activePage))
-              return (
-                <Link to={'/user/' + user._id} key={user._id}>
-                  <UserSummary user={user} />
-                </Link>
-              )
-            })}
-          </div>
+        <div >
+          <p style={{ color: "white" }}>Searching...</p>
         </div>
       )
     } else {
-      return (
-        <div className="container center">
-          <p style={{ color: "white" }}>Loading users...</p>
-        </div>
-      )
+      if (this.props.users) {
+        return (
+          <div>
+            <div>
+              <Pagination
+                activePage={this.state.activePage}
+                itemsCountPerPage={10}
+                totalItemsCount={this.props.users.length}
+                pageRangeDisplayed={9}
+                onChange={this.handlePageChange}
+              />
+            </div>
+            <div className="project-list section">
+              {this.props.users.map((user, id) => {
+                if ((10 * (this.state.activePage - 1)) <= id && id < (10 * this.state.activePage))
+                  return (
+                    <Link to={'/user/' + user._id} key={user._id}>
+                      <UserSummary user={user} />
+                    </Link>
+                  )
+              })}
+            </div>
+          </div>
+        )
+      } else {
+        return (
+          <div >
+            <p style={{ color: "white" }}>Loading users...</p>
+          </div>
+        )
+      }
     }
+
+    
   }
 }
 

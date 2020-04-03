@@ -10,7 +10,8 @@ class Captures extends Component {
     state = {
         projectsLoaded: false,
         busqueda: "",
-        capturesBusqueda: null
+        capturesBusqueda: null,
+        searching: false
     };
 
     handleChange = (e) => {
@@ -21,6 +22,7 @@ class Captures extends Component {
 
     handleSubmitSearch = (e) => {
         e.preventDefault();
+        this.setState({ searching: true })
         this.getSearchResults(false);
     }
 
@@ -71,6 +73,7 @@ class Captures extends Component {
                     // Hacer algo con lo que regresa el server = res[1].newsfeed
                     this.setState({
                         ...this.state,
+                        searching: false,
                         capturesBusqueda: res[1].result
                     })
                     //console.log(res[1].result);
@@ -123,7 +126,7 @@ class Captures extends Component {
                 </form>
                 <div className ="row">
                     <div className="col s12 m6">
-                        <CapturesList captures={this.state.capturesBusqueda}/>
+                        <CapturesList captures={this.state.capturesBusqueda} searching={this.state.searching}/>
                     </div>
                     {/* <div className="col s12 m5 offset-m1">
                         <Notifications />

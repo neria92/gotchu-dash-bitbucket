@@ -97,46 +97,54 @@ class CapturesList extends Component {
   }
 
   render(){
-    if (this.props.captures){
+    if (this.props.searching) {
       return (
-        <div>
-          <div>
-            <Pagination
-              activePage={this.state.activePage}
-              itemsCountPerPage={10}
-              totalItemsCount={this.state.capturesToShow.length}
-              pageRangeDisplayed={9}
-              onChange={this.handlePageChange}
-            />
-          </div>
-          <label>
-
-            <input type="checkbox" defaultChecked={this.state.orderByReports} id="orderByReports" ref="orderByReports" onChange={this.handleorderByReports} />
-            <span>Ordernar por cantidad de reportes</span>
-          </label>
-          <label>
-            
-              <input type="checkbox" defaultChecked={this.state.showOnlyPending} id="showOnlyPending" ref="showOnlyPending" onChange={this.handleshowOnlyPending} />
-            <span>Mostrar solo pendientes</span>
-          </label>
-          <div className="project-list section">
-            {this.state.capturesToShow.map((capture, id) => {
-              if ((10 * (this.state.activePage - 1)) <= id && id < (10 * this.state.activePage))
-                  return (
-                    <Link to={{pathname:'/capture/' + capture._id, state:capture}} key={capture._id}>
-                      <CaptureSummary capture={capture} />
-                    </Link>
-                  )
-            })}
-          </div>
+        <div >
+          <p style={{ color: "white" }}>Searching...</p>
         </div>
       )
     } else {
-      return (
-        <div className="container center">
-          <p style={{ color: "white" }}>Loading captures...</p>
-        </div>
-      )
+      if (this.props.captures) {
+        return (
+          <div>
+            <div>
+              <Pagination
+                activePage={this.state.activePage}
+                itemsCountPerPage={10}
+                totalItemsCount={this.state.capturesToShow.length}
+                pageRangeDisplayed={9}
+                onChange={this.handlePageChange}
+              />
+            </div>
+            <label>
+
+              <input type="checkbox" defaultChecked={this.state.orderByReports} id="orderByReports" ref="orderByReports" onChange={this.handleorderByReports} />
+              <span>Ordernar por cantidad de reportes</span>
+            </label>
+            <label>
+
+              <input type="checkbox" defaultChecked={this.state.showOnlyPending} id="showOnlyPending" ref="showOnlyPending" onChange={this.handleshowOnlyPending} />
+              <span>Mostrar solo pendientes</span>
+            </label>
+            <div className="project-list section">
+              {this.state.capturesToShow.map((capture, id) => {
+                if ((10 * (this.state.activePage - 1)) <= id && id < (10 * this.state.activePage))
+                  return (
+                    <Link to={{ pathname: '/capture/' + capture._id, state: capture }} key={capture._id}>
+                      <CaptureSummary capture={capture} />
+                    </Link>
+                  )
+              })}
+            </div>
+          </div>
+        )
+      } else {
+        return (
+          <div >
+            <p style={{ color: "white" }}>Loading captures...</p>
+          </div>
+        )
+      }
     }
   }
 }

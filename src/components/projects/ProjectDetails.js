@@ -360,6 +360,10 @@ class ProjectDetails extends Component {
             <div className="card-content">
               <form onSubmit={this.handleSubmit} style={{ marginTop: "0px auto" }}>
                 <label>
+                  ID:
+                <input readOnly defaultValue={this.state.id} />
+                </label>
+                <label>
                   Titulo:
                 <input defaultValue={mission.title[lang]} ref="title" onChange={this.handleChange} />
                 </label>
