@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import { compose } from 'redux'
 import { Redirect } from 'react-router-dom'
-import { editCapture, deleteCapture } from '../../store/actions/captureActions'
+import { editCapture, deleteCapture, showOnlyPending } from '../../store/actions/captureActions'
 import { functions } from 'firebase'
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css";
@@ -266,6 +266,7 @@ class CaptureDetails extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
+  console.log(state)
   const id = ownProps.match.params.id;
   const captures = state.firestore.data.captures;
   const capture = captures ? captures[id] : null;
@@ -282,6 +283,7 @@ const mapDispathToProps = (dispatch) => {
   return {
     editCapture: (id, capture) => dispatch(editCapture(id, capture)),
     deleteCapture: (capture) => dispatch(deleteCapture(capture)),
+    showOnlyPending: (sop) => dispatch(showOnlyPending(sop)),
   }
 }
 

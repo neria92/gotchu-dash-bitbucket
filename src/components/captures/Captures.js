@@ -48,8 +48,7 @@ class Captures extends Component {
         // });
 
         var fr = getAll ? { contentType: { missions: false, captures: true, users: false, hashtags: false }, "NSFW": true } : { contentType: { missions: false, captures: true, users: false, hashtags: false }, "NSFW": true, whiteMIDs: [this.state.busqueda] }
-        console.log(this.state.busqueda)
-        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/dashboardSearch", {
+        fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardSearch", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -77,7 +76,6 @@ class Captures extends Component {
                         capturesBusqueda: res[1].result
                     })
                     //console.log(res[1].result);
-                    console.log(this.state.capturesBusqueda);
 
                 } else {
                     // Hubo un error en el server

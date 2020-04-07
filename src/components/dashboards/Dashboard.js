@@ -100,7 +100,7 @@ class Dashboard extends Component {
         // });
 
         var fr = getAll ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [this.state.busqueda] }
-        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/dashboardSearch", {
+        fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardSearch", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -179,7 +179,7 @@ class Dashboard extends Component {
                     <div className ="row">
                         {/* <Link to="/project/new"><button>Nueva mission</button></Link> */}
                         <div className="col s12 m6">
-                            <Link to={{pathname:"/project/new", state:{id:"new"}}}><button className="btn waves-effect waves-light" type="submit" name="action">Nueva Mission</button></Link>
+                            <Link to={{pathname:"/project/new", state:{_id:"new"}}}><button className="btn waves-effect waves-light" type="submit" name="action">Nueva Mission</button></Link>
 
                             {/* <div class="row" style={{ width: "560px auto", backgroundColor: "white" }}>
                                 <div class="col s12 m12 l12" >

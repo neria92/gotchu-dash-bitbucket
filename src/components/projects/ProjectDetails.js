@@ -79,6 +79,8 @@ class ProjectDetails extends Component {
       }
       
     this.setState({ddLang:{ label: "Español", value: "es" }});
+    this.setState({ ddCom: { label: "Baja", value: "Baja" } });
+    this.setState({ ddLocType: { label: "show", value: "show" } });
     var mission=null
     if(id != null && id != "new")
       mission = this.props.location.state
@@ -103,7 +105,7 @@ class ProjectDetails extends Component {
         _mission.complexity   = mission.complexity   != null && mission.complexity[_mission.language]   != null ? mission.complexity   : {[_mission.language]:""}
         
         var assigned = false
-
+        
         if(_mission.complexity[_mission.language] =="Alta")
         {
           this.setState({ddCom:{ label: "Alta", value: "Alta" }});
@@ -123,7 +125,7 @@ class ProjectDetails extends Component {
           this.setState({ddCom:{ label: "Baja", value: "Baja" }});
 
       assigned = false
-
+      
       if (_mission.locationType == "show") {
         this.setState({ ddLocType: { label: "show", value: "show" } });
         assigned = true
@@ -137,7 +139,7 @@ class ProjectDetails extends Component {
         assigned = true
       }
       if (!assigned)
-        this.setState({ ddCom: { label: "show", value: "show" } });
+        this.setState({ ddLocType: { label: "show", value: "show" } });
       
       _mission.evidenceType = mission.evidenceType != null ? mission.evidenceType : 2
 
@@ -223,7 +225,7 @@ class ProjectDetails extends Component {
 
     const { hashtags } = this.state;
     //alert(`hay ${hashtags.length} hashtags`);
-    
+    console.log(this.state)
     const {id,ddEv} = this.state
     const lang = this.state.ddLang.value
     const complexity = this.state.ddCom.value

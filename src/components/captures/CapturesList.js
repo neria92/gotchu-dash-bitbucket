@@ -5,6 +5,7 @@ import { compose } from 'redux'
 import CaptureSummary from './CaptureSummary'
 import { Link } from 'react-router-dom'
 import Pagination from "react-js-pagination";
+import { showOnlyPending } from '../../store/actions/captureActions'
 
 class CapturesList extends Component {
   constructor(props) {
@@ -23,6 +24,10 @@ class CapturesList extends Component {
     this.setState({ activePage: pageNumber });
   }
 
+  componentDidMount() {
+    this.setState({ showOnlyPending: this.props.showOnlyPending })
+  }
+
   handleshowOnlyPending = (e) => {
     var sop = false
     if (this.refs.showOnlyPending.checked)
@@ -37,7 +42,8 @@ class CapturesList extends Component {
     } else {
       captureAux = [...this.props.captures]
     }
-    this.setState({ capturesToShow: captureAux, lastCaptures: this.props.captures, showOnlyPending: sop })
+    this.props.setShowOnlyPending(sop)
+    this.setState({ capturesToShow: captureAux, lastCaptures: this.props.captures, showOnlyPending: this.props.showOnlyPending })
   }
 
   handleorderByReports = (e) => {
@@ -62,17 +68,20 @@ class CapturesList extends Component {
   }
 
   componentDidUpdate() {
+    console.log(this.state.showOnlyPending)
     if(this.props.captures == this.state.lastCaptures)
       return
     var captureAux = []
-    if(this.state.showOnlyPending) {
+    if(this.state.showOnlyPending && this.props.captures) {
       for (var i = 0; i < this.props.captures.length; i++ ){
         if (this.props.captures[i].status == "Pending") {
           captureAux.push(this.props.captures[i]);
         }
       } 
     } else {
-      captureAux = [...this.props.captures]
+      if (this.props.captures){
+        captureAux = [...this.props.captures]
+      }
     }
     this.setState({capturesToShow: captureAux, lastCaptures: this.props.captures})
 
@@ -149,14 +158,21 @@ class CapturesList extends Component {
   }
 }
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setShowOnlyPending: (sop) => dispatch(showOnlyPending(sop))
+  }
+}
+
 const mapStateToProps = (state) => {
   return {
     //captures: state.firestore.ordered.capture,
+    showOnlyPending: state.captureReducer.showOnlyPending
   }
 }
 
 export default compose(
-  connect(mapStateToProps),
+  connect(mapStateToProps, mapDispatchToProps),
   firestoreConnect(props => {
     return [
       { collection: 'capture', orderBy: ['userId', 'asc'] }

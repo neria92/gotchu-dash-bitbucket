@@ -117,3 +117,14 @@ export const deleteCapture = (capture) => {
         })
     }
 };
+
+export const showOnlyPending = (sop) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        dispatch({
+            type: 'Show_Only_Pending',
+            payload: {
+                showOnlyPending: sop
+            }
+        });
+    }
+};

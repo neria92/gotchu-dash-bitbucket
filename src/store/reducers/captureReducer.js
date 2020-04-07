@@ -58,6 +58,11 @@ const captureReducer =(state = initState,action) => {
                 ...state,
                 error: action.err,
             }
+        case 'Show_Only_Pending':
+            return {
+                ...state,
+                showOnlyPending: action.payload.showOnlyPending,
+            }    
         default:
             return state;
     }
