@@ -5,7 +5,7 @@ import { compose } from 'redux'
 import CaptureSummary from './CaptureSummary'
 import { Link } from 'react-router-dom'
 import Pagination from "react-js-pagination";
-import { showOnlyPending } from '../../store/actions/captureActions'
+import { showOnlyPending, orderByReports } from '../../store/actions/captureActions'
 
 class CapturesList extends Component {
   constructor(props) {
@@ -16,7 +16,8 @@ class CapturesList extends Component {
       capturesToShow: [], 
       lastCaptures: [],
       originalList: null,
-      orderedByReportsList: null
+      orderedByReportsList: null,
+      orderByReports: false
     };
   }
 
@@ -26,6 +27,7 @@ class CapturesList extends Component {
 
   componentDidMount() {
     this.setState({ showOnlyPending: this.props.showOnlyPending })
+    this.setState({ orderByReports: this.props.orderByReports })
   }
 
   handleshowOnlyPending = (e) => {
@@ -64,6 +66,7 @@ class CapturesList extends Component {
     } else {
       captureAux = [...this.props.captures]
     }
+    this.props.setOrderByReports(obr)
     this.setState({ capturesToShow: captureAux, lastCaptures: this.props.captures, orderByReports: obr })
   }
 
@@ -85,11 +88,8 @@ class CapturesList extends Component {
     this.setState({capturesToShow: captureAux, lastCaptures: this.props.captures})
 
 
-
-    if (this.props.captures == this.state.lastMissions)
-      return
     var captureAux = []
-    if (this.state.orderByReports) {
+    if (this.state.orderByReports && this.props.captures) {
       captureAux = [...this.props.captures];
       captureAux.sort(function (a, b) {
         if (a.reports != null && b.reports != null) {
@@ -98,10 +98,13 @@ class CapturesList extends Component {
           return a.reports != null ? -1 : 1;
         }
       });
+
     } else {
-      captureAux = [...this.props.captures]
+      if (this.props.captures){
+        captureAux = [...this.props.captures]
+      } 
     }
-    this.setState({ missionsToShow: captureAux, lastMissions: this.props.captures })
+    this.setState({ capturesToShow: captureAux, lastCaptures: this.props.captures })
   }
 
   render(){
@@ -159,14 +162,16 @@ class CapturesList extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setShowOnlyPending: (sop) => dispatch(showOnlyPending(sop))
+    setShowOnlyPending: (sop) => dispatch(showOnlyPending(sop)),
+    setOrderByReports: (obr) => dispatch(orderByReports(obr))
   }
 }
 
 const mapStateToProps = (state) => {
   return {
     //captures: state.firestore.ordered.capture,
-    showOnlyPending: state.captureReducer.showOnlyPending
+    showOnlyPending: state.captureReducer.showOnlyPending,
+    orderByReports: state.captureReducer.orderByReports
   }
 }
 
