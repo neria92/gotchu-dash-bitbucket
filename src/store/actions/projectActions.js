@@ -110,3 +110,14 @@ export const editProject = (missionID,project) => {
 
     }
 };
+
+export const setSearchString = (searchString) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        dispatch({
+            type: 'set_Search_String',
+            payload: {
+                searchString: searchString
+            }
+        });
+    }
+};

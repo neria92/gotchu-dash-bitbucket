@@ -42,7 +42,6 @@ class Users extends Component {
     }
 
     getSearchResults(getAll) {
-        console.log(this.state.busqueda);
 
         // const dashboardSearch = functions().httpsCallable('dashboardSearch');
         // dashboardSearch({
@@ -85,7 +84,6 @@ class Users extends Component {
                         usersSearch: res[1].result
                     })
                     //console.log(res[1].result);
-                    console.log(this.state.usersSearch);
 
                 } else {
                     // Hubo un error en el server

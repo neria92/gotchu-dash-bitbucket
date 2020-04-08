@@ -7,6 +7,7 @@ import {compose} from 'redux'
 import {Redirect} from 'react-router-dom'
 import { functions } from 'firebase'
 import { signOut } from '../../store/actions/authActions'
+import { setSearchString } from '../../store/actions/projectActions'
 import { Link } from 'react-router-dom'
 //import { addMultipleProjects } from '../../store/actions/projectActions'
 import { reduxFirestore, getFirestore } from 'redux-firestore'
@@ -23,7 +24,6 @@ class Dashboard extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        console.log("submited");
         // const adminUID = document.querySelector('#admin-uid').value;
         // const addAdminRole = functions().httpsCallable('addAdminRole');
         // addAdminRole({ uid: adminUID }).then(result => {
@@ -66,41 +66,24 @@ class Dashboard extends Component {
 
     handleSubmitSearch = (e) => {
         e.preventDefault();
-        this.setState({searching: true})
-        this.getSearchResults(false);
+        this.props.setSearchString(this.refs.busqueda.value)
+        this.setState({ ...this.state,searching: true})
+        this.getSearchResults(this.refs.busqueda.value);
     }
 
     componentDidMount(){
-        this.setState({
-            busqueda: ''
-        })
-        this.getSearchResults(true);
+        this.setState({ ...this.state, busqueda: this.props.searchString})
+        this.getSearchResults(this.props.searchString);
+        if(!(this.props.searchString === "")){
+            this.setState({ searching: true })
+        }
     }
 
-    setStartProjects(){
-        this.setState({
-            ...this.state,
-            projectsLoaded: true
-        })
-        this.filteredProjects = this.props.projects;
-    }
+   
 
-    getSearchResults(getAll){
-
-        // const dashboardSearch = functions().httpsCallable('dashboardSearch');
-        // dashboardSearch({
-        //         UID: "0",
-        //         startIndex: 0,
-        //         numberOfFeeds: 500,
-        //         sortBy: "date",
-        //         filter: { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [this.state.busqueda]}
-        //     }).then(result => {
-        //     console.log(result);
-        //     //this.setState({ admin: true })
-        // });
-
-        var fr = getAll ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [this.state.busqueda] }
-        fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardSearch", {
+    getSearchResults(search){
+        var fr = (search === "") ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [search] }
+        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/dashboardSearch", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -128,7 +111,6 @@ class Dashboard extends Component {
                         searching: false
                     })
                     //console.log(res[1].result);
-                    console.log(this.state.projectsBusqueda);
 
                 } else {
                     // Hubo un error en el server
@@ -172,7 +154,7 @@ class Dashboard extends Component {
             return (
                 <div className="dashboard container">
                     <form onSubmit={this.handleSubmitSearch} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
-                        <input placeholder="Titulo" onChange={this.handleChange} id="busqueda" />
+                        <input placeholder="Titulo" defaultValue={this.state.busqueda} onChange={this.handleChange} ref="busqueda" id="busqueda" />
                         {/* <button type="submit" value="Guardar" >Make admin</button> */}
                     </form>
                     
@@ -227,6 +209,7 @@ class Dashboard extends Component {
 const mapDispatchToProps = (dispatch) => {
     return {
         signOut: () => dispatch(signOut()),
+        setSearchString: (searchString) => dispatch(setSearchString(searchString))
         //addMultipleProjects: (projects) => dispatch(addMultipleProjects(projects)),
     }
 }
@@ -234,7 +217,8 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => {
     return {
         auth: state.firebase.auth,
-        profile: state.firebase.profile
+        profile: state.firebase.profile,
+        searchString: state.projectReducer.searchString
     }
 }
 

@@ -68,7 +68,6 @@ class CapturesList extends Component {
   }
 
   componentDidUpdate() {
-    console.log(this.state.showOnlyPending)
     if(this.props.captures == this.state.lastCaptures)
       return
     var captureAux = []

@@ -71,7 +71,7 @@ class ProjectList extends Component {
       //     missionsAux.push(this.props.projects[i]);
       //   }
       // }
-    } else {
+    } else if (this.props.projects){
       missionsAux = [...this.props.projects]
     }
     this.setState({ missionsToShow: missionsAux, lastMissions: this.props.projects })
