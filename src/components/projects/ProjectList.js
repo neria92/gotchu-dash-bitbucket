@@ -8,6 +8,7 @@ import ProjectSummary from './ProjectSummary'
 import { Link } from 'react-router-dom'
 import { timingSafeEqual } from 'crypto';
 import { importDeclaration } from '@babel/types';
+import { setOrderByReports } from '../../store/actions/projectActions'
 
 class ProjectList extends Component {
 
@@ -48,7 +49,13 @@ class ProjectList extends Component {
       missionsAux = [...this.props.projects]
     }
     this.setState({ missionsToShow: missionsAux, lastMissions: this.props.projects, orderByReports: obr })
+    this.props.setOrderByReports(obr)
   }
+
+  componentDidMount() {
+    this.setState({ orderByReports: this.props.orderByReports })
+  }
+
 
   componentDidUpdate() {
     if (this.props.projects == this.state.lastMissions)
@@ -56,7 +63,7 @@ class ProjectList extends Component {
     var missionsAux = []
     var originalListAux = []
     var o = []
-    if (this.state.orderByReports) {
+    if (this.props.orderByReports && this.props.projects) {
       missionsAux = [...this.props.projects];
       missionsAux.sort(function (a, b) {
         if (a.reports != null && b.reports != null) {
@@ -100,7 +107,7 @@ class ProjectList extends Component {
             <label>
 
               <input type="checkbox" defaultChecked={this.state.orderByReports} id="orderByReports" ref="orderByReports" onChange={this.handleorderByReports} />
-              <span>Ordernar por cantidad de reportes</span>
+              <span>Ordenar por cantidad de reportes</span>
             </label>
             <div className="project-list section">
               {this.state.missionsToShow.map((project, id) => {
@@ -128,12 +135,14 @@ class ProjectList extends Component {
   
 const mapStateToProps = (state) => {
   return {
-    //projects: state.firestore.ordered.missions
+    orderByReports: state.projectReducer.orderByReports
   }
 }
 
 const mapDispathToProps = (dispatch) => {
   return {
+    setOrderByReports: (obr) => dispatch(setOrderByReports(obr))
+    //addMultipleProjects: (projects) => dispatch(addMultipleProjects(projects)),
   }
 }
 

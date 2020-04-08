@@ -121,3 +121,14 @@ export const setSearchString = (searchString) => {
         });
     }
 };
+
+export const setOrderByReports = (obr) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        dispatch({
+            type: 'set_Order_By_Reports',
+            payload: {
+                orderByReports: obr
+            }
+        });
+    }
+};
