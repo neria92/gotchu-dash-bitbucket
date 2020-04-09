@@ -18,7 +18,9 @@ class Dashboard extends Component {
         busqueda: "",
         activePage: 1,
         projectsBusqueda: null,
-        searching: false
+        searching: false,
+        missionsUploaded: 0,
+        uploadJsonError: null
     };
     filteredProjects= null
 
@@ -32,21 +34,27 @@ class Dashboard extends Component {
     }
 
     handleSubmitUploadJson = (e) => {
+        
         e.preventDefault();
         const text = this.refs.JsonText.value
         var obj = JSON.parse(text)
-        console.log(obj);
         const firestore = getFirestore();
         const size = obj.length;
-        for (var i = 0; i < size; i++) {
+        var uploadError = null
+        var i
+        for ( i = 0; i < size; i++) {
             firestore.collection('missions').add(obj[i]).then((res) => {
-
                 console.log("Upload complete : ", res.id)
-
             })
-                .catch(error => {
-                    console.log("error : ", error)
-                });
+            .catch(error => {
+                console.log("error : ", error)
+                uploadError = error
+            });
+        }
+        if (uploadError != null){
+            this.setState({ uploadJsonError: true, missionsUploaded: i + 1 })
+        } else {
+            this.setState({ uploadJsonError: false, missionsUploaded: i + 1 })
         }
         //window.location.reload();
         //this.props.addMultipleProjects(obj);
@@ -187,6 +195,9 @@ class Dashboard extends Component {
                                 <button className="btn waves-effect waves-light" type="submit" name="Subir" style={{ backgroundColor: "red" }}>Subir JSON</button>
                                 {/* <button type="submit" value="Guardar" >Make admin</button> */}
                             </form>
+                            <div >
+                                <Notifications uploadJsonError={this.state.uploadJsonError} missionsUploaded={this.state.missionsUploaded}/>
+                            </div>
                         </div>
                         {/* <div className="col s12 m5 offset-m1">
                             <Notifications />
