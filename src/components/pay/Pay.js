@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import PaymentsList from './PaymentsList'
+import PaymentsList from './PayList'
 import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import { compose } from 'redux'
@@ -7,7 +7,7 @@ import { Redirect } from 'react-router-dom'
 import { resetMoney } from '../../store/actions/userActions'
 import { signOut } from '../../store/actions/authActions'
 
-class Payment extends Component {
+class Pay extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -61,7 +61,7 @@ class Payment extends Component {
             })
             this.setState({ lastFilteredUsers: this.props.users, usersFilteredForPayment: uffp, totalPayment: tp})
         } 
-        console.log(tp)
+        //console.log(tp)
     }
 
     setStartProjects() {
@@ -234,4 +234,4 @@ export default compose(
             { collection: 'users', where: [['money', '>=', 30]] }
         ]
     }),
-)(Payment)
+)(Pay)
