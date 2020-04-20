@@ -12,6 +12,8 @@ import Microtasks from './components/Microtasks/Microtasks'
 import MicrotaskDetails from './components/Microtasks/MicrotaskDetails'
 import CaptureDetails from './components/captures/CaptureDetails'
 import Pay from './components/pay/Pay'
+import Payments from './components/payments/Payments'
+import PaymentDetails from './components/payments/PaymentDetails'
 import CreateProject from './components/projects/CreateProject'
 
 function App() {
@@ -31,6 +33,8 @@ function App() {
           <Route path='/microtasks' component={Microtasks} />
           <Route path='/microtask/:id' component={MicrotaskDetails} />
           <Route path='/pay' component={Pay} />
+          <Route path='/payments' component={Payments} />
+          <Route path='/payment' component={PaymentDetails} />
         </Switch>
       </div>
     </BrowserRouter>

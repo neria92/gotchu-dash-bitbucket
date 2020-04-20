@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import PaymentsList from './PayList'
+import PaymentsList from './PaymentsList'
 import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import { compose } from 'redux'
@@ -7,12 +7,13 @@ import { Redirect } from 'react-router-dom'
 import { resetMoney } from '../../store/actions/userActions'
 import { signOut } from '../../store/actions/authActions'
 
-class Pay extends Component {
+class Payments extends Component {
     constructor(props) {
         super(props)
         this.state = {
             projectsLoaded: false,
             busqueda: "",
+            filter: '',
             usersSearch: null,
             searching: false,
             usersFilteredForPayment: null,
@@ -30,7 +31,7 @@ class Pay extends Component {
 
     handleSubmitSearch = (e) => {
         e.preventDefault();
-        this.setState({ searching: true })
+        this.setState({ filter: this.refs.busqueda.value })
         //this.getSearchResults(false);
     }
 
@@ -184,13 +185,13 @@ class Pay extends Component {
         //if(auth.uid) return <Redirect to='/create'></Redirect>
         return (
             <div className="dashboard container">
-                <div className="s12 m5 " style={{ color: "Red"}}>
-                    <p>Total a pagar: {this.state.totalPayment}</p>
-                </div>
-                <button disabled={this.state.payingInProgress} onClick={this.payButtonOnClick} className="btn waves-effect waves-light" name="Subir" style={{ backgroundColor: "red" }}>Pagar a todos</button>
+                <form onSubmit={this.handleSubmitSearch} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
+                    <input placeholder="UID" defaultValue={this.state.busqueda} onChange={this.handleChange} ref="busqueda" id="busqueda" />
+                    {/* <button type="submit" value="Guardar" >Make admin</button> */}
+                </form>
                 <div className="row">
                     <div className="col s12 m6">
-                        <PaymentsList users={this.state.usersFilteredForPayment} searching={this.state.searching} />
+                        <PaymentsList filter={this.state.filter} />
                     </div>
                     {/* <div className="col s12 m5 offset-m1">
                         <Notifications />
@@ -228,10 +229,10 @@ const mapStateToProps = (state) => {
 
 export default compose(
     connect(mapStateToProps, mapDispatchToProps),
-    firestoreConnect(props => {
-        //console.log(props.filter.charAt(0).toUpperCase() + props.filter.slice(1))
-        return [
-            { collection: 'users', where: [['money', '>=', 30]] }
-        ]
-    }),
-)(Pay)
+    // firestoreConnect(props => {
+    //     //console.log(props.filter.charAt(0).toUpperCase() + props.filter.slice(1))
+    //     return [
+    //         { collection: 'users', where: [['money', '>=', 30]] }
+    //     ]
+    // }),
+)(Payments)
