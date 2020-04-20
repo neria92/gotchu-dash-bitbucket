@@ -4,7 +4,9 @@ const initState={
     captureCreated: null,
     projectSaved: null,
     projectDeleted: null,
-    error: null
+    error: null,
+    searchString: '',
+    orderByReports: false
 }
 
 const projectReducer =(state = initState,action) => {
@@ -45,6 +47,16 @@ const projectReducer =(state = initState,action) => {
             return {
                 ...state,
                 error: action.err,
+            }
+        case 'set_Search_String':
+            return {
+                ...state,
+                searchString: action.payload.searchString
+            }
+        case 'set_Order_By_Reports':
+            return {
+                ...state,
+                orderByReports: action.payload.orderByReports
             }
         default:
             return state;

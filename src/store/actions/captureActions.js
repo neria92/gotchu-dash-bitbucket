@@ -117,3 +117,25 @@ export const deleteCapture = (capture) => {
         })
     }
 };
+
+export const showOnlyPending = (sop) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        dispatch({
+            type: 'Show_Only_Pending',
+            payload: {
+                showOnlyPending: sop
+            }
+        });
+    }
+};
+
+export const orderByReports = (obr) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        dispatch({
+            type: 'Order_By_Reports',
+            payload: {
+                orderByReports: obr
+            }
+        });
+    }
+};

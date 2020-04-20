@@ -1,18 +1,26 @@
 import React, { Component } from 'react'
-import UsersList from'../Users/UsersList'
-import { connect} from 'react-redux'
+import PaymentsList from './PaymentsList'
+import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
-import {compose} from 'redux'
-import {Redirect} from 'react-router-dom'
+import { compose } from 'redux'
+import { Redirect } from 'react-router-dom'
+import { resetMoney } from '../../store/actions/userActions'
 import { signOut } from '../../store/actions/authActions'
 
-class Users extends Component {
-    state = {
-        projectsLoaded: false,
-        busqueda: "",
-        usersSearch: null,
-        searching: false
-    };
+class Payment extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            projectsLoaded: false,
+            busqueda: "",
+            usersSearch: null,
+            searching: false,
+            usersFilteredForPayment: null,
+            lastFilteredUsers: null,
+            totalPayment: 0,
+            payingInProgress: false
+        }
+    }
 
     handleChange = (e) => {
         this.setState({
@@ -23,14 +31,37 @@ class Users extends Component {
     handleSubmitSearch = (e) => {
         e.preventDefault();
         this.setState({ searching: true })
-        this.getSearchResults(false);
+        //this.getSearchResults(false);
     }
 
     componentDidMount() {
         this.setState({
             busqueda: ''
         })
-        this.getSearchResults(true);
+        //console.log(this.props.users)
+    }
+
+    componentDidUpdate() {
+        if(this.state.lastFilteredUsers === this.props.users){
+
+        } else {
+            this.filterUsersForPayment();
+        }
+    }
+
+    filterUsersForPayment() {
+        var tp = 0
+        if(this.props.users != undefined){
+            var uffp = []
+            this.props.users.map((user) => {
+                if (user.accountName != '' && user.clabe != '' && user.email != '') {
+                    uffp.push(user);
+                    tp += user.money
+                }
+            })
+            this.setState({ lastFilteredUsers: this.props.users, usersFilteredForPayment: uffp, totalPayment: tp})
+        } 
+        console.log(tp)
     }
 
     setStartProjects() {
@@ -41,7 +72,16 @@ class Users extends Component {
         this.filteredProjects = this.props.projects;
     }
 
-    getSearchResults(getAll) {
+    payButtonOnClick = (e) => {
+        e.preventDefault();
+        this.setState({...this.state, payingInProgress: true})
+        this.state.usersFilteredForPayment.map((user) => {
+            console.log(user)
+            this.payUser(user)
+        })
+    }
+
+    payUser(user) {
 
         // const dashboardSearch = functions().httpsCallable('dashboardSearch');
         // dashboardSearch({
@@ -54,22 +94,26 @@ class Users extends Component {
         //     console.log(result);
         //     //this.setState({ admin: true })
         // });
-        var fr = getAll ? { contentType: { missions: false, captures: false, users: true, hashtags: false } } : { contentType: { missions: false, captures: false, users: true, hashtags: false }, whiteKeywords: [this.state.busqueda] }
-
-        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/dashboardSearch", {
+        fetch("https://us-central1-gchgame.cloudfunctions.net/sendPayment", {
             method: 'POST',
             mode: 'cors',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                UID: "0",
-                startIndex: 0,
-                numberOfFeeds: 500,
-                sortBy: "date",
-                filter: fr
-            }),
+            body: {
+                uid: user.id,
+                payout: {
+                    "method": "bank_account",
+                    "bank_account": {
+                        "clabe": user.clabe,
+                        "holder_name": user.accountName
+                    },
+                    "amount": user.money,
+                    "description": "Monthly payment"
+                }
+            }
+            ,
         }).then(response => {
             const statusCode = response.status;
             const data = response.json();
@@ -78,21 +122,25 @@ class Users extends Component {
             .then(res => {
                 if (res[0] == 200) {
                     // Hacer algo con lo que regresa el server = res[1].newsfeed
-                    this.setState({
-                        ...this.state,
-                        searching: false,
-                        usersSearch: res[1].result
-                    })
-                    //console.log(res[1].result);
+                    this.setState({ ...this.state, payingInProgress: false })
+                    console.log(res[1].result);
+                    var userID = user.id;
+                    this.props.resetMoney({ userID, user});
 
                 } else {
                     // Hubo un error en el server
-                    console.log("error");
+                    console.log("res != 200");
+                    this.setState({ ...this.state, payingInProgress: false })
+                    var userID = user.id;
+                    this.props.resetMoney({ userID, user});
                 }
             })
             .catch(error => {
                 // Hubo un error en el server
                 console.log("error");
+                this.setState({ ...this.state, payingInProgress: false })
+                var userID = user.id;
+                this.props.resetMoney({ userID, user });
             });
 
     }
@@ -107,13 +155,13 @@ class Users extends Component {
     //     });
     // }
 
-    render(){
-        
+    render() {
+
         const { users, auth, profile } = this.props;
-        
-        if(!auth.uid) return <Redirect to='/singin'></Redirect>
+
+        if (!auth.uid) return <Redirect to='/singin'></Redirect>
         if (!profile.isEmpty) {
-            if(!profile.token.claims.admin){
+            if (!profile.token.claims.admin) {
                 this.props.signOut();
             }
         }
@@ -136,13 +184,13 @@ class Users extends Component {
         //if(auth.uid) return <Redirect to='/create'></Redirect>
         return (
             <div className="dashboard container">
-                <form onSubmit={this.handleSubmitSearch} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
-                    <input placeholder="Username" onChange={this.handleChange} id="busqueda" />
-                    {/* <button type="submit" value="Guardar" >Make admin</button> */}
-                </form>
-                <div className ="row">
+                <div className="s12 m5 " style={{ color: "Red"}}>
+                    <p>Total a pagar: {this.state.totalPayment}</p>
+                </div>
+                <button disabled={this.state.payingInProgress} onClick={this.payButtonOnClick} className="btn waves-effect waves-light" name="Subir" style={{ backgroundColor: "red" }}>Pagar a todos</button>
+                <div className="row">
                     <div className="col s12 m6">
-                        <UsersList users={this.state.usersSearch} searching={this.state.searching}/>
+                        <PaymentsList users={this.state.usersFilteredForPayment} searching={this.state.searching} />
                     </div>
                     {/* <div className="col s12 m5 offset-m1">
                         <Notifications />
@@ -161,7 +209,8 @@ class Users extends Component {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        signOut: () => dispatch(signOut())
+        signOut: () => dispatch(signOut()),
+        resetMoney: (capture) => dispatch(resetMoney(capture))
     }
 }
 
@@ -172,10 +221,17 @@ const mapStateToProps = (state) => {
     // }
     return {
         auth: state.firebase.auth,
-        profile: state.firebase.profile
+        profile: state.firebase.profile,
+        users: state.firestore.ordered.users,
     }
 }
 
 export default compose(
     connect(mapStateToProps, mapDispatchToProps),
-  )(Users)
+    firestoreConnect(props => {
+        //console.log(props.filter.charAt(0).toUpperCase() + props.filter.slice(1))
+        return [
+            { collection: 'users', where: [['money', '>=', 30]] }
+        ]
+    }),
+)(Payment)

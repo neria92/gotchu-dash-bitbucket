@@ -7,7 +7,7 @@ import 'firebase/functions'
 //production
 var firebaseConfig = {
   apiKey: "AIzaSyCkd6L4-_sN73EXBq5eVsEv0JJmafVEfio",
-  authDomain: "gchgame.firebaseapp.com",
+  authDomain: "gchgame.fireb=aseapp.com",
   databaseURL: "https://gchgame.firebaseio.com",
   projectId: "gchgame",
   storageBucket: "gchgame.appspot.com",

@@ -21,7 +21,7 @@ class UserDetails extends Component {
 
   handleAdmin = (e) => {
     e.preventDefault();
-    const adminUID = this.props.id;
+    const adminUID = this.props._id;
     const addAdminRole = functions().httpsCallable('addAdminRole');
     addAdminRole({ uid: adminUID }).then(result => {
       console.log(result);
@@ -31,6 +31,7 @@ class UserDetails extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
+    console.log(this.props)
     const userID = this.props.id;
 
     const user = {
@@ -174,7 +175,9 @@ const mapStateToProps = (state, ownProps) => {
   const id = ownProps.match.params.id;
   const users = state.firestore.data.users;
   const user = users ? users[id] : null;
-  
+  console.log(ownProps.match.params.id)
+  console.log(users)
+
   return {
     id: id,
     user: user,

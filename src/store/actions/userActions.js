@@ -108,3 +108,25 @@ export const editUser = (info) => {
         })
     }
 };
+
+export const resetMoney = (info) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+
+        //make asyn call
+
+        const firestore = getFirestore();
+
+        firestore.collection('users').doc(info.userID).update(
+           {money: 0}
+        ).then(function () {
+            dispatch({
+                type: 'User_Saved',
+                payload: {
+                    id: info.userID
+                }
+            });
+        }).catch((err) => {
+            dispatch({ type: 'User_Saved_Error', err });
+        })
+    }
+};

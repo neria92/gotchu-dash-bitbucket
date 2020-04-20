@@ -51,12 +51,13 @@ class ProjectDetails extends Component {
 
   componentDidMount()
   {
-    const id=this.props.location.state.id
+    const id=this.props.location.state._id
     var _mission = {
         complexity: { es: '' },
         description: { es: '' },
         durationSecs: 0,
         fixed: false,
+        hasLocation: true,
         language: 'es',
         locationName: { es: '' },
         locationType: '',
@@ -78,6 +79,8 @@ class ProjectDetails extends Component {
       }
       
     this.setState({ddLang:{ label: "Español", value: "es" }});
+    this.setState({ ddCom: { label: "Baja", value: "Baja" } });
+    this.setState({ ddLocType: { label: "show", value: "show" } });
     var mission=null
     if(id != null && id != "new")
       mission = this.props.location.state
@@ -102,7 +105,7 @@ class ProjectDetails extends Component {
         _mission.complexity   = mission.complexity   != null && mission.complexity[_mission.language]   != null ? mission.complexity   : {[_mission.language]:""}
         
         var assigned = false
-
+        
         if(_mission.complexity[_mission.language] =="Alta")
         {
           this.setState({ddCom:{ label: "Alta", value: "Alta" }});
@@ -122,7 +125,7 @@ class ProjectDetails extends Component {
           this.setState({ddCom:{ label: "Baja", value: "Baja" }});
 
       assigned = false
-
+      
       if (_mission.locationType == "show") {
         this.setState({ ddLocType: { label: "show", value: "show" } });
         assigned = true
@@ -136,7 +139,7 @@ class ProjectDetails extends Component {
         assigned = true
       }
       if (!assigned)
-        this.setState({ ddCom: { label: "show", value: "show" } });
+        this.setState({ ddLocType: { label: "show", value: "show" } });
       
       _mission.evidenceType = mission.evidenceType != null ? mission.evidenceType : 2
 
@@ -155,6 +158,7 @@ class ProjectDetails extends Component {
       _mission.type         = mission.type         != null ? mission.type         : ""
       _mission.generic      = mission.generic      != null ? mission.generic      : ""
       _mission.fixed        = mission.fixed        != null ? mission.fixed        : false
+      _mission.hasLocation = mission.hasLocation   != null ? mission.hasLocation  : true
       _mission.durationSecs = mission.durationSecs != null ? mission.durationSecs : 0
       _mission.reports      = mission.reports      != null ? mission.reports      : 0
       _mission.startDate    = mission.startDate    != null ? mission.startDate    : 0
@@ -221,7 +225,7 @@ class ProjectDetails extends Component {
 
     const { hashtags } = this.state;
     //alert(`hay ${hashtags.length} hashtags`);
-    
+    console.log(this.state)
     const {id,ddEv} = this.state
     const lang = this.state.ddLang.value
     const complexity = this.state.ddCom.value
@@ -247,6 +251,7 @@ class ProjectDetails extends Component {
       description: { [lang]: this.refs.description.value },
       durationSecs: Number(this.state.timeDuration),
       fixed: this.refs.fixed.checked,
+      hasLocation: this.refs.hasLocation.checked,
       language: lang,
       locationName: { [lang]: this.refs.locationName.value },
       locationType: locationType,
@@ -359,6 +364,10 @@ class ProjectDetails extends Component {
           <div className="card z-depth-0">
             <div className="card-content">
               <form onSubmit={this.handleSubmit} style={{ marginTop: "0px auto" }}>
+                <label>
+                  ID:
+                <input readOnly defaultValue={this.state.id} />
+                </label>
                 <label>
                   Titulo:
                 <input defaultValue={mission.title[lang]} ref="title" onChange={this.handleChange} />
@@ -481,6 +490,12 @@ class ProjectDetails extends Component {
                     <label>
                       <input type="checkbox" defaultChecked={mission.fixed } id="fixed" ref="fixed" onChange={this.handleChange} />
                       <span>Fixed</span>
+                    </label>
+                  </p>
+                  <p>
+                    <label>
+                      <input type="checkbox" defaultChecked={mission.hasLocation} id="hasLocation" ref="hasLocation" onChange={this.handleChange} />
+                      <span>Has location</span>
                     </label>
                   </p>
                   <label>

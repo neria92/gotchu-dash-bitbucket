@@ -6,7 +6,8 @@ const initState={
     projectDeleted: null,
     captureDeleted: null,
     error: null,
-    showOnlyPending: false
+    showOnlyPending: false,
+    orderByReports: false
 }
 
 const captureReducer =(state = initState,action) => {
@@ -58,6 +59,16 @@ const captureReducer =(state = initState,action) => {
                 ...state,
                 error: action.err,
             }
+        case 'Show_Only_Pending':
+            return {
+                ...state,
+                showOnlyPending: action.payload.showOnlyPending,
+            }    
+        case 'Order_By_Reports':
+            return {
+                ...state,
+                orderByReports: action.payload.orderByReports,
+            }    
         default:
             return state;
     }

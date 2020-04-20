@@ -3,11 +3,12 @@ import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import { compose } from 'redux'
 import { Redirect } from 'react-router-dom'
-import { editCapture, deleteCapture } from '../../store/actions/captureActions'
+import { editCapture, deleteCapture, showOnlyPending } from '../../store/actions/captureActions'
 import { functions } from 'firebase'
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select';
+import { getFirestore } from 'redux-firestore'
 
 const status = [
   { label: "Rejected", value: "Rejected" },
@@ -29,10 +30,12 @@ class CaptureDetails extends Component {
     lat: 0,
     long: 0,
     timeCreatedAt: null,
+    missionDescription: '',
+    missionObjective: ''
   };
 
   componentDidMount() {
-    const id = this.props.location.state.id
+    const id = this.props.location.state._id
     var _capture = {
       coord: {lat: 0, long:0},
       createdAt: 0,
@@ -42,6 +45,7 @@ class CaptureDetails extends Component {
       userId: "",
     }
 
+    console.log(this.props.location.state)
     var capture = null
     if (id != null && id != "new")
       capture = this.props.location.state
@@ -86,6 +90,21 @@ class CaptureDetails extends Component {
         this.setState({ ddStatus: { label: "Rejected", value: "Rejected" } });
     }
     this.setState({ id: id, capture: _capture })
+
+    console.log(capture)
+    getFirestore().get({ collection: "missions", doc: capture.mission })
+      .then((doc) => {
+        if (doc != undefined && doc.data().description != undefined && doc.data().description.es != null) {
+          this.setState({ missionDescription: doc.data().description.es })
+        }
+        if (doc != undefined && doc.data().objective != undefined && doc.data().objective.es != null) {
+          this.setState({ missionObjective: doc.data().objective.es })
+        }
+      })
+      .catch((error) => {
+        this.setState({ missionDescription: "Error" })
+        this.setState({ missionObjective: "Error" })
+      });  
   }
 
   handleChange = (e) => {
@@ -109,7 +128,7 @@ class CaptureDetails extends Component {
     const status = this.state.ddStatus.value
 
     const capture = {
-      coord: { lat: Number(this.state.lat), long: Number(this.state.long) },
+      coord: { lat: Number(this.refs.lat.value), long: Number(this.refs.long.value) },
       createdAt: Number(this.state.timeCreatedAt / 1000.0),
       evidence: { photo: this.refs.photo.value, sound: this.refs.sound.value, text: this.refs.text.value, video: this.refs.video.value },
       mission: this.refs.mission.value,
@@ -135,7 +154,7 @@ class CaptureDetails extends Component {
   
   render() {
     const { auth, projectActions } = this.props;
-    const { capture, lat, long, timeCreatedAt, ddStatus } = this.state
+    const { capture, lat, long, timeCreatedAt, ddStatus, missionDescription, missionObjective } = this.state
     if (this.state.savingChanges) {
       return <Redirect to='/captures' />
     }
@@ -144,14 +163,21 @@ class CaptureDetails extends Component {
     }
     if (!auth.uid) return <Redirect to='/singin' />
 
-    if (capture) {
+    if (capture && missionObjective) {
       return (
-
         <div className="container section project-details">
           <button className="btn waves-effect waves-light" onClick={this.handleDelete}>Eliminar</button>
           <div className="card z-depth-0">
             <div className="card-content">
               <form onSubmit={this.handleSubmit} style={{ marginTop: "0px auto" }}>
+                <label>
+                  Descripción de la misión:
+                <textarea readOnly defaultValue={this.state.missionDescription} />
+                </label>
+                <label>
+                  Objetivo de la misión:
+                <textarea readOnly defaultValue={this.state.missionObjective} />
+                </label>
                 <label>
                   Latitude:
                 <input type="number" defaultValue={capture.coord.lat} ref="lat" onChange={this.handleChange} />
@@ -240,6 +266,7 @@ class CaptureDetails extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
+  console.log(state)
   const id = ownProps.match.params.id;
   const captures = state.firestore.data.captures;
   const capture = captures ? captures[id] : null;
@@ -256,6 +283,7 @@ const mapDispathToProps = (dispatch) => {
   return {
     editCapture: (id, capture) => dispatch(editCapture(id, capture)),
     deleteCapture: (capture) => dispatch(deleteCapture(capture)),
+    showOnlyPending: (sop) => dispatch(showOnlyPending(sop)),
   }
 }
 

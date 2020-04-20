@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import { compose } from 'redux'
-import UserSummary from './UserSummary'
+import PaymentSummary from './PaymentSummary'
 import { Link } from 'react-router-dom'
 import Pagination from "react-js-pagination";
 
-class UsersList extends Component {
+class PaymentList extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -42,9 +42,7 @@ class UsersList extends Component {
               {this.props.users.map((user, id) => {
                 if ((10 * (this.state.activePage - 1)) <= id && id < (10 * this.state.activePage))
                   return (
-                    <Link to={'/user/' + user._id} key={user._id}>
-                      <UserSummary user={user} />
-                    </Link>
+                      <PaymentSummary user={user} />
                   )
               })}
             </div>
@@ -71,10 +69,5 @@ const mapStateToProps = (state) => {
 
 export default compose(
   connect(mapStateToProps),
-  firestoreConnect(props => {
-    //console.log(props.filter.charAt(0).toUpperCase() + props.filter.slice(1))
-    return [
-      { collection: 'users', orderBy: ['username', 'asc'] }
-    ]
-  }),
-)(UsersList)
+  
+)(PaymentList)

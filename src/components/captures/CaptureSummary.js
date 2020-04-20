@@ -18,6 +18,7 @@ class CaptureSummary extends Component {
 
         this.setState({ username:"Error - No Existe Usuario" })
       });
+      
     getFirestore().get({ collection: "missions", doc: this.props.capture.mission })
       .then((doc) => {
         if (doc != undefined && doc.data().title.es != null) {

@@ -7,11 +7,13 @@ import geoReducer from './geoReducer';
 import serverReducer from './serverReducer';
 import userReducer from './userReducer';
 import pageReducer from './pageReducer'
+import captureReducer from './captureReducer'
 
 const rootReducer = combineReducers({
     auth: authReducer,
     projectReducer: projectReducer,
-    userReducer, userReducer,
+    userReducer: userReducer,
+    captureReducer: captureReducer,
     geo: geoReducer,
     server: serverReducer,
     page: pageReducer,

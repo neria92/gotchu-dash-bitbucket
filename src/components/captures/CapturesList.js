@@ -5,6 +5,7 @@ import { compose } from 'redux'
 import CaptureSummary from './CaptureSummary'
 import { Link } from 'react-router-dom'
 import Pagination from "react-js-pagination";
+import { showOnlyPending, orderByReports } from '../../store/actions/captureActions'
 
 class CapturesList extends Component {
   constructor(props) {
@@ -15,12 +16,18 @@ class CapturesList extends Component {
       capturesToShow: [], 
       lastCaptures: [],
       originalList: null,
-      orderedByReportsList: null
+      orderedByReportsList: null,
+      orderByReports: false
     };
   }
 
   handlePageChange = (pageNumber) => {
     this.setState({ activePage: pageNumber });
+  }
+
+  componentDidMount() {
+    this.setState({ showOnlyPending: this.props.showOnlyPending })
+    this.setState({ orderByReports: this.props.orderByReports })
   }
 
   handleshowOnlyPending = (e) => {
@@ -37,7 +44,8 @@ class CapturesList extends Component {
     } else {
       captureAux = [...this.props.captures]
     }
-    this.setState({ capturesToShow: captureAux, lastCaptures: this.props.captures, showOnlyPending: sop })
+    this.props.setShowOnlyPending(sop)
+    this.setState({ capturesToShow: captureAux, lastCaptures: this.props.captures, showOnlyPending: this.props.showOnlyPending })
   }
 
   handleorderByReports = (e) => {
@@ -58,6 +66,7 @@ class CapturesList extends Component {
     } else {
       captureAux = [...this.props.captures]
     }
+    this.props.setOrderByReports(obr)
     this.setState({ capturesToShow: captureAux, lastCaptures: this.props.captures, orderByReports: obr })
   }
 
@@ -65,23 +74,22 @@ class CapturesList extends Component {
     if(this.props.captures == this.state.lastCaptures)
       return
     var captureAux = []
-    if(this.state.showOnlyPending) {
+    if(this.state.showOnlyPending && this.props.captures) {
       for (var i = 0; i < this.props.captures.length; i++ ){
         if (this.props.captures[i].status == "Pending") {
           captureAux.push(this.props.captures[i]);
         }
       } 
     } else {
-      captureAux = [...this.props.captures]
+      if (this.props.captures){
+        captureAux = [...this.props.captures]
+      }
     }
     this.setState({capturesToShow: captureAux, lastCaptures: this.props.captures})
 
 
-
-    if (this.props.captures == this.state.lastMissions)
-      return
     var captureAux = []
-    if (this.state.orderByReports) {
+    if (this.state.orderByReports && this.props.captures) {
       captureAux = [...this.props.captures];
       captureAux.sort(function (a, b) {
         if (a.reports != null && b.reports != null) {
@@ -90,68 +98,88 @@ class CapturesList extends Component {
           return a.reports != null ? -1 : 1;
         }
       });
+
     } else {
-      captureAux = [...this.props.captures]
+      if (this.props.captures){
+        captureAux = [...this.props.captures]
+      } 
     }
-    this.setState({ missionsToShow: captureAux, lastMissions: this.props.captures })
+    this.setState({ capturesToShow: captureAux, lastCaptures: this.props.captures })
   }
 
   render(){
-    if (this.props.captures){
+    if (this.props.searching) {
       return (
-        <div>
-          <div>
-            <Pagination
-              activePage={this.state.activePage}
-              itemsCountPerPage={10}
-              totalItemsCount={this.state.capturesToShow.length}
-              pageRangeDisplayed={9}
-              onChange={this.handlePageChange}
-            />
-          </div>
-          <label>
-
-            <input type="checkbox" defaultChecked={this.state.orderByReports} id="orderByReports" ref="orderByReports" onChange={this.handleorderByReports} />
-            <span>Ordernar por cantidad de reportes</span>
-          </label>
-          <label>
-            
-              <input type="checkbox" defaultChecked={this.state.showOnlyPending} id="showOnlyPending" ref="showOnlyPending" onChange={this.handleshowOnlyPending} />
-            <span>Mostrar solo pendientes</span>
-          </label>
-          <div className="project-list section">
-            {this.state.capturesToShow.map((capture, id) => {
-              if ((10 * (this.state.activePage - 1)) <= id && id < (10 * this.state.activePage))
-                  return (
-                    <Link to={{pathname:'/capture/' + capture.id, state:capture}} key={capture.id}>
-                      <CaptureSummary capture={capture} />
-                    </Link>
-                  )
-            })}
-          </div>
+        <div >
+          <p style={{ color: "white" }}>Searching...</p>
         </div>
       )
     } else {
-      return (
-        <div className="container center">
-          <p>Loading captures...</p>
-        </div>
-      )
+      if (this.props.captures) {
+        return (
+          <div>
+            <div>
+              <Pagination
+                activePage={this.state.activePage}
+                itemsCountPerPage={10}
+                totalItemsCount={this.state.capturesToShow.length}
+                pageRangeDisplayed={9}
+                onChange={this.handlePageChange}
+              />
+            </div>
+            <label>
+
+              <input type="checkbox" defaultChecked={this.state.orderByReports} id="orderByReports" ref="orderByReports" onChange={this.handleorderByReports} />
+              <span>Ordernar por cantidad de reportes</span>
+            </label>
+            <label>
+
+              <input type="checkbox" defaultChecked={this.state.showOnlyPending} id="showOnlyPending" ref="showOnlyPending" onChange={this.handleshowOnlyPending} />
+              <span>Mostrar solo pendientes</span>
+            </label>
+            <div className="project-list section">
+              {this.state.capturesToShow.map((capture, id) => {
+                if ((10 * (this.state.activePage - 1)) <= id && id < (10 * this.state.activePage))
+                  return (
+                    <Link to={{ pathname: '/capture/' + capture._id, state: capture }} key={capture._id}>
+                      <CaptureSummary capture={capture} />
+                    </Link>
+                  )
+              })}
+            </div>
+          </div>
+        )
+      } else {
+        return (
+          <div >
+            <p style={{ color: "white" }}>Loading captures...</p>
+          </div>
+        )
+      }
     }
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setShowOnlyPending: (sop) => dispatch(showOnlyPending(sop)),
+    setOrderByReports: (obr) => dispatch(orderByReports(obr))
   }
 }
 
 const mapStateToProps = (state) => {
   return {
-    captures: state.firestore.ordered.capture,
+    //captures: state.firestore.ordered.capture,
+    showOnlyPending: state.captureReducer.showOnlyPending,
+    orderByReports: state.captureReducer.orderByReports
   }
 }
 
 export default compose(
-  connect(mapStateToProps),
+  connect(mapStateToProps, mapDispatchToProps),
   firestoreConnect(props => {
     return [
-      { collection: 'capture', where: [['userId', '>=', props.filter]], orderBy: ['userId', 'asc'] }
+      { collection: 'capture', orderBy: ['userId', 'asc'] }
     ]
   }),
 )(CapturesList)

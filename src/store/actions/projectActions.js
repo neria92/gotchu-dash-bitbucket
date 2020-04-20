@@ -110,3 +110,25 @@ export const editProject = (missionID,project) => {
 
     }
 };
+
+export const setSearchString = (searchString) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        dispatch({
+            type: 'set_Search_String',
+            payload: {
+                searchString: searchString
+            }
+        });
+    }
+};
+
+export const setOrderByReports = (obr) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        dispatch({
+            type: 'set_Order_By_Reports',
+            payload: {
+                orderByReports: obr
+            }
+        });
+    }
+};
