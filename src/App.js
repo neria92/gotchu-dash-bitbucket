@@ -14,6 +14,8 @@ import CaptureDetails from './components/captures/CaptureDetails'
 import Pay from './components/pay/Pay'
 import Payments from './components/payments/Payments'
 import PaymentDetails from './components/payments/PaymentDetails'
+import Charges from './components/charges/Charges'
+import ChargeDetails from './components/charges/ChargeDetails'
 import CreateProject from './components/projects/CreateProject'
 
 function App() {
@@ -35,6 +37,8 @@ function App() {
           <Route path='/pay' component={Pay} />
           <Route path='/payments' component={Payments} />
           <Route path='/payment' component={PaymentDetails} />
+          <Route path='/charges' component={Charges} />
+          <Route path='/charge' component={ChargeDetails} />
         </Switch>
       </div>
     </BrowserRouter>
