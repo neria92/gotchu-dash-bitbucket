@@ -48,7 +48,7 @@ class Captures extends Component {
         // });
 
         var fr = getAll ? { contentType: { missions: false, captures: true, users: false, hashtags: false }, "NSFW": true } : { contentType: { missions: false, captures: true, users: false, hashtags: false }, "NSFW": true, whiteMIDs: [this.state.busqueda] }
-        fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardSearch", {
+        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/dashboardSearch", {
             method: 'POST',
             mode: 'cors',
             headers: {
