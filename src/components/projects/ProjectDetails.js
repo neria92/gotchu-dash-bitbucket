@@ -181,6 +181,7 @@ class ProjectDetails extends Component {
 
       if(mission.locationPoints != null && mission.locationPoints[0]!=null)
       {
+        _mission.locationPoints = mission.locationPoints
         _mission.locationPoints[0].coord.lat    = mission.locationPoints[0].coord     != null && mission.locationPoints[0].coord.lat  != null ? mission.locationPoints[0].coord.lat  : 0
         _mission.locationPoints[0].coord.long   = mission.locationPoints[0].coord     != null && mission.locationPoints[0].coord.long != null ? mission.locationPoints[0].coord.long : 0
         _mission.locationPoints[0].radius       = mission.locationPoints[0].radius    != null ?  mission.locationPoints[0].radius : 0
@@ -225,12 +226,18 @@ class ProjectDetails extends Component {
 
     const { hashtags } = this.state;
     //alert(`hay ${hashtags.length} hashtags`);
-    console.log(this.state)
     const {id,ddEv} = this.state
     const lang = this.state.ddLang.value
     const complexity = this.state.ddCom.value
     const locationType = this.state.ddLocType.value
     var evidenceType = 1;
+    var mlp = []
+    if (this.state.mission != null){
+      mlp = this.state.mission.locationPoints
+    }
+    mlp[0].coord.lat = Number(this.refs.locationPoint0Lat.value)
+    mlp[0].coord.long = Number(this.refs.locationPoint0Long.value)
+    mlp[0].radius = Number(this.refs.locationPoint0Radius.value)
     for(var i =0;i<ddEv.length;i++)
       evidenceType = evidenceType*ddEv[i].value
 
@@ -255,7 +262,7 @@ class ProjectDetails extends Component {
       language: lang,
       locationName: { [lang]: this.refs.locationName.value },
       locationType: locationType,
-      locationPoints: [ { coord:{ lat:Number(this.refs.locationPoint0Lat.value),long:Number(this.refs.locationPoint0Long.value)}, radius:Number(this.refs.locationPoint0Radius.value)} ],
+      locationPoints: mlp,
       missionType: { [lang]: this.refs.missionType.value },
       objective: { [lang]: this.refs.objetive.value },
       reward: { GP: parseInt(this.refs.rewardGP.value), points: parseInt(this.refs.rewardPoints.value) },
@@ -278,7 +285,6 @@ class ProjectDetails extends Component {
     if(id == 'new'){
       this.props.addProject(mission);
     } else {
-      console.log(mission)
       this.props.editProject(id, mission );
     }
   }

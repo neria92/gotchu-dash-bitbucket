@@ -231,7 +231,7 @@ export default compose(
     firestoreConnect(props => {
         //console.log(props.filter.charAt(0).toUpperCase() + props.filter.slice(1))
         return [
-            { collection: 'users', where: [['money', '>=', 30]] }
+            { collection: 'users', where: [['money', '>=', 15]] }
         ]
     }),
 )(Pay)
