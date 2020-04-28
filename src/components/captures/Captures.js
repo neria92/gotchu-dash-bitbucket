@@ -58,7 +58,7 @@ class Captures extends Component {
             body: JSON.stringify({
                 UID: "0",
                 startIndex: 0,
-                numberOfFeeds: 500,
+                numberOfFeeds: 5000,
                 sortBy: "date",
                 filter: fr
             }),
