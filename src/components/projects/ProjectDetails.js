@@ -7,6 +7,8 @@ import { editProject, addProject, deleteProject} from '../../store/actions/proje
 import Select from 'react-select';
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css";
+import { reduxFirestore, getFirestore } from 'redux-firestore'
+
 const idiomas = [
   { label: "Español", value: "es" },
   { label: "English", value: "en" }
@@ -46,7 +48,8 @@ class ProjectDetails extends Component {
     timeInit:null,
     timeFinish:null,
     timeDuration:0,
-    hashtags: []
+    hashtags: [],
+    microtaskUsername: ''
   };
 
   componentDidMount()
@@ -62,6 +65,7 @@ class ProjectDetails extends Component {
         locationName: { es: '' },
         locationType: '',
         locationPoints: [ { coord:{ lat:0,long:0}, radius:0} ],
+        microtask: '',
         missionType: { es: '' },
         objective: { es: '' },
         reward: { GP: 0, points: 0 },
@@ -210,8 +214,21 @@ class ProjectDetails extends Component {
       _mission.pinned = mission.pinned != null ? mission.pinned : false
       _mission.validatorProperties = mission.validatorProperties != null ? mission.validatorProperties : ""
 
+      _mission.microtask = mission.microtask != null ? mission.microtask : [""]
       _mission.hashtags = mission.hashtags != null ? mission.hashtags : [""]
       this.setState({ hashtags: _mission.hashtags})
+    }
+
+    if(_mission.microtask != ''){
+      getFirestore().get({ collection: "users", doc: _mission.microtask })
+        .then((doc) => {
+          if (doc != undefined && doc.data().username != null) {
+            this.setState({ microtaskUsername: doc.data().username })
+          }
+        })
+        .catch((error) => {
+          this.setState({ microtaskUsername: "No se encontro usuario" })
+        });
     }
     //console.log(id,_mission)
     this.setState({id:id,mission:_mission})
@@ -373,6 +390,10 @@ class ProjectDetails extends Component {
                 <label>
                   ID:
                 <input readOnly defaultValue={this.state.id} />
+                </label>
+                <label>
+                  Usuario creador:
+                <input readOnly defaultValue={this.state.microtaskUsername} />
                 </label>
                 <label>
                   Titulo:
