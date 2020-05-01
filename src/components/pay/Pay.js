@@ -93,6 +93,28 @@ class Pay extends Component {
         //     console.log(result);
         //     //this.setState({ admin: true })
         // });
+        // var payout = {
+        //     "method": "bank_account",
+        //     "bank_account": {
+        //         "clabe": "012298026516924616",
+        //         "holder_name": "Gotchu Agent"
+        //     },
+        //     "amount": 10.50,
+        //     "description": "Galletas Taifelds"
+        // };
+
+        // fetch('https://us-central1-gchgame.cloudfunctions.net/sendPayment', {
+        //     method: 'POST',
+        //     headers: {
+        //         Accept: 'application/json',
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({
+        //         uid: "test id",
+        //         payout: payout
+        //     }),
+        // })
+
         fetch("https://us-central1-gchgame.cloudfunctions.net/sendPayment", {
             method: 'POST',
             mode: 'cors',
