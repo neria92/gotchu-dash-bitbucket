@@ -76,7 +76,6 @@ class Pay extends Component {
         e.preventDefault();
         this.setState({...this.state, payingInProgress: true})
         this.state.usersFilteredForPayment.map((user) => {
-            console.log(user)
             this.payUser(user)
         })
     }
@@ -101,7 +100,7 @@ class Pay extends Component {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: {
+            body: JSON.stringify({ 
                 uid: user.id,
                 payout: {
                     "method": "bank_account",
@@ -112,7 +111,7 @@ class Pay extends Component {
                     "amount": user.money,
                     "description": "Monthly payment"
                 }
-            }
+            })
             ,
         }).then(response => {
             const statusCode = response.status;
