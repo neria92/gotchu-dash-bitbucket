@@ -23,7 +23,11 @@ class Captures extends Component {
     handleSubmitSearch = (e) => {
         e.preventDefault();
         this.setState({ searching: true })
-        this.getSearchResults(false);
+        if (this.state.busqueda === ""){
+            this.getSearchResults(true);
+        } else {
+            this.getSearchResults(false);
+        }
     }
 
     componentDidMount() {
@@ -46,7 +50,7 @@ class Captures extends Component {
         //     console.log(result);
         //     //this.setState({ admin: true })
         // });
-
+        console.log(this.state.busqueda)
         var fr = getAll ? { contentType: { missions: false, captures: true, users: false, hashtags: false }, "NSFW": true } : { contentType: { missions: false, captures: true, users: false, hashtags: false }, "NSFW": true, whiteMIDs: [this.state.busqueda] }
         fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardSearch", {
             method: 'POST',
@@ -119,7 +123,7 @@ class Captures extends Component {
         return (
             <div className="dashboard container">
                 <form onSubmit={this.handleSubmitSearch} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
-                    <input placeholder="Mission ID" onChange={this.handleChange} id="busqueda" required />
+                    <input placeholder="Mission ID" onChange={this.handleChange} id="busqueda" />
                     {/* <button type="submit" value="Guardar" >Make admin</button> */}
                 </form>
                 <div className ="row">
