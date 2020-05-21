@@ -8,6 +8,8 @@ import Select from 'react-select';
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css";
 import { functions } from 'firebase'
+import { reduxFirestore, getFirestore } from 'redux-firestore'
+
 
 const idiomas = [
   { label: "Español", value: "es" },
@@ -43,6 +45,7 @@ class MicrotaskDetails extends Component {
     timeFinish: null,
     timeDuration: 0,
     hashtags: [],
+    creatorAgent: null,
 
     microtaskPublishDate: null,
     agentHistoryCurrentCaptureDate: null
@@ -58,6 +61,18 @@ class MicrotaskDetails extends Component {
 
   componentDidMount() {
     const id = this.props.location.state.id
+
+    getFirestore().get({ collection: "users", doc: this.props.location.state.microtask })
+      .then((doc) => {
+        if (doc != undefined && doc.data().username != null) {
+          this.setState({ creatorAgent: doc.data().username })
+        }
+      })
+      .catch((error) => {
+
+        this.setState({ creatorAgent: "Error - No Existe Usuario" })
+      });
+
     var _mission = {
       complexity: { es: '' },
       description: { es: '' },
@@ -356,7 +371,7 @@ class MicrotaskDetails extends Component {
   };
 
   render() {
-    const { auth, projectActions } = this.props;
+    const { auth, captures } = this.props;
     const { mission, ddLang, ddEv, ddCom, timeInit, timeFinish, microtaskInfo, microtaskPublishDate, agentHistoryCurrentCaptureDate } = this.state
     if (this.state.savingChanges) {
       return <Redirect to='/' />
@@ -365,6 +380,11 @@ class MicrotaskDetails extends Component {
       return <Redirect to='/' />
     }
     if (!auth.uid) return <Redirect to='/singin' />
+    var rcap = []
+    rcap[0] = { coord: { lat: 0, long: 0 }, createdAt: 0, evidence: { photo: "", sound: "", text: "" }, mission: "", status: "Esta microtask no ha sido capturada", userId: "" }
+    if(captures != undefined && captures[0]){
+      rcap = captures
+    }
 
     if (mission) {
       const lang = mission.language;
@@ -378,6 +398,10 @@ class MicrotaskDetails extends Component {
                 <label>
                   Titulo:
                 <input readOnly defaultValue={mission.title[lang]} ref="title" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Usuario Creador:
+                <input readOnly defaultValue={this.state.creatorAgent} ref="title" onChange={this.handleChange} />
                 </label>
                 {/* <div>
                   <label>
@@ -573,33 +597,34 @@ class MicrotaskDetails extends Component {
                   {/* <button>Incorporate</button> */}
                 </form>
 
-                
-
-
-
                 <label>
                   Agente aceptado:
-                <input readOnly defaultValue={microtaskInfo.acceptedAgent.name} ref="title" onChange={this.handleChange} />
+                <input readOnly defaultValue={rcap[0].userId} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Evidencia foto:
-                <input readOnly defaultValue={microtaskInfo.agentHistory[0].evidence.photo} ref="title" onChange={this.handleChange} />
+                <input readOnly defaultValue={rcap[0].evidence.photo} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Evidencia sonido:
-                <input readOnly defaultValue={microtaskInfo.agentHistory[0].evidence.sound} ref="title" onChange={this.handleChange} />
+                <input readOnly defaultValue={rcap[0].evidence.sound} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Evidencia Texto:
-                <input readOnly defaultValue={microtaskInfo.agentHistory[0].evidence.text} ref="title" onChange={this.handleChange} />
+                <input readOnly defaultValue={rcap[0].evidence.text} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Evidencia Video:
-                <input readOnly defaultValue={microtaskInfo.agentHistory[0].evidence.video} ref="title" onChange={this.handleChange} />
+                <input readOnly defaultValue={rcap[0].evidence.video} ref="title" onChange={this.handleChange} />
+                </label>
+
+                <label>
+                  Estatus:
+                <input readOnly defaultValue={rcap[0].status} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <div>
@@ -619,22 +644,22 @@ class MicrotaskDetails extends Component {
                 
                 <label>
                   Captura latitud:
-                <input readOnly defaultValue={microtaskInfo.agentHistory[0].coord.lat} ref="title" onChange={this.handleChange} />
+                <input readOnly defaultValue={rcap[0].coord.lat} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Captura longitud:
-                <input readOnly defaultValue={microtaskInfo.agentHistory[0].coord.long} ref="title" onChange={this.handleChange} />
+                <input readOnly defaultValue={rcap[0].coord.long} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Apelacion agente:
-                <textarea readOnly defaultValue={microtaskInfo.status} ref="objetive" onChange={this.handleChange} />
+                <textarea readOnly defaultValue={rcap.status} ref="objetive" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Respuesta creador:
-                <textarea readOnly defaultValue={microtaskInfo.response} ref="objetive" onChange={this.handleChange} />
+                <textarea readOnly defaultValue={rcap.response} ref="objetive" onChange={this.handleChange} />
                 </label>
 
                 
@@ -673,10 +698,21 @@ class MicrotaskDetails extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const id = ownProps.match.params.id;
+  //console.log(id)
+  var captures = state.firestore.data.capture;
+  if(captures != undefined){
+    var filteredCaptures = Object.values(captures).filter(function (capture) {
+      return capture.mission == id;
+    });
+    filteredCaptures.sort(function (a, b) { return a.createdAt < b.createdAt });
+  }
+  //const user = users ? users[id] : null;
+
   return {
     id: id,
     auth: state.firebase.auth,
-    projectActions: state.projectReducer
+    projectActions: state.projectReducer,
+    captures: filteredCaptures
   }
 }
 
@@ -689,4 +725,11 @@ const mapDispathToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispathToProps)(MicrotaskDetails)
+//export default connect(mapStateToProps, mapDispathToProps)(MicrotaskDetails)
+
+export default compose(
+  connect(mapStateToProps, mapDispathToProps),
+  firestoreConnect([{
+    collection: 'capture'
+  }])
+)(MicrotaskDetails)
