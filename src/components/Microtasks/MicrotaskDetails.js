@@ -46,6 +46,14 @@ class MicrotaskDetails extends Component {
     timeDuration: 0,
     hashtags: [],
     creatorAgent: null,
+    captures: null,
+    cci: null,
+    currentCapture: null,
+    cits: null,
+    clts: null,
+    captureDate: null,
+    captureAgentName: "",
+    prevCaptureAgentName: "",
 
     microtaskPublishDate: null,
     agentHistoryCurrentCaptureDate: null
@@ -244,10 +252,39 @@ class MicrotaskDetails extends Component {
       _microtaskInfo.agentHistory = microtaskInfo.agentHistory != null ? microtaskInfo.agentHistory : [{ coord: { lat: 0, long: 0 }, createdAt: 0, evidence: { photo: '', sound: '', text: '', video: '' }, status: '', statusResponse: '' }]
       this.setState({ microtaskInfo: _microtaskInfo })
     }
+    
+    this.setState({ cci: 0 })
+    if (this.props.captures && this.props.captures[0]) {
+      this.setState({ cl: this.props.captures.length })
+    } else {
+      this.setState({ cl: 0 })
+    }
   }
 
   handleChange = (e) => {
     e.preventDefault();
+  }
+
+  handlePreviousCapture = (e) => {
+    if(this.state.cci > 0){
+      var cc = this.state.cci
+      cc = cc - 1
+      var cco = this.props.captures[cc]
+      var t1 = new Date()
+      t1.setTime(cco.createdAt * 1000.0)
+      this.setState({ cci: cc, currentCapture: cco, cits: cc + 1, captureDate: t1 })
+    }
+  }
+
+  handleNextCapture = (e) => {
+    if (this.state.cci < this.props.captures.length - 1){
+      var cc = this.state.cci
+      cc = cc + 1
+      var cco = this.props.captures[cc]
+      var t1 = new Date()
+      t1.setTime(cco.createdAt * 1000.0)
+      this.setState({ cci: cc, currentCapture: cco, cits: cc + 1, captureDate: t1 })
+    }
   }
 
   handleSubmit = (e) => {
@@ -370,7 +407,37 @@ class MicrotaskDetails extends Component {
     });
   };
 
+  componentDidUpdate(pp, pe){
+    if (this.props.captures !== pp.captures) {
+      if(this.props.captures.length > 0){
+        var t = new Date()
+        t.setTime(this.props.captures[0].createdAt * 1000)
+        this.setState({ captures: this.props.captures, cci: 0, currentCapture: this.props.captures[0], cits: 1, clts: this.props.captures.length, captureDate: t })
+        //this.loadCaptureAgentName(this.props.captures[0].userId);
+      } else {
+        var rcap = []
+        rcap[0] = { coord: { lat: 0, long: 0 }, createdAt: 0, evidence: { photo: "", sound: "", text: "" }, mission: "", status: "", userId: "No capturada" }
+        this.setState({ captures: rcap, currentCapture: rcap[0], cci: 0, cits: 0, clts: 0, captureAgentName: "No ha sido capturada", captureDate: 0 })
+      }
+    }
+  }
+
+  loadCaptureAgentName(userId){
+    getFirestore().get({ collection: "users", doc: userId })
+      .then((doc) => {
+        if (doc != undefined && doc.data().username != null) {
+          if (doc.data().username){
+            this.setState({ captureAgentName: doc.data().username })
+          }
+        }
+      })
+      .catch((error) => {
+        this.setState({ captureAgentName: "Error - No Existe Usuario" })
+      });
+  }
+
   render() {
+    //console.log(this.props.captures) //undefined a defined
     const { auth, captures } = this.props;
     const { mission, ddLang, ddEv, ddCom, timeInit, timeFinish, microtaskInfo, microtaskPublishDate, agentHistoryCurrentCaptureDate } = this.state
     if (this.state.savingChanges) {
@@ -380,13 +447,8 @@ class MicrotaskDetails extends Component {
       return <Redirect to='/' />
     }
     if (!auth.uid) return <Redirect to='/singin' />
-    var rcap = []
-    rcap[0] = { coord: { lat: 0, long: 0 }, createdAt: 0, evidence: { photo: "", sound: "", text: "" }, mission: "", status: "Esta microtask no ha sido capturada", userId: "" }
-    if(captures != undefined && captures[0]){
-      rcap = captures
-    }
 
-    if (mission) {
+    if (mission && this.state.currentCapture) {
       const lang = mission.language;
       return (
 
@@ -597,34 +659,55 @@ class MicrotaskDetails extends Component {
                   {/* <button>Incorporate</button> */}
                 </form>
 
+                <hr></hr>
+                <a style={{color:"red", fontSize:"25px"}}>Captura {this.state.cits} de {this.state.clts}</a><br></br>
+
+                <button
+                  type="button"
+                  onClick={this.handlePreviousCapture}
+                  className="small"
+                >
+                  Captura anterior
+            </button>
+
+                <button
+                  type="button"
+                  onClick={this.handleNextCapture}
+                  className="small"
+                >
+                  Captura siguiente
+            </button>
+                <br></br>
                 <label>
                   Agente aceptado:
-                <input readOnly defaultValue={rcap[0].userId} ref="title" onChange={this.handleChange} />
+                <input readOnly value={this.state.currentCapture.userId} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Evidencia foto:
-                <input readOnly defaultValue={rcap[0].evidence.photo} ref="title" onChange={this.handleChange} />
+                <input readOnly value={this.state.currentCapture.evidence.photo} ref="title" onChange={this.handleChange} />
                 </label>
+
+                {this.state.currentCapture.evidence.photo && <div><img src={this.state.currentCapture.evidence.photo} style={{ maxWidth: "-webkit-fill-available" }} /> </div>}
 
                 <label>
                   Evidencia sonido:
-                <input readOnly defaultValue={rcap[0].evidence.sound} ref="title" onChange={this.handleChange} />
+                <input readOnly value={this.state.currentCapture.evidence.sound} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Evidencia Texto:
-                <input readOnly defaultValue={rcap[0].evidence.text} ref="title" onChange={this.handleChange} />
+                <input readOnly value={this.state.currentCapture.evidence.text} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Evidencia Video:
-                <input readOnly defaultValue={rcap[0].evidence.video} ref="title" onChange={this.handleChange} />
+                <input readOnly value={this.state.currentCapture.evidence.video} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Estatus:
-                <input readOnly defaultValue={rcap[0].status} ref="title" onChange={this.handleChange} />
+                <input readOnly value={this.state.currentCapture.status} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <div>
@@ -633,7 +716,7 @@ class MicrotaskDetails extends Component {
                 </label>
                 </div>
                 <div>
-                  <DatePicker readOnly selected={agentHistoryCurrentCaptureDate}
+                  <DatePicker readOnly selected={this.state.captureDate}
                     showTimeSelect
                     timeFormat="HH:mm"
                     timeIntervals={15}
@@ -644,22 +727,22 @@ class MicrotaskDetails extends Component {
                 
                 <label>
                   Captura latitud:
-                <input readOnly defaultValue={rcap[0].coord.lat} ref="title" onChange={this.handleChange} />
+                <input readOnly value={this.state.currentCapture.coord.lat} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Captura longitud:
-                <input readOnly defaultValue={rcap[0].coord.long} ref="title" onChange={this.handleChange} />
+                <input readOnly value={this.state.currentCapture.coord.long} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Apelacion agente:
-                <textarea readOnly defaultValue={rcap.status} ref="objetive" onChange={this.handleChange} />
+                <textarea readOnly value={""} ref="objetive" onChange={this.handleChange} />
                 </label>
 
                 <label>
                   Respuesta creador:
-                <textarea readOnly defaultValue={rcap.response} ref="objetive" onChange={this.handleChange} />
+                <textarea readOnly value={""} ref="objetive" onChange={this.handleChange} />
                 </label>
 
                 
@@ -704,7 +787,7 @@ const mapStateToProps = (state, ownProps) => {
     var filteredCaptures = Object.values(captures).filter(function (capture) {
       return capture.mission == id;
     });
-    filteredCaptures.sort(function (a, b) { return a.createdAt < b.createdAt });
+    var sfilteredCaptures = filteredCaptures.sort(function (a, b) { return a.createdAt < b.createdAt });
   }
   //const user = users ? users[id] : null;
 
@@ -712,7 +795,7 @@ const mapStateToProps = (state, ownProps) => {
     id: id,
     auth: state.firebase.auth,
     projectActions: state.projectReducer,
-    captures: filteredCaptures
+    captures: sfilteredCaptures
   }
 }
 

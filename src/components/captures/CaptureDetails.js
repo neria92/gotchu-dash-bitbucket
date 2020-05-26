@@ -209,9 +209,7 @@ class CaptureDetails extends Component {
                 <input defaultValue={capture.evidence.photo} ref="photo" onChange={this.handleChange} />
                 </label>
 
-                {capture.evidence.photo &&
-                  <div><img src={capture.evidence.photo} style={{ maxWidth: "-webkit-fill-available" }} /> </div>
-                }
+                {capture.evidence.photo && <div><img src={capture.evidence.photo} style={{ maxWidth: "-webkit-fill-available" }} /> </div>}
 
                 <label>
                   Sonido evidencia:
