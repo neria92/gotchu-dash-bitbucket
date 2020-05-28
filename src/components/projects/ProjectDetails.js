@@ -68,7 +68,7 @@ class ProjectDetails extends Component {
         microtask: '',
         missionType: { es: '' },
         objective: { es: '' },
-        reward: { GP: 0, points: 0 },
+        reward: { GP: 0, points: 0, money: 0 },
         startDate: 0,
         title: { es: '' },
         type: '',
@@ -203,6 +203,7 @@ class ProjectDetails extends Component {
 
       _mission.reward.GP = mission.reward != null && mission.reward.GP != null ? mission.reward.GP : 0
       _mission.reward.points = mission.reward != null && mission.reward.points != null ? mission.reward.points : 0
+      _mission.reward.money = mission.reward != null && mission.reward.money != null ? mission.reward.money : 0
       _mission.images   = mission.images != null ? mission.images : []
       _mission.imagesRef = mission.imagesRef != null ? mission.imagesRef : []
 
@@ -282,7 +283,7 @@ class ProjectDetails extends Component {
       locationPoints: mlp,
       missionType: { [lang]: this.refs.missionType.value },
       objective: { [lang]: this.refs.objetive.value },
-      reward: { GP: parseInt(this.refs.rewardGP.value), points: parseInt(this.refs.rewardPoints.value) },
+      reward: { GP: parseInt(this.refs.rewardGP.value), points: parseInt(this.refs.rewardPoints.value), money: parseInt(this.refs.rewardMoney.value) },
       startDate: Number(this.state.timeInit/1000.0),
       title: { [lang]: this.refs.title.value },
       type: this.refs.type.value,
@@ -507,6 +508,10 @@ class ProjectDetails extends Component {
                 <label>
                   Recompensa Points:
                 <input type="number" defaultValue={mission.reward.points} ref="rewardPoints" onChange={this.handleChange} />
+                </label>
+                <label>
+                  Recompensa Dinero:
+                <input type="number" defaultValue={mission.reward.money} ref="rewardMoney" onChange={this.handleChange} />
                 </label>
                 <label>
                   URL de servico:
