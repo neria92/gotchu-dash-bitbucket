@@ -54,6 +54,7 @@ class MicrotaskDetails extends Component {
     captureDate: null,
     captureAgentName: "",
     prevCaptureAgentName: "",
+    captureButtonPress: true,
 
     microtaskPublishDate: null,
     agentHistoryCurrentCaptureDate: null
@@ -267,22 +268,27 @@ class MicrotaskDetails extends Component {
 
   handlePreviousCapture = (e) => {
     if(this.state.cci > 0){
+      this.state.captureButtonPress = true
+
       var cc = this.state.cci
       cc = cc - 1
       var cco = this.props.captures[cc]
       var t1 = new Date()
       t1.setTime(cco.createdAt * 1000.0)
+      console.log("llamando")
       this.setState({ cci: cc, currentCapture: cco, cits: cc + 1, captureDate: t1 })
     }
   }
 
   handleNextCapture = (e) => {
     if (this.state.cci < this.props.captures.length - 1){
+      this.state.captureButtonPress = true
       var cc = this.state.cci
       cc = cc + 1
       var cco = this.props.captures[cc]
       var t1 = new Date()
       t1.setTime(cco.createdAt * 1000.0)
+      console.log("llamando")
       this.setState({ cci: cc, currentCapture: cco, cits: cc + 1, captureDate: t1 })
     }
   }
@@ -408,32 +414,39 @@ class MicrotaskDetails extends Component {
   };
 
   componentDidUpdate(pp, pe){
-    if (this.props.captures !== pp.captures) {
-      if(this.props.captures.length > 0){
-        var t = new Date()
-        t.setTime(this.props.captures[0].createdAt * 1000)
-        this.setState({ captures: this.props.captures, cci: 0, currentCapture: this.props.captures[0], cits: 1, clts: this.props.captures.length, captureDate: t })
-        //this.loadCaptureAgentName(this.props.captures[0].userId);
-      } else {
-        var rcap = []
-        rcap[0] = { coord: { lat: 0, long: 0 }, createdAt: 0, evidence: { photo: "", sound: "", text: "" }, mission: "", status: "", userId: "No capturada" }
-        this.setState({ captures: rcap, currentCapture: rcap[0], cci: 0, cits: 0, clts: 0, captureAgentName: "No ha sido capturada", captureDate: 0 })
+    if(this.state.captureButtonPress){
+    
+      if (this.state.currentCapture !== pe.currentCapture) {
+        this.state.captureButtonPress = false;
+
+        this.state.captureAgentName = ""
+        getFirestore().get({ collection: "users", doc: this.state.currentCapture.userId })
+          .then((doc) => {
+            if (doc.exists) {
+              if (doc.data().username) {
+                this.setState({ captureAgentName: doc.data().username })
+              }
+            }
+          })
+          .catch((error) => {
+            this.setState({ captureAgentName: "Error - No Existe Usuario" })
+          });
+          
+      }
+
+      if (this.props.captures !== pp.captures) {
+        if(this.props.captures.length > 0){
+          var t = new Date()
+          t.setTime(this.props.captures[0].createdAt * 1000)
+          this.setState({ captures: this.props.captures, cci: 0, currentCapture: this.props.captures[0], cits: 1, clts: this.props.captures.length, captureDate: t })
+          //this.loadCaptureAgentName(this.props.captures[0].userId);
+        } else {
+          var rcap = []
+          rcap[0] = { coord: { lat: 0, long: 0 }, createdAt: 0, evidence: { photo: "", sound: "", text: "" }, mission: "", status: "", userId: "No capturada" }
+          this.setState({ captures: rcap, currentCapture: rcap[0], cci: 0, cits: 0, clts: 0, captureAgentName: "No ha sido capturada", captureDate: 0 })
+        }
       }
     }
-  }
-
-  loadCaptureAgentName(userId){
-    getFirestore().get({ collection: "users", doc: userId })
-      .then((doc) => {
-        if (doc != undefined && doc.data().username != null) {
-          if (doc.data().username){
-            this.setState({ captureAgentName: doc.data().username })
-          }
-        }
-      })
-      .catch((error) => {
-        this.setState({ captureAgentName: "Error - No Existe Usuario" })
-      });
   }
 
   render() {
@@ -680,7 +693,7 @@ class MicrotaskDetails extends Component {
                 <br></br>
                 <label>
                   Agente aceptado:
-                <input readOnly value={this.state.currentCapture.userId} ref="title" onChange={this.handleChange} />
+                <input readOnly value={this.state.captureAgentName} ref="title" onChange={this.handleChange} />
                 </label>
 
                 <label>

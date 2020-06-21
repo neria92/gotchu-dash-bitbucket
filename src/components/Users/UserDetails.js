@@ -21,7 +21,8 @@ class UserDetails extends Component {
 
   handleAdmin = (e) => {
     e.preventDefault();
-    const adminUID = this.props._id;
+    console.log(this.props.id)
+    const adminUID = this.props.id;
     const addAdminRole = functions().httpsCallable('addAdminRole');
     addAdminRole({ uid: adminUID }).then(result => {
       console.log(result);

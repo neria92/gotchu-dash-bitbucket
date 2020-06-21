@@ -166,18 +166,25 @@ class ProjectDetails extends Component {
       _mission.durationSecs = mission.durationSecs != null ? mission.durationSecs : 0
       _mission.reports      = mission.reports      != null ? mission.reports      : 0
       _mission.startDate    = mission.startDate    != null ? mission.startDate    : 0
+      _mission.endDate      = mission.endDate      != null ? mission.endDate      : 0
       
       _mission.startDate    = Number(_mission.startDate)
-      _mission.durationSecs = Number(_mission.durationSecs)
       if(isNaN(Number(_mission.startDate)))
         _mission.startDate  = 0 
+
+      _mission.endDate = Number(_mission.endDate)
+      if (isNaN(Number(_mission.endDate)))
+        _mission.endDate = 0 
+
+      _mission.durationSecs = Number(_mission.durationSecs)
       if(isNaN(Number(_mission.durationSecs)))
         _mission.durationSecs = 0
 
       var t1 = new Date()
       t1.setTime(_mission.startDate*1000.0)
+
       var t2 = new Date()
-      t2.setTime((_mission.startDate+_mission.durationSecs)*1000.0  )
+      t2.setTime(_mission.endDate * 1000.0  )
      
       this.setState({timeInit:t1,timeFinish:t2,timeDuration:_mission.durationSecs})
    
@@ -231,7 +238,7 @@ class ProjectDetails extends Component {
           this.setState({ microtaskUsername: "No se encontro usuario" })
         });
     }
-    //console.log(id,_mission)
+    console.log(id,_mission)
     this.setState({id:id,mission:_mission})
   }
 
@@ -285,6 +292,7 @@ class ProjectDetails extends Component {
       objective: { [lang]: this.refs.objetive.value },
       reward: { GP: parseInt(this.refs.rewardGP.value), points: parseInt(this.refs.rewardPoints.value), money: parseInt(this.refs.rewardMoney.value) },
       startDate: Number(this.state.timeInit/1000.0),
+      endDate: Number(this.state.timeFinish/1000.0),
       title: { [lang]: this.refs.title.value },
       type: this.refs.type.value,
       generic: this.refs.generic.value,

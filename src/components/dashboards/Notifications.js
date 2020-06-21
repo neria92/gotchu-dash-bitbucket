@@ -1,7 +1,7 @@
 import React from 'react'
 
 const Notifications = (data) => {
-    console.log(data.uploadJsonError)
+    //console.log(data.uploadJsonError)
     if (data.uploadJsonError == undefined){
         return (
                 <p></p>
