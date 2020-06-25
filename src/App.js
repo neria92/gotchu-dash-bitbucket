@@ -16,6 +16,7 @@ import Payments from './components/payments/Payments'
 import PaymentDetails from './components/payments/PaymentDetails'
 import Charges from './components/charges/Charges'
 import ChargeDetails from './components/charges/ChargeDetails'
+import Analytics from './components/analytics/Analytics'
 import CreateProject from './components/projects/CreateProject'
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
           <Route path='/payment' component={PaymentDetails} />
           <Route path='/charges' component={Charges} />
           <Route path='/charge' component={ChargeDetails} />
+          <Route path='/analytics' component={Analytics} />
         </Switch>
       </div>
     </BrowserRouter>

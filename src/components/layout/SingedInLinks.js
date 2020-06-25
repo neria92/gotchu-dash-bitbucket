@@ -13,6 +13,7 @@ const SingedInLinks = (props) => {
         <li> <NavLink to='/pay'> Pay</NavLink></li>
         <li> <NavLink to='/payments'> Payments</NavLink></li>
         <li> <NavLink to='/charges'> Charges</NavLink></li>
+        <li> <NavLink to='/analytics'> Analytics</NavLink></li>
         <li> <a onClick={props.signOut}> Log Out</a></li>
      </ul>
     )
