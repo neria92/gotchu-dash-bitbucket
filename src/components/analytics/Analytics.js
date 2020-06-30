@@ -20,9 +20,10 @@ class Analytics extends Component {
         busqueda: "",
         activePage: 1,
         projectsBusqueda: null,
-        searching: false,
+        searching: true,
         missionsUploaded: 0,
-        uploadJsonError: null
+        uploadJsonError: null,
+        analyticsData: null
     };
     filteredProjects = null
 
@@ -93,7 +94,7 @@ class Analytics extends Component {
 
     getSearchResults(search) {
         var fr = (search === "") ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [search] }
-        fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardSearch", {
+        fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardAnalytics", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -115,9 +116,11 @@ class Analytics extends Component {
             .then(res => {
                 if (res[0] == 200) {
                     // Hacer algo con lo que regresa el server = res[1].newsfeed
+                    console.log(res[1].result)
+                    
                     this.setState({
                         ...this.state,
-                        projectsBusqueda: res[1].result,
+                        analyticsData: res[1].result,
                         searching: false
                     })
                     //console.log(res[1].result);
@@ -129,7 +132,7 @@ class Analytics extends Component {
             })
             .catch(error => {
                 // Hubo un error en el server
-                console.log("error");
+                console.log(error);
             });
 
     }
@@ -163,35 +166,44 @@ class Analytics extends Component {
         //         console.log(error);
         //     });
         //if(auth.uid) return <Redirect to='/create'></Redirect>
-        return (
-            <div className="dashboard container" >
-                <div className="row">
-                    <div className="col s12 m6" style={{ backgroundColor: "white" }}>
-                        <table class="striped">
-                            <tbody>
-                                <tr>
-                                    <td>Misiones totales</td>
-                                    <td>1430</td>
-                                </tr>
-                                <tr>
-                                    <td>Misiones capturadas</td>
-                                    <td>875</td>
-                                </tr>
-                            </tbody>
-                        </table>
+        if (this.state.analyticsData != null) {
+            return (
+                <div className="dashboard container" >
+                    <div className="row">
+                        <div className="col s12 m6" style={{ backgroundColor: "white" }}>
+                            <table class="striped">
+                                <tbody>
+                                    <tr>
+                                        <td>Misiones totales</td>
+                                        <td>{this.state.analyticsData.totalMissions}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Misiones capturadas</td>
+                                        <td>{this.state.analyticsData.totalCaptures}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-                <div className="row">
-                    <div className="col s12 m6" style={{ backgroundColor: "white" }}>
-                        <div>
-                            <h3 class="header" class="center-align">Capturas</h3>
-                            <LineChart xtitle="Dia" ytitle="Capturas" id="Capturas" data={{ "2017-05-13": 2, "2017-05-14": 5, "2017-05-15": 4, "2017-05-16": 8, "2017-05-17": 6}} />
+                    <div className="row">
+                        <div className="col s12 m6" style={{ backgroundColor: "white" }}>
+                            <div>
+                                <h3 class="header" class="center-align">Capturas</h3>
+                                <LineChart xtitle="Dia" ytitle="Capturas" id="Capturas" data={{ "2017-05-13": 2, "2017-05-14": 5, "2017-05-15": 4, "2017-05-16": 8, "2017-05-17": 6 }} />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        )
-
+            )
+        } else {
+            return(
+                <div className="dashboard container" >
+                    <div className="container center">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            )
+        }
     }
 }
 
