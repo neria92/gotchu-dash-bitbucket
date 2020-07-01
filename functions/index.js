@@ -19,27 +19,166 @@ exports.addAdminRole = functions.https.onCall((data, context) => {
 
 //Funcion que regresa un arreglo de tamaño a lo mas lengthLimit, con el contenido de las misiones usando la base de datos db. 
 //El contenido estara ordenado por sortBy y filtrado con las opciones de filter
-async function getTotalMissions(db) {
-    var queryMissions = db.collection("missions");
-    var result = 0
+// async function getTotalMissions(db) {
+//     var queryMissions = db.collection("missions");
+//     var result = 0
 
-    //if (sortBy == "date") {
-        //query = query.orderBy("startDate", "desc");
-    //}
+//     //if (sortBy == "date") {
+//         //query = query.orderBy("startDate", "desc");
+//     //}
+
+//     //Se regresa una promesa para que todo funcione bien
+//     return new Promise((resolve, reject) => {
+        
+        
+//         queryMissions.get().then(function (snapshot) {
+//             var totalMissions = 0;
+//             var totalCaptures = 0
+//             var rmissions = [];
+//             var docs = snapshot
+
+//             docs.forEach(function (doc) {
+//                 totalMissions++
+                
+//                 var data = doc.data();
+//                 rmissions.push(data);
+//                 //     data._id = doc.id;
+//                 //     data.contentType = "mission";
+//                 //     data.distanceToUser = doc.distanceToUser;
+//                 //     var lan = "es";
+//                 //     var ok = true;
+//             });
+//             result = totalMissions
+//             return resolve(result);
+//         }).catch(function (error) {
+//             console.log("Error getting documents: ", error);
+//             return reject([]);
+//         });
+//     });
+// }
+
+// async function getLastCaptures(db) {
+//     var queryMissions = db.collection("capture");
+//     queryMissions = queryMissions.orderBy("createdAt", "asc");
+//     var lengthLimit = 10
+//     var result = []
+
+//     //if (sortBy == "date") {
+//         //query = query.orderBy("startDate", "desc");
+//     //}
+
+//     //Se regresa una promesa para que todo funcione bien
+//     return new Promise((resolve, reject) => {
+//         queryMissions.get().then(function (snapshot) {
+//             var finished = false
+//             var totalCaptures = 0;
+//             var totalCaptures = 0
+//             var rcaptures = [];
+//             var docs = snapshot
+
+//             docs.forEach(function (doc) {
+//                 if (finished) {
+//                     return;
+//                 }
+//                 totalCaptures++
+                
+//                 var data = doc.data();
+//                 rcaptures.push(data);
+//                 //     data._id = doc.id;
+//                 //     data.contentType = "mission";
+//                 //     data.distanceToUser = doc.distanceToUser;
+//                 //     var lan = "es";
+//                 //     var ok = true;
+
+//                 lengthLimit--;
+//                 if (lengthLimit <= 0) {
+//                     finished = true;
+//                 }
+//             });
+//             result = rcaptures
+//             return resolve(result);
+//         }).catch(function (error) {
+//             console.log("Error getting documents: ", error);
+//             return reject([]);
+//         });
+//     });
+// }
+
+// async function getTotalCaptures(db) {
+//     var queryMissions = db.collection("capture");
+//     var result = 0
+
+//     //if (sortBy == "date") {
+//     //query = query.orderBy("startDate", "desc");
+//     //}
+
+//     //Se regresa una promesa para que todo funcione bien
+//     return new Promise((resolve, reject) => {
+
+
+//         queryMissions.get().then(function (snapshot) {
+//             var totalCaptures = 0;
+//             var totalCaptures = 0
+//             var rcaptures = [];
+//             var docs = snapshot
+
+//             docs.forEach(function (doc) {
+//                 totalCaptures++
+
+//                 var data = doc.data();
+//                 rcaptures.push(data);
+//                 //     data._id = doc.id;
+//                 //     data.contentType = "mission";
+//                 //     data.distanceToUser = doc.distanceToUser;
+//                 //     var lan = "es";
+//                 //     var ok = true;
+//             });
+//             result = totalCaptures
+//             return resolve(result);
+//         }).catch(function (error) {
+//             console.log("Error getting documents: ", error);
+//             return reject([]);
+//         });
+//     });
+// }
+
+// async function getTotalUsers(db) {
+//     var queryMissions = db.collection("users");
+//     var result = 0
+
+//     //Se regresa una promesa para que todo funcione bien
+//     return new Promise((resolve, reject) => {
+
+//         queryMissions.get().then(function (snapshot) {
+//             var totalUsers = 0;
+//             var docs = snapshot
+
+//             docs.forEach(function (doc) {
+//                 totalUsers++
+//             });
+//             result = totalUsers
+//             return resolve(result);
+//         }).catch(function (error) {
+//             console.log("Error getting documents: ", error);
+//             return reject([]);
+//         });
+//     });
+// }
+
+async function getMissions(db) {
+    var queryMissions = db.collection("missions");
+    queryMissions = queryMissions.orderBy("startDate", "desc");
+    var result = []
 
     //Se regresa una promesa para que todo funcione bien
     return new Promise((resolve, reject) => {
-        
-        
+
         queryMissions.get().then(function (snapshot) {
-            var totalMissions = 0;
-            var totalCaptures = 0
             var rmissions = [];
             var docs = snapshot
 
             docs.forEach(function (doc) {
-                totalMissions++
-                
+
                 var data = doc.data();
                 rmissions.push(data);
                 //     data._id = doc.id;
@@ -48,7 +187,7 @@ async function getTotalMissions(db) {
                 //     var lan = "es";
                 //     var ok = true;
             });
-            result = totalMissions
+            result = rmissions
             return resolve(result);
         }).catch(function (error) {
             console.log("Error getting documents: ", error);
@@ -57,31 +196,20 @@ async function getTotalMissions(db) {
     });
 }
 
-async function getLastCaptures(db) {
-    var queryMissions = db.collection("capture");
-    queryMissions = queryMissions.orderBy("createdAt", "asc");
-    var lengthLimit = 10
+async function getCaptures(db) {
+    var queryCaptures = db.collection("capture");
+    queryCaptures = queryCaptures.orderBy("createdAt", "desc");
     var result = []
-
-    //if (sortBy == "date") {
-        //query = query.orderBy("startDate", "desc");
-    //}
 
     //Se regresa una promesa para que todo funcione bien
     return new Promise((resolve, reject) => {
-        queryMissions.get().then(function (snapshot) {
-            var finished = false
-            var totalCaptures = 0;
-            var totalCaptures = 0
+
+        queryCaptures.get().then(function (snapshot) {
             var rcaptures = [];
             var docs = snapshot
 
             docs.forEach(function (doc) {
-                if (finished) {
-                    return;
-                }
-                totalCaptures++
-                
+
                 var data = doc.data();
                 rcaptures.push(data);
                 //     data._id = doc.id;
@@ -89,11 +217,6 @@ async function getLastCaptures(db) {
                 //     data.distanceToUser = doc.distanceToUser;
                 //     var lan = "es";
                 //     var ok = true;
-
-                lengthLimit--;
-                if (lengthLimit <= 0) {
-                    finished = true;
-                }
             });
             result = rcaptures
             return resolve(result);
@@ -104,36 +227,28 @@ async function getLastCaptures(db) {
     });
 }
 
-async function getTotalCaptures(db) {
-    var queryMissions = db.collection("capture");
-    var result = 0
-
-    //if (sortBy == "date") {
-    //query = query.orderBy("startDate", "desc");
-    //}
+async function getUsers(db) {
+    var queryUsers = db.collection("users");
+    var result = []
 
     //Se regresa una promesa para que todo funcione bien
     return new Promise((resolve, reject) => {
 
-
-        queryMissions.get().then(function (snapshot) {
-            var totalCaptures = 0;
-            var totalCaptures = 0
-            var rcaptures = [];
+        queryUsers.get().then(function (snapshot) {
+            var rusers = [];
             var docs = snapshot
 
             docs.forEach(function (doc) {
-                totalCaptures++
 
                 var data = doc.data();
-                rcaptures.push(data);
+                rusers.push(data);
                 //     data._id = doc.id;
                 //     data.contentType = "mission";
                 //     data.distanceToUser = doc.distanceToUser;
                 //     var lan = "es";
                 //     var ok = true;
             });
-            result = totalCaptures
+            result = rusers
             return resolve(result);
         }).catch(function (error) {
             console.log("Error getting documents: ", error);
@@ -168,9 +283,10 @@ exports.dashboardAnalytics = functions.https.onRequest(async (request, response)
         const db = admin.firestore();
 
         var result = {};
-        result.totalMissions =  await getTotalMissions(db);
-        result.totalCaptures = await getTotalCaptures(db);
-        result.lastCaptures = await getLastCaptures(db);
+        result.missions =  await getMissions(db);
+        result.captures = await getCaptures(db);
+        result.users = await getUsers(db);
+        //result.lastCaptures = await getLastCaptures(db);
 
         // if (request.body.filter.contentType.missions != null && request.body.filter.contentType.missions == true) {
         //     console.log("Querying missions");

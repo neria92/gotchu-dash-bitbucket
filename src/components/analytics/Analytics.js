@@ -117,10 +117,18 @@ class Analytics extends Component {
                 if (res[0] == 200) {
                     // Hacer algo con lo que regresa el server = res[1].newsfeed
                     console.log(res[1].result)
+                    var result = res[1].result
+                    result.opentaskMissions = []
+
+                    result.missions.forEach(mission => {
+                        if(mission.opentask !== ""){
+                            result.opentaskMissions.push(mission)
+                        }
+                    });
                     
                     this.setState({
                         ...this.state,
-                        analyticsData: res[1].result,
+                        analyticsData: result,
                         searching: false
                     })
                     //console.log(res[1].result);
@@ -174,31 +182,39 @@ class Analytics extends Component {
                             <table class="striped">
                                 <tbody>
                                     <tr>
-                                        <td>Misiones totales</td>
-                                        <td>{this.state.analyticsData.totalMissions}</td>
+                                        <td>Usuarios totales</td>
+                                        <td>{this.state.analyticsData.users.length}</td>
                                     </tr>
                                     <tr>
-                                        <td>Misiones capturadas</td>
-                                        <td>{this.state.analyticsData.totalCaptures}</td>
+                                        <td>Misiones totales</td>
+                                        <td>{this.state.analyticsData.missions.length}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Capturas totales</td>
+                                        <td>{this.state.analyticsData.captures.length}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Misiones OpenTask totales</td>
+                                        <td>{this.state.analyticsData.opentaskMissions.length}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    <div className="row">
+                    {/* <div className="row">
                         <div className="col s12 m6" style={{ backgroundColor: "white" }}>
                             <div>
                                 <h3 class="header" class="center-align">Capturas</h3>
                                 <LineChart xtitle="Dia" ytitle="Capturas" id="Capturas" data={{ "2017-05-13": 2, "2017-05-14": 5, "2017-05-15": 4, "2017-05-16": 8, "2017-05-17": 6 }} />
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             )
         } else {
             return(
                 <div className="dashboard container" >
-                    <div className="container center">
+                    <div style={{ margin: "20px auto", backgroundColor: "white" }} className="container center">
                         <p>Loading...</p>
                     </div>
                 </div>
