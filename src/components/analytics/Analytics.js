@@ -116,7 +116,7 @@ class Analytics extends Component {
             .then(res => {
                 if (res[0] == 200) {
                     // Hacer algo con lo que regresa el server = res[1].newsfeed
-                    console.log(res[1].result)
+                    //console.log(res[1].result)
                     var result = res[1].result
                     result.opentaskMissions = []
 
@@ -125,7 +125,28 @@ class Analytics extends Component {
                             result.opentaskMissions.push(mission)
                         }
                     });
+
+                    //cuantos usuarios han cumplido misiones
+                    result.usersCompletedMissions = new Map()
+                    result.captures.forEach(capture => {
+                        result.usersCompletedMissions.set(capture.userId, null)
+                        // if (capture.opentask !== "") {
+                        //     usersCompletedMissions.push(capture)
+                        // }
+                    });
+
+                    //cuantos usuarios han creado misiones opentask
+                    result.usersCreatedOpenTask = new Map()
+                    result.missions.forEach(mission => {
+                        if (mission.opentask !== null && mission.opentask !== ""){
+                            result.usersCreatedOpenTask.set(mission.opentask, null)
+                        }
+                        // if (capture.opentask !== "") {
+                        //     usersCompletedMissions.push(capture)
+                        // }
+                    });
                     
+                    console.log(result);
                     this.setState({
                         ...this.state,
                         analyticsData: result,
@@ -196,6 +217,14 @@ class Analytics extends Component {
                                     <tr>
                                         <td>Misiones OpenTask totales</td>
                                         <td>{this.state.analyticsData.opentaskMissions.length}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Numero de usuarios que han completado misiones</td>
+                                        <td>{this.state.analyticsData.usersCompletedMissions.size}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Numero de usuarios que han creado OpenTask</td>
+                                        <td>{this.state.analyticsData.usersCreatedOpenTask.size}</td>
                                     </tr>
                                 </tbody>
                             </table>
