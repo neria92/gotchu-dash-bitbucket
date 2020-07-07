@@ -32,7 +32,11 @@ class UserDetails extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    console.log(this.props)
+    this.saveUserData()
+  }
+
+  saveUserData(){
+    //console.log(this.props)
     const userID = this.props.id;
 
     const user = {
@@ -50,13 +54,32 @@ class UserDetails extends Component {
         parseInt(this.refs.p7.value),
         parseInt(this.refs.p8.value),
         parseInt(this.refs.p9.value),
-         parseInt(this.refs.p10.value),
-         parseInt(this.refs.p11.value),
-         parseInt(this.refs.p12.value),
-         parseInt(this.refs.p13.value),
+        parseInt(this.refs.p10.value),
+        parseInt(this.refs.p11.value),
+        parseInt(this.refs.p12.value),
+        parseInt(this.refs.p13.value),
       ],
       blocked: this.refs.blocked.checked,
     };
+
+    if(this.props.user.isAdmin){
+      
+    } else {
+      if (this.state.admin == true) {
+        user.admin = true
+        user.adminPermissions = {
+          missions:true,
+          users:true,
+          captures:true,
+          microtasks:true,
+          pay:true,
+          payments:true,
+          charges:true,
+          analytics:true
+        }
+      }
+    }
+    
     this.setState({
       ...this.state,
       savingChanges: true
