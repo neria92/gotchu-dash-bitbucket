@@ -203,27 +203,27 @@ class Analytics extends Component {
                             <table class="striped">
                                 <tbody>
                                     <tr>
-                                        <td>Usuarios totales</td>
+                                        <td>Usuarios totales:</td>
                                         <td>{this.state.analyticsData.users.length}</td>
                                     </tr>
                                     <tr>
-                                        <td>Misiones totales</td>
+                                        <td>Misiones totales:</td>
                                         <td>{this.state.analyticsData.missions.length}</td>
                                     </tr>
                                     <tr>
-                                        <td>Capturas totales</td>
+                                        <td>Capturas totales:</td>
                                         <td>{this.state.analyticsData.captures.length}</td>
                                     </tr>
                                     <tr>
-                                        <td>Misiones OpenTask totales</td>
+                                        <td>Misiones OpenTask totales:</td>
                                         <td>{this.state.analyticsData.opentaskMissions.length}</td>
                                     </tr>
                                     <tr>
-                                        <td>Numero de usuarios que han completado misiones</td>
+                                        <td>Número de usuarios que han completado misiones:</td>
                                         <td>{this.state.analyticsData.usersCompletedMissions.size}</td>
                                     </tr>
                                     <tr>
-                                        <td>Numero de usuarios que han creado OpenTask</td>
+                                        <td>Número de usuarios que han creado OpenTask:</td>
                                         <td>{this.state.analyticsData.usersCreatedOpenTask.size}</td>
                                     </tr>
                                 </tbody>
