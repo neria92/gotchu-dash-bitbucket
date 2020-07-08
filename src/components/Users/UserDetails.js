@@ -10,6 +10,7 @@ class UserDetails extends Component {
 
   state = {
     savingChanges: false,
+    savingAdmin: false,
     admin:false
   }
 
@@ -21,12 +22,14 @@ class UserDetails extends Component {
 
   handleAdmin = (e) => {
     e.preventDefault();
+    this.setState({ savingAdmin: true })
     console.log(this.props.id)
     const adminUID = this.props.id;
     const addAdminRole = functions().httpsCallable('addAdminRole');
     addAdminRole({ uid: adminUID }).then(result => {
       console.log(result);
       this.setState({admin:true})
+      this.saveUserData()
     });
   }
 
@@ -63,10 +66,19 @@ class UserDetails extends Component {
     };
 
     if(this.props.user.isAdmin){
-      
+      user.adminPermissions = {
+        missions: this.refs.adminPermissionsMissions.checked,
+        users: this.refs.adminPermissionsUsers.checked,
+        captures: this.refs.adminPermissionsCaptures.checked,
+        microtasks: this.refs.adminPermissionsMicrotasks.checked,
+        pay: this.refs.adminPermissionsPay.checked,
+        payments: this.refs.adminPermissionsPayments.checked,
+        charges: this.refs.adminPermissionsCharges.checked,
+        analytics: this.refs.adminPermissionsAnalytics.checked
+      }
     } else {
       if (this.state.admin == true) {
-        user.admin = true
+        user.isAdmin = true
         user.adminPermissions = {
           missions:true,
           users:true,
@@ -84,12 +96,13 @@ class UserDetails extends Component {
       ...this.state,
       savingChanges: true
     })
-    console.log(user);
+    //console.log(user);
     this.props.editUser({ userID, user });
   }
   
   render() {
     const { user, auth, userActions } = this.props;
+    //console.log(user);
     if (!auth.uid) return <Redirect to='/singin' /> 
     if (this.state.savingChanges && userActions.userSaved) {
       return <Redirect to='/users' />
@@ -97,7 +110,8 @@ class UserDetails extends Component {
     if (user) {
       return (
         <div className="container section project-details">
-          <button className="btn waves-effect waves-light" onClick={this.handleAdmin}>Asignar Administrador</button>
+          {this.state.savingAdmin && <button disabled={true} className="btn waves-effect waves-light" onClick={this.handleAdmin}>Guardando...</button>}
+          {!this.state.savingAdmin && <button className="btn waves-effect waves-light" onClick={this.handleAdmin}>Asignar Administrador</button>}
           <div className="card z-depth-0">
             <div className="card-content">
               <form onSubmit={this.handleSubmit}>
@@ -175,10 +189,74 @@ class UserDetails extends Component {
                     <span>Bloqueado</span>
                   </label>
                 </p>
+
+                {user.isAdmin &&
+                <div>
+                  <h5 >Permisos de administrador</h5>
+
+                  <p>
+                    <label>
+                    <input type="checkbox" defaultChecked={user.adminPermissions.missions != null ? user.adminPermissions.missions : false} id="adminPermissionsMissions" ref="adminPermissionsMissions" onChange={this.handleChange} />
+                      <span>Missions</span>
+                    </label>
+                  </p>
+
+                  <p>
+                    <label>
+                      <input type="checkbox" defaultChecked={user.adminPermissions.users != null ? user.adminPermissions.users : false} id="adminPermissionsUsers" ref="adminPermissionsUsers" onChange={this.handleChange} />
+                      <span>Users</span>
+                    </label>
+                  </p>
+
+                  <p>
+                    <label>
+                      <input type="checkbox" defaultChecked={user.adminPermissions.captures != null ? user.adminPermissions.captures : false} id="adminPermissionsCaptures" ref="adminPermissionsCaptures" onChange={this.handleChange} />
+                      <span>Captures</span>
+                    </label>
+                  </p>
+
+                  <p>
+                    <label>
+                      <input type="checkbox" defaultChecked={user.adminPermissions.microtasks != null ? user.adminPermissions.microtasks : false} id="adminPermissionsMicrotasks" ref="adminPermissionsMicrotasks" onChange={this.handleChange} />
+                      <span>Microtasks</span>
+                    </label>
+                  </p>
+
+                  <p>
+                    <label>
+                      <input type="checkbox" defaultChecked={user.adminPermissions.pay != null ? user.adminPermissions.pay : false} id="adminPermissionsPay" ref="adminPermissionsPay" onChange={this.handleChange} />
+                      <span>Pay</span>
+                    </label>
+                  </p>
+
+                  <p>
+                    <label>
+                      <input type="checkbox" defaultChecked={user.adminPermissions.payments != null ? user.adminPermissions.payments : false} id="adminPermissionsPayments" ref="adminPermissionsPayments" onChange={this.handleChange} />
+                      <span>Payments</span>
+                    </label>
+                  </p>
+
+                  <p>
+                    <label>
+                      <input type="checkbox" defaultChecked={user.adminPermissions.charges != null ? user.adminPermissions.charges : false} id="adminPermissionsCharges" ref="adminPermissionsCharges" onChange={this.handleChange} />
+                      <span>Charges</span>
+                    </label>
+                  </p>
+
+                  <p>
+                    <label>
+                      <input type="checkbox" defaultChecked={user.adminPermissions.analytics != null ? user.adminPermissions.analytics : false} id="adminPermissionsAnalytics" ref="adminPermissionsAnalytics" onChange={this.handleChange} />
+                      <span>Analytics</span>
+                    </label>
+                  </p>
+                </div>
+                }
+
                 {this.state.admin &&
                  <label>
                  Usuario es Administrador!
-               </label>}
+                </label>
+               }
                 <button className="btn waves-effect waves-light" type="submit" name="action">Guardar</button>
               </form>
             </div>
