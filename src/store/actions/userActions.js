@@ -89,7 +89,6 @@ export const deleteProject = (project) =>{
 
 export const editUser = (info) => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
-
         //make asyn call
 
         const firestore = getFirestore();
@@ -127,6 +126,35 @@ export const resetMoney = (info) => {
             });
         }).catch((err) => {
             dispatch({ type: 'User_Saved_Error', err });
+        })
+    }
+};
+
+export const loadLoggedUserData = (uid) => {
+    console.log("aqui si")
+    console.log(uid)
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        console.log("aqui no")
+        const firestore = getFirestore();
+        
+        firestore.collection('users').doc(uid).get().then(function (doc) {
+            console.log("aqui menos")
+            if (doc.exists) {
+                console.log("Document data:", doc.data());
+                dispatch({
+                    type: 'User_Loaded',
+                    payload: {
+                        user: doc.data()
+                    }
+                });
+            } else {
+                console.log("No user found on DB.");
+                var err = "No user found on DB."
+                dispatch({ type: 'User_Loaded_Error', err });
+            }
+        }).catch((err) => {
+            console.log("error:" + err)
+            dispatch({ type: 'User_Loaded_Error', err });
         })
     }
 };

@@ -2,7 +2,8 @@
 const initState={
     userSaved: null,
     projectDeleted: null,
-    error: null
+    error: null,
+    loggedUser: null
 }
 
 const userReducer =(state = initState,action) => {

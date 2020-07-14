@@ -8,6 +8,7 @@ import {Redirect} from 'react-router-dom'
 import { functions } from 'firebase'
 import { signOut } from '../../store/actions/authActions'
 import { setSearchString } from '../../store/actions/projectActions'
+import { loadLoggedUserData } from '../../store/actions/userActions'
 import { Link } from 'react-router-dom'
 //import { addMultipleProjects } from '../../store/actions/projectActions'
 import { reduxFirestore, getFirestore } from 'redux-firestore'
@@ -80,6 +81,11 @@ class Dashboard extends Component {
     }
 
     componentDidMount(){
+        //console.log(this.props.auth)
+        if (this.props.auth && !this.props.user){
+            console.log("no user, cargando")
+            loadLoggedUserData(this.props.auth.uid)
+        }
         this.setState({ ...this.state, busqueda: this.props.searchString})
         this.getSearchResults(this.props.searchString);
         if(!(this.props.searchString === "")){
@@ -220,7 +226,8 @@ class Dashboard extends Component {
 const mapDispatchToProps = (dispatch) => {
     return {
         signOut: () => dispatch(signOut()),
-        setSearchString: (searchString) => dispatch(setSearchString(searchString))
+        setSearchString: (searchString) => dispatch(setSearchString(searchString)),
+        loadLoggedUserData: (uid) => dispatch(loadLoggedUserData(uid)),
         //addMultipleProjects: (projects) => dispatch(addMultipleProjects(projects)),
     }
 }
@@ -229,7 +236,8 @@ const mapStateToProps = (state) => {
     return {
         auth: state.firebase.auth,
         profile: state.firebase.profile,
-        searchString: state.projectReducer.searchString
+        searchString: state.projectReducer.searchString,
+        user: state.userReducer.loggedUser
     }
 }
 
