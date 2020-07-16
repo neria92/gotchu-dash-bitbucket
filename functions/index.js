@@ -313,3 +313,91 @@ exports.dashboardAnalytics = functions.https.onRequest(async (request, response)
 
     });
 });
+
+//exports.saveDailyAnalytics = functions.pubsub.schedule('every day 06:00').timeZone('America/Mexico_City').onRun(index.saveAnalytics);
+exports.saveDailyAnalytics = functions.pubsub.schedule('every 1 minutes').onRun((context) => {
+    //console.log('This will be run every 1 minutes!');
+
+    console.log("Querying analytics data to DB");
+    const db = admin.firestore();
+
+    var result = {};
+    result.missions = await getMissions(db);
+    result.captures = await getCaptures(db);
+    result.users = await getUsers(db);
+
+    result.opentaskMissions = []
+
+    result.missions.forEach(mission => {
+        if (mission.opentask !== "") {
+            result.opentaskMissions.push(mission)
+        }
+    });
+
+    //cuantos usuarios han cumplido misiones
+    result.usersCompletedMissions = new Map()
+    result.captures.forEach(capture => {
+        result.usersCompletedMissions.set(capture.userId, null)
+        // if (capture.opentask !== "") {
+        //     usersCompletedMissions.push(capture)
+        // }
+    });
+
+    //cuantos usuarios han creado misiones opentask
+    result.usersCreatedOpenTask = new Map()
+    result.missions.forEach(mission => {
+        if (mission.opentask !== null && mission.opentask !== "") {
+            result.usersCreatedOpenTask.set(mission.opentask, null)
+        }
+        // if (capture.opentask !== "") {
+        //     usersCompletedMissions.push(capture)
+        // }
+    });
+
+    var analytics = db.collection('analytics')
+    var d = new Date();
+    var dt = d.getTime();
+    var captureId = null
+
+    var analyticsCapture = {
+        totalUsers: result.users.length,
+        totalMissions: result.missions.length,
+        totalCaptures: result.captures.length,
+        OpentaskMissions: result.opentaskMissions,
+        usersCompletedMissions: result.usersCompletedMissions,
+        usersCreatedOpenTask: result.usersCreatedOpenTask
+    }
+
+    await analytics.doc(dt).set(analyticsCapture).then(ref => {
+        captureId = ref.id
+    });
+
+    console.log("Capture of analytics successful, ID: " + captureId);
+    
+    return null;
+});
+
+// exports.saveAnalytics = functions.https.onRequest(async (request, response) => {
+//     //TODO: checar si aun se usa el CORS
+//     utils.cors(request, response, async () => {
+//         console.log('This will be run every 5 minutes!');
+
+//         // console.log("Querying analytics data to DB");
+//         // const db = admin.firestore();
+
+//         // var result = {};
+//         // result.missions = await getMissions(db);
+//         // result.captures = await getCaptures(db);
+//         // result.users = await getUsers(db);
+
+//         // var analytics = db.collection('analytics')
+//         // var dt = System.currentTimeMillis();
+//         // var captureId = null
+//         // await analytics.doc(dt).set({ totalMissions: result.missions.length }).then(ref => {
+//         //     captureId = ref.id
+//         // });
+
+//         // console.log("Captura de analiticas exitosa: " + captureId);
+//         response.status(200).json({ status: "ok", result: result });
+//     });
+// });
