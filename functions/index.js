@@ -260,24 +260,7 @@ async function getUsers(db) {
 exports.dashboardAnalytics = functions.https.onRequest(async (request, response) => {
     //TODO: checar si aun se usa el CORS
     utils.cors(request, response, async () => {
-
-        // //Checar los valores necesarios
-        // if (request.body.UID == null || request.body.startIndex == null || request.body.numberOfFeeds == null) {
-        //     response.status(400).json({ status: "bad", reason: "bad format" });
-        //     return;
-        // }
-
-        // if (request.body.sortBy == null || !stringContainsAnyOf(request.body.sortBy, ["date", "location"])) {
-        //     request.body.sortBy = "date";
-        // }
-
-        // if (request.body.filter == null) {
-        //     request.body.filter = { contentType: { missions: true } };
-        // }
-
-        // if (request.body.filter.contentType == null) {
-        //     request.body.filter.contentType = { missions: true };
-        // }
+        
 
         console.log("Querying data to DB");
         const db = admin.firestore();
@@ -286,27 +269,6 @@ exports.dashboardAnalytics = functions.https.onRequest(async (request, response)
         result.missions =  await getMissions(db);
         result.captures = await getCaptures(db);
         result.users = await getUsers(db);
-        //result.lastCaptures = await getLastCaptures(db);
-
-        // if (request.body.filter.contentType.missions != null && request.body.filter.contentType.missions == true) {
-        //     console.log("Querying missions");
-        //     request.body.filter.dashboard = true;
-        //     result = await getContentByMissions(request.body.startIndex + request.body.numberOfFeeds, request.body.sortBy, request.body.filter, db);
-        // }
-        // if (request.body.filter.contentType.captures != null && request.body.filter.contentType.captures == true) {
-        //     console.log("Querying captures");
-        //     result = await getContentByCapture(request.body.startIndex + request.body.numberOfFeeds, request.body.sortBy, request.body.filter, db);
-        // }
-        // if (request.body.filter.contentType.users != null && request.body.filter.contentType.users == true) {
-        //     console.log("Querying users");
-        //     result = await getContentByUsers(request.body.startIndex + request.body.numberOfFeeds, request.body.sortBy, request.body.filter, db);
-        // }
-
-
-        // if (request.body.filter.contentType.hashtags != null && request.body.filter.contentType.hashtags == true) {
-        //     console.log("Querying hashtags");
-        //     result = await getContentByHashtags(request.body.startIndex + request.body.numberOfFeeds, request.body.sortBy, request.body.filter, db);
-        // }
 
         console.log("Responding");
         response.status(200).json({ status: "ok", result: result });
@@ -314,15 +276,14 @@ exports.dashboardAnalytics = functions.https.onRequest(async (request, response)
     });
 });
 
-//exports.saveDailyAnalytics = functions.pubsub.schedule('every day 06:00').timeZone('America/Mexico_City').onRun(index.saveAnalytics);
-exports.saveDailyAnalytics = functions.pubsub.schedule('every 1 minutes').onRun((context) => {
-    //console.log('This will be run every 1 minutes!');
+exports.saveDailyAnalytics = functions.pubsub.schedule('every day 23:59').timeZone('America/Mexico_City').onRun(async (context) => {
+    //console.log('This will be run every 2 minutes!');
 
-    console.log("Querying analytics data to DB");
+    //console.log("Querying analytics data to DB");
     const db = admin.firestore();
 
     var result = {};
-    result.missions = await getMissions(db);
+    result.missions = await getMissions(db)
     result.captures = await getCaptures(db);
     result.users = await getUsers(db);
 
@@ -357,22 +318,24 @@ exports.saveDailyAnalytics = functions.pubsub.schedule('every 1 minutes').onRun(
     var analytics = db.collection('analytics')
     var d = new Date();
     var dt = d.getTime();
+    var dts = dt.toString();
     var captureId = null
 
     var analyticsCapture = {
         totalUsers: result.users.length,
         totalMissions: result.missions.length,
         totalCaptures: result.captures.length,
-        OpentaskMissions: result.opentaskMissions,
-        usersCompletedMissions: result.usersCompletedMissions,
-        usersCreatedOpenTask: result.usersCreatedOpenTask
+        opentaskMissions: result.opentaskMissions.length,
+        usersCompletedMissions: result.usersCompletedMissions.size,
+        usersCreatedOpenTask: result.usersCreatedOpenTask.size
     }
 
-    await analytics.doc(dt).set(analyticsCapture).then(ref => {
-        captureId = ref.id
+    analytics.doc(dts).set(analyticsCapture).then(function (docRef) {
+        //console.log("Analytics document written with ID: ", docRef.id);
+        captureId = docRef.id
+    }).catch(function (error) {
+        console.error("Error adding analytics document: ", error);
     });
-
-    console.log("Capture of analytics successful, ID: " + captureId);
     
     return null;
 });
