@@ -21,7 +21,8 @@ class Dashboard extends Component {
         projectsBusqueda: null,
         searching: false,
         missionsUploaded: 0,
-        uploadJsonError: null
+        uploadJsonError: null,
+        jsonErrorString: "",
     };
     filteredProjects= null
 
@@ -37,26 +38,78 @@ class Dashboard extends Component {
     handleSubmitUploadJson = (e) => {
         
         e.preventDefault();
+        this.setState({ jsonErrorString: "Subiendo Json" })
         const text = this.refs.JsonText.value
         var obj = JSON.parse(text)
         const firestore = getFirestore();
         const size = obj.length;
-        var uploadError = null
+        //var uploadError = false
         var i
         for ( i = 0; i < size; i++) {
+            // if (uploadError) {
+            //     console.log("break")
+            //     break;
+            // }
+            // if (!obj[i]){
+            //     console.log("error obj " + obj[i])
+            //     var es = this.state.jsonErrorString
+            //     es = es.concat("\nError obj " + obj[i] )
+            //     this.setState({ jsonErrorString: es })
+            // } else {
+            //     console.log("subiendo " + obj[i].title.es)
+            //     firestore.collection('missions').add(obj[i]).then((res) => {
+            //         var es = this.state.jsonErrorString
+            //         es = es.concat("\nMission " + obj[i].title.es + " uploaded successfully.")
+            //         console.log("subio " + obj[i].title.es)
+            //         this.setState({ jsonErrorString: es })
+            //     })
+            //     .catch(error => {
+            //         var es = this.state.jsonErrorString
+            //         es = es.concat("\nERROR: Mission " + obj[i].title.es + " not uploaded.")
+            //         es = es.concat("\nFirestore error: " + error)
+            //         es = es.concat("\nAborting ")
+            //         this.setState({ jsonErrorString: es })
+            //         uploadError = true
+            //         console.log("no subio " + obj[i].title.es)
+            //     });
+            var captureTitle
+            //console.log("subiendo a firebase" + obj[i].title.es)
             firestore.collection('missions').add(obj[i]).then((res) => {
-                console.log("Upload complete : ", res.id)
+                //get mision title
+                firestore.get({ collection: "missions", doc: res.id })
+                    .then((doc) => {
+                        if (doc != undefined && doc.data().title.es != null) {
+                            captureTitle = doc.data().title.es
+                            //console.log(doc.data().title.es)
+
+                            var es = this.state.jsonErrorString
+                            es = es.concat("\nMission " + captureTitle + " uploaded successfully.")
+                            //console.log(res)
+                            this.setState({ jsonErrorString: es })
+                        }
+                    })
+                    .catch((error) => {
+                        console.log("Error getting mission title from id: " + res.id)
+                    });
             })
             .catch(error => {
-                console.log("error : ", error)
-                uploadError = error
+                var es = this.state.jsonErrorString
+                //es = es.concat("\nERROR: Mission " + error + " not uploaded.")
+                es = es.concat("\nFirestore error: " + error)
+                //es = es.concat("\nAborting ")
+                this.setState({ jsonErrorString: es })
+                //uploadError = true
+                //console.log(error)
             });
+            
         }
-        if (uploadError != null){
-            this.setState({ uploadJsonError: true, missionsUploaded: i + 1 })
-        } else {
-            this.setState({ uploadJsonError: false, missionsUploaded: i + 1 })
-        }
+        // if (uploadError){
+        //     console.log("error")
+        //     this.setState({ uploadJsonError: true, missionsUploaded: i + 1 })
+        // } else {
+        //     console.log("no error")
+        //     this.setState({ uploadJsonError: false, missionsUploaded: i + 1 })
+        // }
         //window.location.reload();
         //this.props.addMultipleProjects(obj);
         // const adminUID = document.querySelector('#admin-uid').value;
@@ -200,6 +253,7 @@ class Dashboard extends Component {
                                 <textarea onChange={this.handleChange} ref="JsonText" required style={{ height: 200 }}/>
                                 <button className="btn waves-effect waves-light" type="submit" name="Subir" style={{ backgroundColor: "red" }}>Subir JSON</button>
                                 {/* <button type="submit" value="Guardar" >Make admin</button> */}
+                                <textarea disabled={true} value={this.state.jsonErrorString} onChange={this.handleChange} ref="JsonErrorText" id="JsonErrorText" required style={{ height: 50 }} />
                             </form>
                             <div >
                                 <Notifications uploadJsonError={this.state.uploadJsonError} missionsUploaded={this.state.missionsUploaded}/>
