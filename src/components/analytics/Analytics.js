@@ -23,7 +23,9 @@ class Analytics extends Component {
         searching: true,
         missionsUploaded: 0,
         uploadJsonError: null,
-        analyticsData: null
+        analyticsData: null,
+        graphData: null,
+        numberOfElementsOnGraph: 1, //mostrar los ultimos 7 dias
     };
     filteredProjects = null
 
@@ -85,14 +87,54 @@ class Analytics extends Component {
     componentDidMount() {
         this.setState({ ...this.state, busqueda: this.props.searchString })
         this.getSearchResults(this.props.searchString);
+
+        
+
         if (!(this.props.searchString === "")) {
             this.setState({ searching: true })
         }
     }
 
-
-
     getSearchResults(search) {
+        var i = 1
+
+        getFirestore().get({ collection: "analytics" })
+            .then((querySnapshot) => {
+                var graphDataUsers = {}
+                var graphDataMissions = {}
+                var graphDataCaptures = {}
+                var graphDataOpenTasks = {}
+                var graphDataUsersCompletedMissions = {}
+                var graphDataUsersCreatedOpenTask = {}
+                querySnapshot.forEach(function (doc) {
+                    if(i <= 7) { //muestra los ultimos 7 dias
+                        // doc.data() is never undefined for query doc snapshots
+                        //console.log(doc.id, " => ", doc.data());
+                        var n = parseInt(doc.id)
+                        var d = new Date(n)
+                        console.log(d)
+                        graphDataUsers[d] = doc.data().totalUsers
+                        graphDataMissions[d] = doc.data().totalMissions
+                        graphDataCaptures[d] = doc.data().totalCaptures
+                        graphDataOpenTasks[d] = doc.data().opentaskMissions
+                        graphDataUsersCompletedMissions[d] = doc.data().usersCompletedMissions
+                        graphDataUsersCreatedOpenTask[d] = doc.data().usersCreatedOpenTask
+                    }
+                    i++
+                });
+
+                console.log(graphDataUsers)
+                this.setState({
+                    ...this.state,
+                    graphDataUsers: graphDataUsers,
+                    graphDataMissions: graphDataMissions,
+                    graphDataCaptures: graphDataCaptures,
+                    graphDataOpenTasks: graphDataOpenTasks,
+                    graphDataUsersCompletedMissions: graphDataUsersCompletedMissions,
+                    graphDataUsersCreatedOpenTask: graphDataUsersCreatedOpenTask
+                })
+            })
+
         var fr = (search === "") ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [search] }
         fetch("https://us-central1-gchgamedev2.cloudfunctions.net/dashboardAnalytics", {
             method: 'POST',
@@ -145,32 +187,30 @@ class Analytics extends Component {
                         //     usersCompletedMissions.push(capture)
                         // }
                     });
-                    
-                    console.log(result);
+
                     this.setState({
                         ...this.state,
                         analyticsData: result,
-                        searching: false
                     })
-                    //console.log(res[1].result);
 
+                    
                 } else {
                     // Hubo un error en el server
                     console.log("error");
                 }
+
+                
             })
             .catch(error => {
                 // Hubo un error en el server
                 console.log(error);
             });
-
     }
 
     render() {
-
+        //console.log(this.state.analyticsData)
+        //console.log(this.state.graphData)
         const { auth, profile } = this.props;
-
-        const data = [{ name: 'Page A', uv: 200, pv: 2400, amt: 3400 }, { name: 'Page A', uv: 600, pv: 7400, amt: 8400 }];
 
         if (!auth.uid) return <Redirect to='/singin'></Redirect>
         if (!profile.isEmpty) {
@@ -195,7 +235,7 @@ class Analytics extends Component {
         //         console.log(error);
         //     });
         //if(auth.uid) return <Redirect to='/create'></Redirect>
-        if (this.state.analyticsData != null) {
+        if (this.state.analyticsData != null && this.state.graphDataUsers != null) {
             return (
                 <div className="dashboard container" >
                     <div className="row">
@@ -230,14 +270,54 @@ class Analytics extends Component {
                             </table>
                         </div>
                     </div>
-                    {/* <div className="row">
+                    <div className="row">
                         <div className="col s12 m6" style={{ backgroundColor: "white" }}>
                             <div>
-                                <h3 class="header" class="center-align">Capturas</h3>
-                                <LineChart xtitle="Dia" ytitle="Capturas" id="Capturas" data={{ "2017-05-13": 2, "2017-05-14": 5, "2017-05-15": 4, "2017-05-16": 8, "2017-05-17": 6 }} />
+                                <h4 class="header" class="center-align">Usuarios</h4>
+                                <LineChart xtitle="Dia" ytitle="Usuarios" id="Capturas" data={this.state.graphDataUsers} />
                             </div>
                         </div>
-                    </div> */}
+                    </div>
+                    <div className="row">
+                        <div className="col s12 m6" style={{ backgroundColor: "white" }}>
+                            <div>
+                                <h4 class="header" class="center-align">Misiones</h4>
+                                <LineChart xtitle="Dia" ytitle="Misiones" id="Capturas" data={this.state.graphDataMissions} />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col s12 m6" style={{ backgroundColor: "white" }}>
+                            <div>
+                                <h4 class="header" class="center-align">Capturas</h4>
+                                <LineChart xtitle="Dia" ytitle="Capturas" id="Capturas" data={this.state.graphDataCaptures} />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col s12 m6" style={{ backgroundColor: "white" }}>
+                            <div>
+                                <h4 class="header" class="center-align">OpenTask</h4>
+                                <LineChart xtitle="Dia" ytitle="OpenTask" id="Capturas" data={this.state.graphDataOpenTasks} />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col s12 m6" style={{ backgroundColor: "white" }}>
+                            <div>
+                                <h4 class="header" class="center-align">Usuarios completado misiones</h4>
+                                <LineChart xtitle="Dia" ytitle="Usuarios" id="Capturas" data={this.state.graphDataUsersCompletedMissions} />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col s12 m6" style={{ backgroundColor: "white" }}>
+                            <div>
+                                <h4 class="header" class="center-align">Usuarios creado OpenTask</h4>
+                                <LineChart xtitle="Dia" ytitle="Usuarios" id="Capturas" data={this.state.graphDataUsersCreatedOpenTask} />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )
         } else {

@@ -275,9 +275,9 @@ exports.dashboardAnalytics = functions.https.onRequest(async (request, response)
 
     });
 });
-
+                                                      //'every 5 minutes'
+                                                      //('every day 23:59').timeZone('America/Mexico_City')
 exports.saveDailyAnalytics = functions.pubsub.schedule('every day 23:59').timeZone('America/Mexico_City').onRun(async (context) => {
-    //console.log('This will be run every 2 minutes!');
 
     //console.log("Querying analytics data to DB");
     const db = admin.firestore();
