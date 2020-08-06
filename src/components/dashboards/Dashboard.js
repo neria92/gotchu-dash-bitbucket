@@ -134,10 +134,8 @@ class Dashboard extends Component {
     }
 
     componentDidMount(){
-        //console.log(this.props.auth)
         if (this.props.auth && !this.props.user){
-            console.log("no user, cargando")
-            loadLoggedUserData(this.props.auth.uid)
+            this.props.loadLoggedUserData(this.props.auth.uid)
         }
         this.setState({ ...this.state, busqueda: this.props.searchString})
         this.getSearchResults(this.props.searchString);
@@ -145,8 +143,6 @@ class Dashboard extends Component {
             this.setState({ searching: true })
         }
     }
-
-   
 
     getSearchResults(search){
         var fr = (search === "") ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [search] }
@@ -192,6 +188,7 @@ class Dashboard extends Component {
     }
 
     render(){
+        console.log(this.props.user)
         
         const { auth, profile } = this.props;
         
@@ -201,23 +198,8 @@ class Dashboard extends Component {
                 this.props.signOut();
             }
         }
-        // auth.getIdTokenResult()
-        //     .then((idTokenResult) => {
-        //         // Confirm the user is an Admin.
-        //         if (!!idTokenResult.claims.admin) {
-        //             // Show admin UI.
-        //             //showAdminUI();
-        //             console.log("admin");
-        //         } else {
-        //             // Show regular user UI.
-        //             // return <Redirect to='/singin'></Redirect>
-        //             console.log("no admin");
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         console.log(error);
-        //     });
-        //if(auth.uid) return <Redirect to='/create'></Redirect>
+
+        if (this.props.user && this.props.user.adminPermissions.missions) {
             return (
                 <div className="dashboard container">
                     <form onSubmit={this.handleSubmitSearch} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
@@ -265,7 +247,14 @@ class Dashboard extends Component {
                     </div>
                 </div>
             )
-        
+        }
+        else {
+            return(
+                <div className="dashboard container" style={{backgroundColor:"white"}}>
+                    You do not have permission to edit this categorie.
+                </div>
+            )
+        }
     }
 }
 

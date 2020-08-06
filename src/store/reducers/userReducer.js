@@ -25,6 +25,11 @@ const userReducer =(state = initState,action) => {
                 userSaved: null,
                 error: null
             }
+        case 'User_Loaded':
+            return {
+                ...state,
+                loggedUser: action.payload.user
+            }
         default:
             return state;
     }

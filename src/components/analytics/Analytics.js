@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom'
 //import { addMultipleProjects } from '../../store/actions/projectActions'
 import { reduxFirestore, getFirestore } from 'redux-firestore'
 import { LineChart, PieChart } from 'react-chartkick'
+import { loadLoggedUserData } from '../../store/actions/userActions'
 import 'chart.js'
 
 class Analytics extends Component {
@@ -87,7 +88,9 @@ class Analytics extends Component {
     componentDidMount() {
         this.setState({ ...this.state, busqueda: this.props.searchString })
         this.getSearchResults(this.props.searchString);
-
+        if (this.props.auth && !this.props.user) {
+            this.props.loadLoggedUserData(this.props.auth.uid)
+        }
         
 
         if (!(this.props.searchString === "")) {
@@ -112,7 +115,7 @@ class Analytics extends Component {
                         //console.log(doc.id, " => ", doc.data());
                         var n = parseInt(doc.id)
                         var d = new Date(n)
-                        console.log(d)
+                        //console.log(d)
                         graphDataUsers[d] = doc.data().totalUsers
                         graphDataMissions[d] = doc.data().totalMissions
                         graphDataCaptures[d] = doc.data().totalCaptures
@@ -123,7 +126,7 @@ class Analytics extends Component {
                     i++
                 });
 
-                console.log(graphDataUsers)
+                //console.log(graphDataUsers)
                 this.setState({
                     ...this.state,
                     graphDataUsers: graphDataUsers,
@@ -235,97 +238,105 @@ class Analytics extends Component {
         //         console.log(error);
         //     });
         //if(auth.uid) return <Redirect to='/create'></Redirect>
-        if (this.state.analyticsData != null && this.state.graphDataUsers != null) {
-            return (
-                <div className="dashboard container" >
-                    <div className="row">
-                        <div className="col s12 m6" style={{ backgroundColor: "white" }}>
-                            <table class="striped">
-                                <tbody>
-                                    <tr>
-                                        <td>Usuarios totales:</td>
-                                        <td>{this.state.analyticsData.users.length}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Misiones totales:</td>
-                                        <td>{this.state.analyticsData.missions.length}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Capturas totales:</td>
-                                        <td>{this.state.analyticsData.captures.length}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Misiones OpenTask totales:</td>
-                                        <td>{this.state.analyticsData.opentaskMissions.length}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Número de usuarios que han completado misiones:</td>
-                                        <td>{this.state.analyticsData.usersCompletedMissions.size}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Número de usuarios que han creado OpenTask:</td>
-                                        <td>{this.state.analyticsData.usersCreatedOpenTask.size}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+        if (this.props.user && this.props.user.adminPermissions.analytics) {
+            if (this.state.analyticsData != null && this.state.graphDataUsers != null) {
+                return (
+                    <div className="dashboard container" >
+                        <div className="row">
+                            <div className="col s12 m6" style={{ backgroundColor: "white" }}>
+                                <table class="striped">
+                                    <tbody>
+                                        <tr>
+                                            <td>Usuarios totales:</td>
+                                            <td>{this.state.analyticsData.users.length}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Misiones totales:</td>
+                                            <td>{this.state.analyticsData.missions.length}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Capturas totales:</td>
+                                            <td>{this.state.analyticsData.captures.length}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Misiones OpenTask totales:</td>
+                                            <td>{this.state.analyticsData.opentaskMissions.length}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Número de usuarios que han completado misiones:</td>
+                                            <td>{this.state.analyticsData.usersCompletedMissions.size}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Número de usuarios que han creado OpenTask:</td>
+                                            <td>{this.state.analyticsData.usersCreatedOpenTask.size}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <div className="row">
-                        <div className="col s12 m6" style={{ backgroundColor: "white" }}>
-                            <div>
-                                <h4 class="header" class="center-align">Usuarios</h4>
-                                <LineChart xtitle="Dia" ytitle="Usuarios" id="Capturas" data={this.state.graphDataUsers} />
+                        <div className="row">
+                            <div className="col s12 m6" style={{ backgroundColor: "white" }}>
+                                <div>
+                                    <h4 class="header" class="center-align">Usuarios</h4>
+                                    <LineChart xtitle="Dia" ytitle="Usuarios" id="Capturas" data={this.state.graphDataUsers} />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col s12 m6" style={{ backgroundColor: "white" }}>
+                                <div>
+                                    <h4 class="header" class="center-align">Misiones</h4>
+                                    <LineChart xtitle="Dia" ytitle="Misiones" id="Capturas" data={this.state.graphDataMissions} />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col s12 m6" style={{ backgroundColor: "white" }}>
+                                <div>
+                                    <h4 class="header" class="center-align">Capturas</h4>
+                                    <LineChart xtitle="Dia" ytitle="Capturas" id="Capturas" data={this.state.graphDataCaptures} />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col s12 m6" style={{ backgroundColor: "white" }}>
+                                <div>
+                                    <h4 class="header" class="center-align">OpenTask</h4>
+                                    <LineChart xtitle="Dia" ytitle="OpenTask" id="Capturas" data={this.state.graphDataOpenTasks} />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col s12 m6" style={{ backgroundColor: "white" }}>
+                                <div>
+                                    <h4 class="header" class="center-align">Usuarios completado misiones</h4>
+                                    <LineChart xtitle="Dia" ytitle="Usuarios" id="Capturas" data={this.state.graphDataUsersCompletedMissions} />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col s12 m6" style={{ backgroundColor: "white" }}>
+                                <div>
+                                    <h4 class="header" class="center-align">Usuarios creado OpenTask</h4>
+                                    <LineChart xtitle="Dia" ytitle="Usuarios" id="Capturas" data={this.state.graphDataUsersCreatedOpenTask} />
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col s12 m6" style={{ backgroundColor: "white" }}>
-                            <div>
-                                <h4 class="header" class="center-align">Misiones</h4>
-                                <LineChart xtitle="Dia" ytitle="Misiones" id="Capturas" data={this.state.graphDataMissions} />
-                            </div>
+                )
+            } else {
+                return(
+                    <div className="dashboard container" >
+                        <div style={{ margin: "20px auto", backgroundColor: "white" }} className="container center">
+                            <p>Loading...</p>
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col s12 m6" style={{ backgroundColor: "white" }}>
-                            <div>
-                                <h4 class="header" class="center-align">Capturas</h4>
-                                <LineChart xtitle="Dia" ytitle="Capturas" id="Capturas" data={this.state.graphDataCaptures} />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col s12 m6" style={{ backgroundColor: "white" }}>
-                            <div>
-                                <h4 class="header" class="center-align">OpenTask</h4>
-                                <LineChart xtitle="Dia" ytitle="OpenTask" id="Capturas" data={this.state.graphDataOpenTasks} />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col s12 m6" style={{ backgroundColor: "white" }}>
-                            <div>
-                                <h4 class="header" class="center-align">Usuarios completado misiones</h4>
-                                <LineChart xtitle="Dia" ytitle="Usuarios" id="Capturas" data={this.state.graphDataUsersCompletedMissions} />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col s12 m6" style={{ backgroundColor: "white" }}>
-                            <div>
-                                <h4 class="header" class="center-align">Usuarios creado OpenTask</h4>
-                                <LineChart xtitle="Dia" ytitle="Usuarios" id="Capturas" data={this.state.graphDataUsersCreatedOpenTask} />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )
+                )
+            }
         } else {
-            return(
-                <div className="dashboard container" >
-                    <div style={{ margin: "20px auto", backgroundColor: "white" }} className="container center">
-                        <p>Loading...</p>
-                    </div>
+            return (
+                <div className="dashboard container" style={{ backgroundColor: "white" }}>
+                    You do not have permission to edit this categorie.
                 </div>
             )
         }
@@ -343,7 +354,8 @@ class Analytics extends Component {
 const mapDispatchToProps = (dispatch) => {
     return {
         signOut: () => dispatch(signOut()),
-        setSearchString: (searchString) => dispatch(setSearchString(searchString))
+        setSearchString: (searchString) => dispatch(setSearchString(searchString)),
+        loadLoggedUserData: (uid) => dispatch(loadLoggedUserData(uid)),
         //addMultipleProjects: (projects) => dispatch(addMultipleProjects(projects)),
     }
 }
@@ -352,7 +364,8 @@ const mapStateToProps = (state) => {
     return {
         auth: state.firebase.auth,
         profile: state.firebase.profile,
-        searchString: state.projectReducer.searchString
+        searchString: state.projectReducer.searchString,
+        user: state.userReducer.loggedUser
     }
 }
 

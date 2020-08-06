@@ -131,16 +131,16 @@ export const resetMoney = (info) => {
 };
 
 export const loadLoggedUserData = (uid) => {
-    console.log("aqui si")
-    console.log(uid)
+   // console.log("aqui si")
+    //console.log(uid)
     return (dispatch, getState, { getFirebase, getFirestore }) => {
-        console.log("aqui no")
+        //console.log("aqui no")
         const firestore = getFirestore();
         
         firestore.collection('users').doc(uid).get().then(function (doc) {
-            console.log("aqui menos")
+            //console.log(uid)
             if (doc.exists) {
-                console.log("Document data:", doc.data());
+                //console.log("Document data:", doc.data());
                 dispatch({
                     type: 'User_Loaded',
                     payload: {

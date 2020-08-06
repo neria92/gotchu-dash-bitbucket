@@ -6,6 +6,7 @@ import { compose } from 'redux'
 import { Redirect } from 'react-router-dom'
 import { resetMoney } from '../../store/actions/userActions'
 import { signOut } from '../../store/actions/authActions'
+import { loadLoggedUserData } from '../../store/actions/userActions'
 
 class Pay extends Component {
     constructor(props) {
@@ -35,6 +36,9 @@ class Pay extends Component {
     }
 
     componentDidMount() {
+        if (this.props.auth && !this.props.user) {
+            this.props.loadLoggedUserData(this.props.auth.uid)
+        }
         this.setState({
             busqueda: ''
         })
@@ -203,22 +207,30 @@ class Pay extends Component {
         //         console.log(error);
         //     });
         //if(auth.uid) return <Redirect to='/create'></Redirect>
-        return (
-            <div className="dashboard container">
-                <div className="s12 m5 " style={{ color: "Red"}}>
-                    <p>Total a pagar: {this.state.totalPayment}</p>
-                </div>
-                <button disabled={this.state.payingInProgress} onClick={this.payButtonOnClick} className="btn waves-effect waves-light" name="Subir" style={{ backgroundColor: "red" }}>Pagar a todos</button>
-                <div className="row">
-                    <div className="col s12 m6">
-                        <PaymentsList users={this.state.usersFilteredForPayment} searching={this.state.searching} />
+        if (this.props.user && this.props.user.adminPermissions.pay) {
+            return (
+                <div className="dashboard container">
+                    <div className="s12 m5 " style={{ color: "Red"}}>
+                        <p>Total a pagar: {this.state.totalPayment}</p>
                     </div>
-                    {/* <div className="col s12 m5 offset-m1">
-                        <Notifications />
-                    </div> */}
+                    <button disabled={this.state.payingInProgress} onClick={this.payButtonOnClick} className="btn waves-effect waves-light" name="Subir" style={{ backgroundColor: "red" }}>Pagar a todos</button>
+                    <div className="row">
+                        <div className="col s12 m6">
+                            <PaymentsList users={this.state.usersFilteredForPayment} searching={this.state.searching} />
+                        </div>
+                        {/* <div className="col s12 m5 offset-m1">
+                            <Notifications />
+                        </div> */}
+                    </div>
                 </div>
-            </div>
-        )
+            )
+        } else {
+            return (
+                <div className="dashboard container" style={{ backgroundColor: "white" }}>
+                    You do not have permission to edit this categorie.
+                </div>
+            )
+        }
     }
 }
 
@@ -231,7 +243,8 @@ class Pay extends Component {
 const mapDispatchToProps = (dispatch) => {
     return {
         signOut: () => dispatch(signOut()),
-        resetMoney: (capture) => dispatch(resetMoney(capture))
+        resetMoney: (capture) => dispatch(resetMoney(capture)),
+        loadLoggedUserData: (uid) => dispatch(loadLoggedUserData(uid)),
     }
 }
 
@@ -244,6 +257,7 @@ const mapStateToProps = (state) => {
         auth: state.firebase.auth,
         profile: state.firebase.profile,
         users: state.firestore.ordered.users,
+        user: state.userReducer.loggedUser
     }
 }
 

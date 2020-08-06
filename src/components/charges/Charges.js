@@ -6,6 +6,7 @@ import { Redirect } from 'react-router-dom'
 import { resetMoney } from '../../store/actions/userActions'
 import { signOut } from '../../store/actions/authActions'
 import ChargesList from './ChargesList'
+import { loadLoggedUserData } from '../../store/actions/userActions'
 
 class Payments extends Component {
     constructor(props) {
@@ -36,6 +37,9 @@ class Payments extends Component {
     }
 
     componentDidMount() {
+        if (this.props.auth && !this.props.user) {
+            this.props.loadLoggedUserData(this.props.auth.uid)
+        }
         this.setState({
             busqueda: ''
         })
@@ -183,22 +187,30 @@ class Payments extends Component {
         //         console.log(error);
         //     });
         //if(auth.uid) return <Redirect to='/create'></Redirect>
-        return (
-            <div className="dashboard container">
-                <form onSubmit={this.handleSubmitSearch} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
-                    <input placeholder="UID" defaultValue={this.state.busqueda} onChange={this.handleChange} ref="busqueda" id="busqueda" />
-                    {/* <button type="submit" value="Guardar" >Make admin</button> */}
-                </form>
-                <div className="row">
-                    <div className="col s12 m6">
-                        <ChargesList filter={this.state.filter} />
+        if (this.props.user && this.props.user.adminPermissions.charges) {
+            return (
+                <div className="dashboard container">
+                    <form onSubmit={this.handleSubmitSearch} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
+                        <input placeholder="UID" defaultValue={this.state.busqueda} onChange={this.handleChange} ref="busqueda" id="busqueda" />
+                        {/* <button type="submit" value="Guardar" >Make admin</button> */}
+                    </form>
+                    <div className="row">
+                        <div className="col s12 m6">
+                            <ChargesList filter={this.state.filter} />
+                        </div>
+                        {/* <div className="col s12 m5 offset-m1">
+                            <Notifications />
+                        </div> */}
                     </div>
-                    {/* <div className="col s12 m5 offset-m1">
-                        <Notifications />
-                    </div> */}
                 </div>
-            </div>
-        )
+            )
+        } else {
+            return (
+                <div className="dashboard container" style={{ backgroundColor: "white" }}>
+                    You do not have permission to edit this categorie.
+                </div>
+            )
+        }
     }
 }
 
@@ -211,7 +223,8 @@ class Payments extends Component {
 const mapDispatchToProps = (dispatch) => {
     return {
         signOut: () => dispatch(signOut()),
-        resetMoney: (capture) => dispatch(resetMoney(capture))
+        resetMoney: (capture) => dispatch(resetMoney(capture)),
+        loadLoggedUserData: (uid) => dispatch(loadLoggedUserData(uid)),
     }
 }
 
@@ -224,6 +237,7 @@ const mapStateToProps = (state) => {
         auth: state.firebase.auth,
         profile: state.firebase.profile,
         users: state.firestore.ordered.users,
+        user: state.userReducer.loggedUser
     }
 }
 

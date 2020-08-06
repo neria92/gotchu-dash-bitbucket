@@ -5,6 +5,7 @@ import { firestoreConnect } from 'react-redux-firebase'
 import {compose} from 'redux'
 import {Redirect} from 'react-router-dom'
 import { signOut } from '../../store/actions/authActions'
+import { loadLoggedUserData } from '../../store/actions/userActions'
 
 class Users extends Component {
     state = {
@@ -27,6 +28,9 @@ class Users extends Component {
     }
 
     componentDidMount() {
+        if (this.props.auth && !this.props.user) {
+            this.props.loadLoggedUserData(this.props.auth.uid)
+        }
         this.setState({
             busqueda: ''
         })
@@ -134,22 +138,30 @@ class Users extends Component {
         //         console.log(error);
         //     });
         //if(auth.uid) return <Redirect to='/create'></Redirect>
-        return (
-            <div className="dashboard container">
-                <form onSubmit={this.handleSubmitSearch} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
-                    <input placeholder="Username" onChange={this.handleChange} id="busqueda" />
-                    {/* <button type="submit" value="Guardar" >Make admin</button> */}
-                </form>
-                <div className ="row">
-                    <div className="col s12 m6">
-                        <UsersList users={this.state.usersSearch} searching={this.state.searching}/>
+        if (this.props.user && this.props.user.adminPermissions.users) {
+            return (
+                <div className="dashboard container">
+                    <form onSubmit={this.handleSubmitSearch} className="admin-actions" style={{ margin: "40px auto", backgroundColor: "white" }}>
+                        <input placeholder="Username" onChange={this.handleChange} id="busqueda" />
+                        {/* <button type="submit" value="Guardar" >Make admin</button> */}
+                    </form>
+                    <div className ="row">
+                        <div className="col s12 m6">
+                            <UsersList users={this.state.usersSearch} searching={this.state.searching}/>
+                        </div>
+                        {/* <div className="col s12 m5 offset-m1">
+                            <Notifications />
+                        </div> */}
                     </div>
-                    {/* <div className="col s12 m5 offset-m1">
-                        <Notifications />
-                    </div> */}
                 </div>
-            </div>
-        )
+            )
+        } else {
+            return (
+                <div className="dashboard container" style={{ backgroundColor: "white" }}>
+                    You do not have permission to edit this categorie.
+                </div>
+            )
+        }
     }
 }
 
@@ -161,7 +173,8 @@ class Users extends Component {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        signOut: () => dispatch(signOut())
+        signOut: () => dispatch(signOut()),
+        loadLoggedUserData: (uid) => dispatch(loadLoggedUserData(uid)),
     }
 }
 
@@ -172,7 +185,8 @@ const mapStateToProps = (state) => {
     // }
     return {
         auth: state.firebase.auth,
-        profile: state.firebase.profile
+        profile: state.firebase.profile,
+        user: state.userReducer.loggedUser
     }
 }
 
