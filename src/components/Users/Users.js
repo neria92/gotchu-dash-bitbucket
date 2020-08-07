@@ -60,7 +60,7 @@ class Users extends Component {
         // });
         var fr = getAll ? { contentType: { missions: false, captures: false, users: true, hashtags: false } } : { contentType: { missions: false, captures: false, users: true, hashtags: false }, whiteKeywords: [this.state.busqueda] }
 
-        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/dashboardSearch", {
+        fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardSearch", {
             method: 'POST',
             mode: 'cors',
             headers: {

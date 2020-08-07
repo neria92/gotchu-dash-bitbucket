@@ -119,7 +119,7 @@ class Pay extends Component {
         //     }),
         // })
 
-        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/sendPayment", {
+        fetch("https://us-central1-gchgame.cloudfunctions.net/sendPayment", {
             method: 'POST',
             mode: 'cors',
             headers: {

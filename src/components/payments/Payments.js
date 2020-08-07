@@ -99,7 +99,7 @@ class Payments extends Component {
         //     console.log(result);
         //     //this.setState({ admin: true })
         // });
-        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/sendPayment", {
+        fetch("https://us-central1-gchgame.cloudfunctions.net/sendPayment", {
             method: 'POST',
             mode: 'cors',
             headers: {

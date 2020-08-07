@@ -134,7 +134,7 @@ class Dashboard extends Component {
     }
 
     componentDidMount(){
-        if (this.props.auth && !this.props.user){
+        if (this.props.auth.uid !== undefined && !this.props.user){
             this.props.loadLoggedUserData(this.props.auth.uid)
         }
         this.setState({ ...this.state, busqueda: this.props.searchString})
@@ -146,7 +146,7 @@ class Dashboard extends Component {
 
     getSearchResults(search){
         var fr = (search === "") ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [search] }
-        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/dashboardSearch", {
+        fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardSearch", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -188,7 +188,7 @@ class Dashboard extends Component {
     }
 
     render(){
-        console.log(this.props.user)
+        console.log(this.props)
         
         const { auth, profile } = this.props;
         
