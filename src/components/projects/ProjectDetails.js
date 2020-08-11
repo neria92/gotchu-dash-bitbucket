@@ -61,6 +61,7 @@ class ProjectDetails extends Component {
         durationSecs: 0,
         fixed: false,
         hasLocation: true,
+        needRevision: true,
         language: 'es',
         locationName: { es: '' },
         locationType: '',
@@ -163,6 +164,7 @@ class ProjectDetails extends Component {
       _mission.generic      = mission.generic      != null ? mission.generic      : ""
       _mission.fixed        = mission.fixed        != null ? mission.fixed        : false
       _mission.hasLocation = mission.hasLocation   != null ? mission.hasLocation  : true
+      _mission.needRevision = mission.needRevision != null ? mission.needRevision : true
       _mission.durationSecs = mission.durationSecs != null ? mission.durationSecs : 0
       _mission.reports      = mission.reports      != null ? mission.reports      : 0
       _mission.startDate    = mission.startDate    != null ? mission.startDate    : 0
@@ -284,6 +286,7 @@ class ProjectDetails extends Component {
       durationSecs: Number(this.state.timeDuration),
       fixed: this.refs.fixed.checked,
       hasLocation: this.refs.hasLocation.checked,
+      needRevision: this.refs.needRevision.checked,
       language: lang,
       locationName: { [lang]: this.refs.locationName.value },
       locationType: locationType,
@@ -400,6 +403,12 @@ class ProjectDetails extends Component {
                   ID:
                 <input readOnly defaultValue={this.state.id} />
                 </label>
+                <p>
+                  <label>
+                    <input type="checkbox" defaultChecked={mission.needRevision} id="needRevision" ref="needRevision" onChange={this.handleChange} />
+                    <span>Need revision</span>
+                  </label>
+                </p>
                 <label>
                   Usuario creador:
                 <input readOnly defaultValue={this.state.microtaskUsername} />
@@ -538,6 +547,7 @@ class ProjectDetails extends Component {
                       <span>Has location</span>
                     </label>
                   </p>
+                  
                   <label>
                     Rally Mission anterior:
                 <input defaultValue={mission.rally.prevMission} ref="rallyPrevMission" onChange={this.handleChange} />
