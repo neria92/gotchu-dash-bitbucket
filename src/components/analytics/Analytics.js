@@ -139,7 +139,7 @@ class Analytics extends Component {
             })
 
         var fr = (search === "") ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [search] }
-        fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardAnalytics", {
+        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/dashboardAnalytics", {
             method: 'POST',
             mode: 'cors',
             headers: {

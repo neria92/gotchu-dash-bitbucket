@@ -146,7 +146,7 @@ class Dashboard extends Component {
 
     getSearchResults(search){
         var fr = (search === "") ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [search] }
-        fetch("https://us-central1-gchgame.cloudfunctions.net/dashboardSearch", {
+        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/dashboardSearch", {
             method: 'POST',
             mode: 'cors',
             headers: {
