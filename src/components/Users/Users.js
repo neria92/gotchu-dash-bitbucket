@@ -70,7 +70,7 @@ class Users extends Component {
             body: JSON.stringify({
                 UID: "0",
                 startIndex: 0,
-                numberOfFeeds: 5000,
+                numberOfFeeds: 100,
                 sortBy: "date",
                 filter: fr
             }),

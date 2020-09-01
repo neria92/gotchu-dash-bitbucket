@@ -123,7 +123,7 @@ export default compose(
     //console.log(props.filter.charAt(0).toUpperCase() + props.filter.slice(1))
     return [
       {
-        collection: 'missions', limit: 0, where: [['title.es', '>=', props.filter.charAt(0).toUpperCase() + props.filter.slice(1)]], orderBy: ['title.es', 'asc']
+        collection: 'missions', limit: 100, where: [['title.es', '>=', props.filter.charAt(0).toUpperCase() + props.filter.slice(1)]], orderBy: ['title.es', 'asc']
       }
     ]
   }),
