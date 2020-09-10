@@ -165,7 +165,8 @@ class Dashboard extends Component {
             t0 = new Date(this.props.startDate);
         } 
 
-        this.refs.startDateChecked.checked = this.props.startDateChecked
+        if (this.refs.startDateChecked && this.refs.startDateChecked !== undefined)
+            this.refs.startDateChecked.checked = this.props.startDateChecked
         this.setState({ searching: s, busqueda: this.props.searchString, startDateChecked: this.props.startDateChecked, startDate: t0 })
         this.getSearchResults(this.props.searchString, this.props.startDateChecked, this.props.startDate);
 
