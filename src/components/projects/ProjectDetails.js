@@ -80,7 +80,8 @@ class ProjectDetails extends Component {
         hashtags: [],
         rally: { prevMission: '', nextMission: '', position: 0, total: 0, isRally: false},
         pinned: false,
-        validatorProperties: ''
+        validatorProperties: '',
+        typeform: "",
       }
       
     this.setState({ddLang:{ label: "Español", value: "es" }});
@@ -226,6 +227,8 @@ class ProjectDetails extends Component {
 
       _mission.microtask = mission.microtask != null ? mission.microtask : [""]
       _mission.hashtags = mission.hashtags != null ? mission.hashtags : [""]
+
+      _mission.typeform = mission.typeform != null ? mission.typeform : ""
       this.setState({ hashtags: _mission.hashtags})
     }
 
@@ -305,7 +308,8 @@ class ProjectDetails extends Component {
       hashtags: hashtags,
       rally: { prevMission: this.refs.rallyPrevMission.value, nextMission: this.refs.rallyNextMission.value, position: parseInt(this.refs.rallyPosition.value), total: parseInt(this.refs.rallyTotal.value), isRally: this.refs.rallyIsRally.checked },
       pinned: this.refs.pinned.checked,
-      validatorProperties: this.refs.validatorProperties.value
+      validatorProperties: this.refs.validatorProperties.value,
+      typeform: this.refs.typeform.value
     }
     this.setState({
       ...this.state,
@@ -580,6 +584,10 @@ class ProjectDetails extends Component {
                       ValidatorProperties:
                 <textarea defaultValue={mission.validatorProperties} ref="validatorProperties" onChange={this.handleChange} />
                     </label>
+                  <label>
+                    Typeform:
+                  <input defaultValue={mission.typeform} ref="typeform" onChange={this.handleChange} />
+                  </label>
                   <label>
                    Reportes:
                   <input readOnly type="number" value={mission.reports} ref="reports" />
