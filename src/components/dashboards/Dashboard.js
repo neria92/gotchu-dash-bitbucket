@@ -240,8 +240,7 @@ class Dashboard extends Component {
             }
         }
 
-        //if (this.props.user && this.props.user.adminPermissions.missions) {
-        if (true) {
+        if (this.props.user && this.props.user.adminPermissions.missions) {
             return (
                 <div className="dashboard container">
                     <form onSubmit={this.handleSubmitSearch} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
