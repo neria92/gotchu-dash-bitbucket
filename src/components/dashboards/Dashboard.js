@@ -14,6 +14,7 @@ import DatePicker from 'react-datepicker'
 //import { addMultipleProjects } from '../../store/actions/projectActions'
 import { reduxFirestore, getFirestore } from 'redux-firestore'
 import { setStartDateChecked, setStartDate } from '../../store/actions/projectActions'
+import { cloudFunctionsURL } from '../config/fbConfig'
 
 class Dashboard extends Component {
     state = {
@@ -181,7 +182,7 @@ class Dashboard extends Component {
             console.log("SIN startdate")
             fr = (search === "") ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [search] }
         }
-        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/dashboardSearch", {
+        fetch(cloudFunctionsURL + "/dashboardSearch", {
             method: 'POST',
             mode: 'cors',
             headers: {

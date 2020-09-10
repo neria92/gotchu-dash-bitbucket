@@ -6,6 +6,7 @@ import {compose} from 'redux'
 import {Redirect} from 'react-router-dom'
 import { signOut } from '../../store/actions/authActions'
 import { loadLoggedUserData } from '../../store/actions/userActions'
+import { cloudFunctionsURL } from '../config/fbConfig'
 
 class Users extends Component {
     state = {
@@ -60,7 +61,7 @@ class Users extends Component {
         // });
         var fr = getAll ? { contentType: { missions: false, captures: false, users: true, hashtags: false } } : { contentType: { missions: false, captures: false, users: true, hashtags: false }, whiteKeywords: [this.state.busqueda] }
 
-        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/dashboardSearch", {
+        fetch(cloudFunctionsURL + "/dashboardSearch", {
             method: 'POST',
             mode: 'cors',
             headers: {

@@ -7,6 +7,7 @@ import { resetMoney } from '../../store/actions/userActions'
 import { signOut } from '../../store/actions/authActions'
 import ChargesList from './ChargesList'
 import { loadLoggedUserData } from '../../store/actions/userActions'
+import { cloudFunctionsURL } from '../config/fbConfig'
 
 class Payments extends Component {
     constructor(props) {
@@ -99,7 +100,7 @@ class Payments extends Component {
         //     console.log(result);
         //     //this.setState({ admin: true })
         // });
-        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/sendPayment", {
+        fetch(cloudFunctionsURL + "/sendPayment", {
             method: 'POST',
             mode: 'cors',
             headers: {

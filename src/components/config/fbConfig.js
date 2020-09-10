@@ -27,6 +27,8 @@ var firebaseConfig = {
   measurementId: "G-GY0CFBD0K3"
 };
 
+export var cloudFunctionsURL = "https://us-central1-gchgamedev2.cloudfunctions.net"
+
   firebase.initializeApp(firebaseConfig);
   firebase.functions()
 

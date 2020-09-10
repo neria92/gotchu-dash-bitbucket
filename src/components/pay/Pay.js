@@ -7,6 +7,7 @@ import { Redirect } from 'react-router-dom'
 import { resetMoney } from '../../store/actions/userActions'
 import { signOut } from '../../store/actions/authActions'
 import { loadLoggedUserData } from '../../store/actions/userActions'
+import { cloudFunctionsURL } from '../config/fbConfig'
 
 class Pay extends Component {
     constructor(props) {
@@ -119,7 +120,7 @@ class Pay extends Component {
         //     }),
         // })
 
-        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/sendPayment", {
+        fetch(cloudFunctionsURL + "/sendPayment", {
             method: 'POST',
             mode: 'cors',
             headers: {

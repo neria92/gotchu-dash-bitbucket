@@ -14,6 +14,7 @@ import { reduxFirestore, getFirestore } from 'redux-firestore'
 import { LineChart, PieChart } from 'react-chartkick'
 import { loadLoggedUserData } from '../../store/actions/userActions'
 import 'chart.js'
+import { cloudFunctionsURL } from '../config/fbConfig'
 
 class Analytics extends Component {
     state = {
@@ -139,7 +140,7 @@ class Analytics extends Component {
             })
 
         var fr = (search === "") ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [search] }
-        fetch("https://us-central1-gchgamedev2.cloudfunctions.net/dashboardAnalytics", {
+        fetch(cloudFunctionsURL + "/dashboardAnalytics", {
             method: 'POST',
             mode: 'cors',
             headers: {
