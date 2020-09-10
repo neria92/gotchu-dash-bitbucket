@@ -10,8 +10,10 @@ import { signOut } from '../../store/actions/authActions'
 import { setSearchString } from '../../store/actions/projectActions'
 import { loadLoggedUserData } from '../../store/actions/userActions'
 import { Link } from 'react-router-dom'
+import DatePicker from 'react-datepicker'
 //import { addMultipleProjects } from '../../store/actions/projectActions'
 import { reduxFirestore, getFirestore } from 'redux-firestore'
+import { setStartDateChecked, setStartDate } from '../../store/actions/projectActions'
 
 class Dashboard extends Component {
     state = {
@@ -23,6 +25,8 @@ class Dashboard extends Component {
         missionsUploaded: 0,
         uploadJsonError: null,
         jsonErrorString: "",
+        startDateChecked: false,
+        startDate: null
     };
     filteredProjects= null
 
@@ -126,26 +130,57 @@ class Dashboard extends Component {
         })
     }
 
+    startDateChecked = (e) => {
+        //e.preventDefault();
+        console.log( this.props.startDate)
+        var sdc = false
+        if (this.refs.startDateChecked.checked)
+            sdc = true
+        
+        this.setState({ startDateChecked: sdc, searching: true })
+        this.getSearchResults(this.refs.busqueda.value, sdc, this.props.startDate);
+        this.props.setStartDateChecked(sdc);
+    }
+
     handleSubmitSearch = (e) => {
         e.preventDefault();
         this.props.setSearchString(this.refs.busqueda.value)
         this.setState({ ...this.state,searching: true})
-        this.getSearchResults(this.refs.busqueda.value);
+        this.getSearchResults(this.refs.busqueda.value, this.state.startDateChecked, this.props.startDate);
     }
 
     componentDidMount(){
+        //console.log(this.props.startDateChecked)
+        var s = false
         if (this.props.auth.uid !== undefined && !this.props.user){
             this.props.loadLoggedUserData(this.props.auth.uid)
         }
-        this.setState({ ...this.state, busqueda: this.props.searchString})
-        this.getSearchResults(this.props.searchString);
         if(!(this.props.searchString === "")){
-            this.setState({ searching: true })
+            s = true
         }
+
+        var t0 = new Date();
+        if (this.props.startDate !== null) {
+            t0 = new Date(this.props.startDate);
+        } 
+
+        this.refs.startDateChecked.checked = this.props.startDateChecked
+        this.setState({ searching: s, busqueda: this.props.searchString, startDateChecked: this.props.startDateChecked, startDate: t0 })
+        this.getSearchResults(this.props.searchString, this.props.startDateChecked, this.props.startDate);
+
     }
 
-    getSearchResults(search){
-        var fr = (search === "") ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [search] }
+    getSearchResults(search, sdc, sd){
+        console.log(search)
+        console.log(sdc)
+        var fr;
+        if (sdc){
+            console.log("CON startdate")
+            fr = (search === "") ? { contentType: { missions: true, captures: false, users: false, hashtags: false }, startDate: Number(sd / 1000.0) } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [search], startDate: Number(this.state.startDate / 1000.0) }
+        } else {
+            console.log("SIN startdate")
+            fr = (search === "") ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [search] }
+        }
         fetch("https://us-central1-gchgamedev2.cloudfunctions.net/dashboardSearch", {
             method: 'POST',
             mode: 'cors',
@@ -157,7 +192,7 @@ class Dashboard extends Component {
                 UID: "0",
                 startIndex: 0,
                 numberOfFeeds: 100,
-                sortBy: "date",
+                sortBy: sdc ? "location" : "date",
                 filter: fr
             }),
         }).then(response => {
@@ -168,9 +203,14 @@ class Dashboard extends Component {
             .then(res => {
                 if (res[0] == 200) {
                     // Hacer algo con lo que regresa el server = res[1].newsfeed
+                    var r = res[1].result
+                    if (sdc) {
+                        r = r.sort(function (a, b) { return b.startDate - a.startDate });
+                    }
+
                     this.setState({
                         ...this.state,
-                        projectsBusqueda: res[1].result,
+                        projectsBusqueda: r,
                         searching: false
                     })
                     //console.log(res[1].result);
@@ -188,9 +228,9 @@ class Dashboard extends Component {
     }
 
     render(){
-        console.log(this.props)
         
         const { auth, profile } = this.props;
+        const { startDate } = this.state;
         
         if(!auth.uid) return <Redirect to='/singin'></Redirect>
         if (!profile.isEmpty) {
@@ -199,7 +239,8 @@ class Dashboard extends Component {
             }
         }
 
-        if (this.props.user && this.props.user.adminPermissions.missions) {
+        //if (this.props.user && this.props.user.adminPermissions.missions) {
+        if (true) {
             return (
                 <div className="dashboard container">
                     <form onSubmit={this.handleSubmitSearch} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
@@ -227,8 +268,31 @@ class Dashboard extends Component {
                                     </ul>
                                 </div>
                             </div>       */}
+                            <p>
+                                <label>
+                                    <input type="checkbox" defaultChecked={this.state.startDateChecked} id="startDateChecked" ref="startDateChecked" onChange={this.startDateChecked} />
+                                    <span>Limitar a fecha de Inicio</span>
+                                </label>
+                            </p>
 
                             
+                            <div style={{  backgroundColor: "white" }}>
+                                <DatePicker selected={startDate} onChange={startDate => { 
+                                    if(this.state.startDateChecked){
+                                        this.setState({ startDate: startDate, searching: true })
+                                        this.getSearchResults(this.refs.busqueda.value, this.props.startDateChecked, this.props.startDate); 
+                                    } else {
+                                        this.setState({ startDate: startDate })
+                                    }
+                                    this.props.setStartDate(startDate);
+                                }}
+                                    showTimeSelect
+                                    timeFormat="HH:mm"
+                                    timeIntervals={15}
+                                    timeCaption="time"
+                                    dateFormat="MMMM d, yyyy h:mm aa"
+                                />
+                            </div> 
                   
                             <ProjectList projects={this.state.projectsBusqueda} searching={this.state.searching}/* pasar resultado de busqueda *//>
                             <form onSubmit={this.handleSubmitUploadJson} className="admin-actions" style={{ margin: "20px auto", backgroundColor: "white" }}>
@@ -271,6 +335,8 @@ const mapDispatchToProps = (dispatch) => {
         signOut: () => dispatch(signOut()),
         setSearchString: (searchString) => dispatch(setSearchString(searchString)),
         loadLoggedUserData: (uid) => dispatch(loadLoggedUserData(uid)),
+        setStartDateChecked: (sdc) => dispatch(setStartDateChecked(sdc)),
+        setStartDate: (sd) => dispatch(setStartDate(sd))
         //addMultipleProjects: (projects) => dispatch(addMultipleProjects(projects)),
     }
 }
@@ -280,7 +346,9 @@ const mapStateToProps = (state) => {
         auth: state.firebase.auth,
         profile: state.firebase.profile,
         searchString: state.projectReducer.searchString,
-        user: state.userReducer.loggedUser
+        user: state.userReducer.loggedUser,
+        startDateChecked: state.projectReducer.startDateChecked,
+        startDate: state.projectReducer.startDate,
     }
 }
 

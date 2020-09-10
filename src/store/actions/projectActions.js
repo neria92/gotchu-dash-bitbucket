@@ -132,3 +132,25 @@ export const setOrderByReports = (obr) => {
         });
     }
 };
+
+export const setStartDate = (startDate) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        dispatch({
+            type: 'set_Start_Date',
+            payload: {
+                startDate: startDate
+            }
+        });
+    }
+};
+
+export const setStartDateChecked = (startDateChecked) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        dispatch({
+            type: 'set_Start_Date_Checked',
+            payload: {
+                startDateChecked: startDateChecked
+            }
+        });
+    }
+};

@@ -6,7 +6,9 @@ const initState={
     projectDeleted: null,
     error: null,
     searchString: '',
-    orderByReports: false
+    orderByReports: false,
+    startDate: new Date(),
+    startDateChecked: false
 }
 
 const projectReducer =(state = initState,action) => {
@@ -57,6 +59,16 @@ const projectReducer =(state = initState,action) => {
             return {
                 ...state,
                 orderByReports: action.payload.orderByReports
+            }
+        case 'set_Start_Date':
+            return {
+                ...state,
+                startDate: action.payload.startDate
+            }
+        case 'set_Start_Date_Checked':
+            return {
+                ...state,
+                startDateChecked: action.payload.startDateChecked
             }
         default:
             return state;
