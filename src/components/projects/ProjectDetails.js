@@ -82,6 +82,7 @@ class ProjectDetails extends Component {
         pinned: false,
         validatorProperties: '',
         typeform: "",
+        mapIcon: "",
       }
       
     this.setState({ddLang:{ label: "Español", value: "es" }});
@@ -229,6 +230,7 @@ class ProjectDetails extends Component {
       _mission.hashtags = mission.hashtags != null ? mission.hashtags : [""]
 
       _mission.typeform = mission.typeform != null ? mission.typeform : ""
+      _mission.mapIcon = mission.mapIcon != null ? mission.mapIcon : ""
       this.setState({ hashtags: _mission.hashtags})
     }
 
@@ -309,7 +311,8 @@ class ProjectDetails extends Component {
       rally: { prevMission: this.refs.rallyPrevMission.value, nextMission: this.refs.rallyNextMission.value, position: parseInt(this.refs.rallyPosition.value), total: parseInt(this.refs.rallyTotal.value), isRally: this.refs.rallyIsRally.checked },
       pinned: this.refs.pinned.checked,
       validatorProperties: this.refs.validatorProperties.value,
-      typeform: this.refs.typeform.value
+      typeform: this.refs.typeform.value,
+      mapIcon: this.refs.mapIcon.value
     }
     this.setState({
       ...this.state,
@@ -587,6 +590,10 @@ class ProjectDetails extends Component {
                   <label>
                     Typeform:
                   <input defaultValue={mission.typeform} ref="typeform" onChange={this.handleChange} />
+                  </label>
+                  <label>
+                    MapIcon:
+                  <input defaultValue={mission.mapIcon} ref="mapIcon" onChange={this.handleChange} />
                   </label>
                   <label>
                    Reportes:

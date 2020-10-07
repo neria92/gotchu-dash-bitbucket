@@ -133,7 +133,7 @@ class Dashboard extends Component {
 
     startDateChecked = (e) => {
         //e.preventDefault();
-        console.log( this.props.startDate)
+        //console.log( this.props.startDate)
         var sdc = false
         if (this.refs.startDateChecked.checked)
             sdc = true
@@ -173,14 +173,14 @@ class Dashboard extends Component {
     }
 
     getSearchResults(search, sdc, sd){
-        console.log(search)
-        console.log(sdc)
+        //console.log(search)
+        //console.log(sdc)
         var fr;
         if (sdc){
-            console.log("CON startdate")
+            //console.log("CON startdate")
             fr = (search === "") ? { contentType: { missions: true, captures: false, users: false, hashtags: false }, startDate: Number(sd / 1000.0) } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [search], startDate: Number(this.state.startDate / 1000.0) }
         } else {
-            console.log("SIN startdate")
+           // console.log("SIN startdate")
             fr = (search === "") ? { contentType: { missions: true, captures: false, users: false, hashtags: false } } : { contentType: { missions: true, captures: false, users: false, hashtags: false }, whiteKeywords: [search] }
         }
         fetch(cloudFunctionsURL + "/dashboardSearch", {
@@ -205,6 +205,7 @@ class Dashboard extends Component {
             .then(res => {
                 if (res[0] == 200) {
                     // Hacer algo con lo que regresa el server = res[1].newsfeed
+                    //console.log(res[1].result);
                     var r = res[1].result
                     if (sdc) {
                         r = r.sort(function (a, b) { return b.startDate - a.startDate });
@@ -215,7 +216,6 @@ class Dashboard extends Component {
                         projectsBusqueda: r,
                         searching: false
                     })
-                    //console.log(res[1].result);
 
                 } else {
                     // Hubo un error en el server
