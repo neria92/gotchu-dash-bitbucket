@@ -7,7 +7,9 @@ const initState={
     captureDeleted: null,
     error: null,
     showOnlyPending: false,
-    orderByReports: false
+    orderByReports: false,
+    showOnlyAccepted: false,
+    showOnlyRejected: false
 }
 
 const captureReducer =(state = initState,action) => {
@@ -68,6 +70,16 @@ const captureReducer =(state = initState,action) => {
             return {
                 ...state,
                 orderByReports: action.payload.orderByReports,
+            }    
+        case 'Show_Only_Accepted':
+            return {
+                ...state,
+                showOnlyAccepted: action.payload.showOnlyAccepted,
+            }    
+        case 'Show_Only_Rejected':
+            return {
+                ...state,
+                showOnlyRejected: action.payload.showOnlyRejected,
             }    
         default:
             return state;

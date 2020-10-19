@@ -129,6 +129,28 @@ export const showOnlyPending = (sop) => {
     }
 };
 
+export const showOnlyAccepted = (soa) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        dispatch({
+            type: 'Show_Only_Accepted',
+            payload: {
+                showOnlyAccepted: soa
+            }
+        });
+    }
+};
+
+export const showOnlyRejected = (sor) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        dispatch({
+            type: 'Show_Only_Rejected',
+            payload: {
+                showOnlyRejected: sor
+            }
+        });
+    }
+};
+
 export const orderByReports = (obr) => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         dispatch({
