@@ -83,6 +83,7 @@ class ProjectDetails extends Component {
         validatorProperties: '',
         typeform: "",
         mapIcon: "",
+        hideCapture: false
       }
       
     this.setState({ddLang:{ label: "Español", value: "es" }});
@@ -231,6 +232,7 @@ class ProjectDetails extends Component {
 
       _mission.typeform = mission.typeform != null ? mission.typeform : ""
       _mission.mapIcon = mission.mapIcon != null ? mission.mapIcon : ""
+      _mission.hideCapture = mission.hideCapture != null ? mission.hideCapture : false
       this.setState({ hashtags: _mission.hashtags})
     }
 
@@ -290,6 +292,7 @@ class ProjectDetails extends Component {
       description: { [lang]: this.refs.description.value },
       durationSecs: Number(this.state.timeDuration),
       fixed: this.refs.fixed.checked,
+      hideCapture: this.refs.hideCapture.checked,
       hasLocation: this.refs.hasLocation.checked,
       needRevision: this.refs.needRevision.checked,
       language: lang,
@@ -552,6 +555,12 @@ class ProjectDetails extends Component {
                     <label>
                       <input type="checkbox" defaultChecked={mission.hasLocation} id="hasLocation" ref="hasLocation" onChange={this.handleChange} />
                       <span>Has location</span>
+                    </label>
+                  </p>
+                  <p>
+                    <label>
+                      <input type="checkbox" defaultChecked={mission.hideCapture} id="hideCapture" ref="hideCapture" onChange={this.handleChange} />
+                      <span>Hide Capture</span>
                     </label>
                   </p>
                   
