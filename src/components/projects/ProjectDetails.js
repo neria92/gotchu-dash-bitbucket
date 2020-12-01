@@ -10,8 +10,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { reduxFirestore, getFirestore } from 'redux-firestore'
 
 const idiomas = [
-  { label: "Español", value: "es" },
-  { label: "English", value: "en" }
+  { label: "Español", value: "es", otherLang: "en" },
+  { label: "English", value: "en", otherLang: "es" }
 ];
 const evidencias = [
   { label: "Foto", value: 2 },
@@ -29,6 +29,13 @@ const tiposUbic = [
   { label: "hide", value: "hide" },
   { label: "none", value: "none" }
 ];
+const missionType = [
+  { label: "Activista", value: "Activista" },
+  { label: "Explora", value: "Explora" },
+  { label: "Deportiva", value: "Deportiva" },
+  { label: "Diversión", value: "Diversión" },
+  { label: "Investiga", value: "Investiga" },
+]
 
 class ProjectDetails extends Component {
 
@@ -44,6 +51,7 @@ class ProjectDetails extends Component {
     ddEv : [],
     ddCom: null,
     ddLocType: null,
+    ddMissionType: null,
 
     timeInit:null,
     timeFinish:null,
@@ -56,22 +64,22 @@ class ProjectDetails extends Component {
   {
     const id=this.props.location.state._id
     var _mission = {
-        complexity: { es: '' },
-        description: { es: '' },
+        complexity: { es: '', en: '' },
+        description: { es: '', en: '' },
         durationSecs: 0,
         fixed: false,
         hasLocation: true,
         needRevision: true,
         language: 'es',
-        locationName: { es: '' },
+        locationName: { es: '', en: '' },
         locationType: '',
         locationPoints: [ { coord:{ lat:0,long:0}, radius:0} ],
         microtask: '',
-        missionType: { es: '' },
-        objective: { es: '' },
+        missionType: { es: '', en: '' },
+        objective: { es: '', en: '' },
         reward: { GP: 0, points: 0, money: 0 },
         startDate: 0,
-        title: { es: '' },
+        title: { es: '', en: '' },
         type: '',
         images:[],
         imagesRef: [],
@@ -99,32 +107,46 @@ class ProjectDetails extends Component {
       if(mission.language!=null)
       {
         _mission.language = mission.language
-        if(mission.language=="es")
-        this.setState({ddLang:{ label: "Español", value: "es" }});
-        if(mission.language=="en")
-        this.setState({ddLang:{ label: "English", value: "en" }});
+        if(_mission.language ==="es"){
+          this.setState({ ddLang: { label: "Español", value: "es", otherLang: "en" } });
+          _mission.otherLanguage = "en"
+        }
 
-        _mission.missionType  = mission.missionType  != null && mission.missionType[_mission.language]  != null ? mission.missionType  : {[_mission.language]:""}
-        _mission.description  = mission.description  != null && mission.description[_mission.language]  != null ? mission.description  : {[_mission.language]:""}
-        _mission.objective    = mission.objective    != null && mission.objective[_mission.language]    != null ? mission.objective    : {[_mission.language]:""}
-        _mission.locationName = mission.locationName != null && mission.locationName[_mission.language] != null ? mission.locationName : {[_mission.language]:""}
+        if(_mission.language ==="en"){
+          this.setState({ ddLang: { label: "English", value: "en", otherLang: "es" } });
+          _mission.otherLanguage = "es"
+        }
+
+        _mission.missionType[_mission.language] = mission.missionType != null && mission.missionType[_mission.language] != null ? mission.missionType[_mission.language]  : ""
+        _mission.description[_mission.language] = mission.description != null && mission.description[_mission.language] != null ? mission.description[_mission.language]  : ""
+        _mission.objective[_mission.language]    = mission.objective    != null && mission.objective[_mission.language] != null ? mission.objective[_mission.language]    : ""
+        _mission.locationName[_mission.language] = mission.locationName != null && mission.locationName[_mission.language] != null ? mission.locationName[_mission.language] : ""
         _mission.locationType = mission.locationType != null ? mission.locationType : "show" }
-        _mission.title        = mission.title        != null && mission.title[_mission.language]        != null ? mission.title        : {[_mission.language]:""}
-        _mission.complexity   = mission.complexity   != null && mission.complexity[_mission.language]   != null ? mission.complexity   : {[_mission.language]:""}
+        _mission.title[_mission.language] = mission.title != null && mission.title[_mission.language] != null ? mission.title[_mission.language]        : ""
+        _mission.complexity["es"] = mission.complexity != null && mission.complexity["es"] != null ? mission.complexity["es"] : ""
+
+      _mission.missionType[_mission.otherLanguage] = mission.missionType != null && mission.missionType[_mission.otherLanguage] != null ? mission.missionType[_mission.otherLanguage] : ""
+      _mission.description[_mission.otherLanguage] = mission.description != null && mission.description[_mission.otherLanguage] != null ? mission.description[_mission.otherLanguage] : ""
+      _mission.objective[_mission.otherLanguage] = mission.objective != null && mission.objective[_mission.otherLanguage] != null ? mission.objective[_mission.otherLanguage] : ""
+      _mission.locationName[_mission.otherLanguage] = mission.locationName != null && mission.locationName[_mission.otherLanguage] != null ? mission.locationName[_mission.otherLanguage] : ""
+      _mission.locationType = mission.locationType != null ? mission.locationType : "show"
+      _mission.title[_mission.otherLanguage] = mission.title != null && mission.title[_mission.otherLanguage] != null ? mission.title[_mission.otherLanguage] : ""
+      //_mission.complexity[_mission.otherLanguage] = mission.complexity != null && mission.complexity[_mission.otherLanguage] != null ? mission.complexity[_mission.otherLanguage] : ""
+
         
         var assigned = false
         
-        if(_mission.complexity[_mission.language] =="Alta")
+        if(_mission.complexity["es"] =="Alta")
         {
           this.setState({ddCom:{ label: "Alta", value: "Alta" }});
           assigned = true
         }
-        if(_mission.complexity[_mission.language] =="Media")
+        if(_mission.complexity["es"] =="Media")
         {
           this.setState({ddCom:{ label: "Media", value: "Media" }});
           assigned = true
         }
-        if(_mission.complexity[_mission.language] =="Baja")
+        if(_mission.complexity["es"] =="Baja")
         {
           this.setState({ddCom:{ label: "Baja", value: "Baja" }});
           assigned = true
@@ -148,6 +170,35 @@ class ProjectDetails extends Component {
       }
       if (!assigned)
         this.setState({ ddLocType: { label: "show", value: "show" } });
+
+      assigned = false
+      if(_mission.missionType["es"] =="Activista")
+      {
+        this.setState({ddMissionType:{ label: "Activista", value: "Activista" }});
+        assigned = true
+      }
+      if(_mission.missionType["es"] =="Explora")
+      {
+        this.setState({ddMissionType:{ label: "Explora", value: "Explora" }});
+        assigned = true
+      }
+      if(_mission.missionType["es"] =="Deportiva")
+      {
+        this.setState({ddMissionType:{ label: "Deportiva", value: "Deportiva" }});
+        assigned = true
+      }
+      if(_mission.missionType["es"] =="Diversión")
+      {
+        this.setState({ddMissionType:{ label: "Diversión", value: "Diversión" }});
+        assigned = true
+      }
+      if(_mission.missionType["es"] =="Investiga")
+      {
+        this.setState({ddMissionType:{ label: "Investiga", value: "Investiga" }});
+        assigned = true
+      }
+      if(!assigned)
+        this.setState({ddMissionType:{ label: "Explora", value: "Explora" }});
       
       _mission.evidenceType = mission.evidenceType != null ? mission.evidenceType : 2
 
@@ -262,8 +313,10 @@ class ProjectDetails extends Component {
     //alert(`hay ${hashtags.length} hashtags`);
     const {id,ddEv} = this.state
     const lang = this.state.ddLang.value
+    const otherLang = this.state.ddLang.otherLang
     const complexity = this.state.ddCom.value
     const locationType = this.state.ddLocType.value
+    const missionType = this.state.ddMissionType.value
     var evidenceType = 1;
     var mlp = []
     if (this.state.mission != null){
@@ -287,36 +340,66 @@ class ProjectDetails extends Component {
     // if (this.refs.pinned.value == "true")
     //   pinned = true;
 
-    const mission = {
-      complexity: { [lang]: complexity },
-      description: { [lang]: this.refs.description.value },
-      durationSecs: Number(this.state.timeDuration),
-      fixed: this.refs.fixed.checked,
-      hideCapture: this.refs.hideCapture.checked,
-      hasLocation: this.refs.hasLocation.checked,
-      needRevision: this.refs.needRevision.checked,
-      language: lang,
-      locationName: { [lang]: this.refs.locationName.value },
-      locationType: locationType,
-      locationPoints: mlp,
-      missionType: { [lang]: this.refs.missionType.value },
-      objective: { [lang]: this.refs.objetive.value },
-      reward: { GP: parseInt(this.refs.rewardGP.value), points: parseInt(this.refs.rewardPoints.value), money: parseInt(this.refs.rewardMoney.value) },
-      startDate: Number(this.state.timeInit/1000.0),
-      endDate: Number(this.state.timeFinish/1000.0),
-      title: { [lang]: this.refs.title.value },
-      type: this.refs.type.value,
-      generic: this.refs.generic.value,
-      images:[this.refs.image1.value,this.refs.image2.value],
-      imagesRef: [this.refs.imageRef1.value, this.refs.imageRef2.value],
-      evidenceType: Number(evidenceType),
-      hashtags: hashtags,
-      rally: { prevMission: this.refs.rallyPrevMission.value, nextMission: this.refs.rallyNextMission.value, position: parseInt(this.refs.rallyPosition.value), total: parseInt(this.refs.rallyTotal.value), isRally: this.refs.rallyIsRally.checked },
-      pinned: this.refs.pinned.checked,
-      validatorProperties: this.refs.validatorProperties.value,
-      typeform: this.refs.typeform.value,
-      mapIcon: this.refs.mapIcon.value
-    }
+    var mission = this.state.mission
+    mission.complexity = { es: complexity }
+    mission.description=  { [lang]: this.refs.description.value, [otherLang]: this.state.mission.description[otherLang] }
+    mission.durationSecs =  Number(this.state.timeDuration)
+    mission.fixed =  this.refs.fixed.checked
+    mission.hideCapture =  this.refs.hideCapture.checked
+    mission.hasLocation =  this.refs.hasLocation.checked
+    mission.needRevision =  this.refs.needRevision.checked
+    mission.language =  lang
+    mission.locationName =  { [lang]: this.refs.locationName.value, [otherLang]: this.state.mission.locationName[otherLang] }
+    mission.locationType =  locationType
+    mission.locationPoints =  mlp
+    mission.missionType =  { es: missionType }
+    mission.objective =  { [lang]: this.refs.objective.value, [otherLang]: this.state.mission.objective[otherLang] }
+    mission.reward =  { GP: parseInt(this.refs.rewardGP.value), points: parseInt(this.refs.rewardPoints.value), money: parseInt(this.refs.rewardMoney.value) }
+    mission.tartDate =  Number(this.state.timeInit/1000.0)
+    mission.endDate =  Number(this.state.timeFinish/1000.0)
+    mission.title =  { [lang]: this.refs.title.value, [otherLang]: this.state.mission.title[otherLang] }
+    mission.type =  this.refs.type.value
+    mission.generic =  this.refs.generic.value
+    mission.images = [this.refs.image1.value,this.refs.image2.value]
+    mission.imagesRef =  [this.refs.imageRef1.value, this.refs.imageRef2.value]
+    mission.evidenceType =  Number(evidenceType)
+    mission.hashtags =  hashtags
+    mission.rally =  { prevMission: this.refs.rallyPrevMission.value, nextMission: this.refs.rallyNextMission.value, position: parseInt(this.refs.rallyPosition.value), total: parseInt(this.refs.rallyTotal.value), isRally: this.refs.rallyIsRally.checked }
+    mission.pinned =  this.refs.pinned.checked
+    mission.validatorProperties =  this.refs.validatorProperties.value
+    mission.typeform =  this.refs.typeform.value
+    mission.mapIcon =  this.refs.mapIcon.value
+
+    // var mission = {
+    //   complexity: { [lang]: complexity, [otherLang]: this.state.mission.complexity[otherLang] },
+    //   description: { [lang]: this.refs.description.value, [otherLang]: this.state.mission.description[otherLang] },
+    //   durationSecs: Number(this.state.timeDuration),
+    //   fixed: this.refs.fixed.checked,
+    //   hideCapture: this.refs.hideCapture.checked,
+    //   hasLocation: this.refs.hasLocation.checked,
+    //   needRevision: this.refs.needRevision.checked,
+    //   language: lang,
+    //   locationName: { [lang]: this.refs.locationName.value, [otherLang]: this.state.mission.locationName[otherLang] },
+    //   locationType: locationType,
+    //   locationPoints: mlp,
+    //   missionType: { es: missionType },
+    //   objective: { [lang]: this.refs.objective.value, [otherLang]: this.state.mission.objective[otherLang] },
+    //   reward: { GP: parseInt(this.refs.rewardGP.value), points: parseInt(this.refs.rewardPoints.value), money: parseInt(this.refs.rewardMoney.value) },
+    //   startDate: Number(this.state.timeInit/1000.0),
+    //   endDate: Number(this.state.timeFinish/1000.0),
+    //   title: { [lang]: this.refs.title.value, [otherLang]: this.state.mission.title[otherLang] },
+    //   type: this.refs.type.value,
+    //   generic: this.refs.generic.value,
+    //   images:[this.refs.image1.value,this.refs.image2.value],
+    //   imagesRef: [this.refs.imageRef1.value, this.refs.imageRef2.value],
+    //   evidenceType: Number(evidenceType),
+    //   hashtags: hashtags,
+    //   rally: { prevMission: this.refs.rallyPrevMission.value, nextMission: this.refs.rallyNextMission.value, position: parseInt(this.refs.rallyPosition.value), total: parseInt(this.refs.rallyTotal.value), isRally: this.refs.rallyIsRally.checked },
+    //   pinned: this.refs.pinned.checked,
+    //   validatorProperties: this.refs.validatorProperties.value,
+    //   typeform: this.refs.typeform.value,
+    //   mapIcon: this.refs.mapIcon.value
+    // }
     this.setState({
       ...this.state,
       savingChanges: true
@@ -362,6 +445,16 @@ class ProjectDetails extends Component {
     })
   }
 
+  setLanguage = (value) => {
+    this.refs.description.value = this.state.mission.description[value.value]
+    this.refs.locationName.value = this.state.mission.locationName[value.value]
+    this.refs.objective.value = this.state.mission.objective[value.value]
+    this.refs.title.value = this.state.mission.title[value.value]
+
+    //TODO
+    this.setState({ ddLang: value })
+  }
+
   handleShareholderNameChange = idx => evt => {
     const newHashtags = this.state.hashtags.map((hashtag, sidx) => {
       if (idx !== sidx) return hashtag;
@@ -391,7 +484,7 @@ class ProjectDetails extends Component {
 
   render() {
     const { auth, projectActions } = this.props;
-    const {mission,ddLang,ddEv,ddCom,ddLocType,timeInit,timeFinish,timeDuration } = this.state
+    const {mission,ddLang,ddEv,ddCom,ddLocType,timeInit,timeFinish,timeDuration,ddMissionType } = this.state
     if (this.state.savingChanges){
       return <Redirect to='/' /> 
     }
@@ -425,7 +518,7 @@ class ProjectDetails extends Component {
                 </label>
                 <label>
                   Titulo:
-                <input defaultValue={mission.title[lang]} ref="title" onChange={this.handleChange} />
+                <input defaultValue={mission.title[ddLang.value]} ref="title" onChange={this.handleChange} />
                 </label>
                 <div>
                 <label>
@@ -498,7 +591,7 @@ class ProjectDetails extends Component {
                 <label>
                   Idioma:
                 </label>
-                <Select value={ddLang} options={ idiomas } onChange={ddLang => {this.setState({ddLang})}} />
+                <Select value={ddLang} options={idiomas} onChange={ddLang => { this.setLanguage(ddLang)}} />
 
                 <label>
                   Nombre de la ubicación:
@@ -520,13 +613,14 @@ class ProjectDetails extends Component {
                  Radio en metros:
                 <input defaultValue={mission.locationPoints[0].radius} ref="locationPoint0Radius" onChange={this.handleChange} />
                 </label>
+               
                 <label>
                   Tipo de mision:
-                <input defaultValue={mission.missionType[lang]} ref="missionType" onChange={this.handleChange} />
+                <Select value={ddMissionType} options={ missionType } onChange={ddMissionType => {this.setState({ddMissionType})}} />
                 </label>
                 <label>
                   Objetivo:
-                <textarea defaultValue={mission.objective[lang]} ref="objetive" onChange={this.handleChange} />
+                <textarea defaultValue={mission.objective[lang]} ref="objective" onChange={this.handleChange} />
                 </label>
                 <label>
                   Recompensa Gotchupesos:
@@ -616,7 +710,7 @@ class ProjectDetails extends Component {
                   {/* <h4>Shareholders</h4> */}
 
                   {this.state.hashtags.map((hashtag, idx) => (
-                    <div className="shareholder">
+                    <div key={idx+"div"} className="shareholder">
                       <label>
                         Hashtag #{idx + 1}:
                       <input
