@@ -28,6 +28,7 @@ class CapturesList extends Component {
   }
 
   componentDidMount() {
+    this.setState({capturesToShow: null})
     this.setState({ showOnlyPending: this.props.showOnlyPending })
     this.setState({ orderByReports: this.props.orderByReports })
     this.setState({ showOnlyAccepted: this.props.showOnlyAccepted })
@@ -172,6 +173,7 @@ class CapturesList extends Component {
   }
 
   componentDidUpdate() {
+    this.capturesToShow = null
     if(this.props.captures == this.state.lastCaptures)
       return
     var captureAux = [...this.props.captures]

@@ -36,16 +36,16 @@ class CaptureDetails extends Component {
 
   componentDidMount() {
     const id = this.props.location.state._id
-    var _capture = {
-      coord: {lat: 0, long:0},
-      createdAt: 0,
-      evidence: { photo: "", sound: "", text: "", video: ""},
-      mission: "",
-      status: "",
-      userId: "",
-    }
+    // var _capture = {
+    //   coord: {lat: 0, long:0},
+    //   createdAt: 0,
+    //   evidence: { photo: "", sound: "", text: "", video: ""},
+    //   mission: "",
+    //   status: "",
+    //   userId: "",
+    // }
+    var _capture = this.props.location.state
 
-    console.log(this.props.location.state)
     var capture = null
     if (id != null && id != "new")
       capture = this.props.location.state
@@ -72,7 +72,7 @@ class CaptureDetails extends Component {
       _capture.reports = capture.reports != null ? capture.reports : 0
 
       var assigned = false
-
+      console.log(this.props.location.state)
       if(_capture.status == "Rejected")
       {
         this.setState({ddStatus:{label: "Rejected", value: "Rejected"}});
@@ -89,9 +89,9 @@ class CaptureDetails extends Component {
       if (!assigned)
         this.setState({ ddStatus: { label: "Rejected", value: "Rejected" } });
     }
+
     this.setState({ id: id, capture: _capture })
 
-    console.log(capture)
     getFirestore().get({ collection: "missions", doc: capture.mission })
       .then((doc) => {
         if (doc != undefined && doc.data().description != undefined && doc.data().description.es != null) {
@@ -125,16 +125,30 @@ class CaptureDetails extends Component {
     e.preventDefault();
 
     const { id } = this.state
-    const status = this.state.ddStatus.value
+    var status = this.state.ddStatus.value
 
-    const capture = {
-      coord: { lat: Number(this.refs.lat.value), long: Number(this.refs.long.value) },
-      createdAt: Number(this.state.timeCreatedAt / 1000.0),
-      evidence: { photo: this.refs.photo.value, sound: this.refs.sound.value, text: this.refs.text.value, video: this.refs.video.value },
-      mission: this.refs.mission.value,
-      status: status,
-      userId: this.refs.userId.value,
-    }
+    // const capture = {
+    //   coord: { lat: Number(this.refs.lat.value), long: Number(this.refs.long.value) },
+    //   createdAt: Number(this.state.timeCreatedAt / 1000.0),
+    //   evidence: { photo: this.refs.photo.value, sound: this.refs.sound.value, text: this.refs.text.value, video: this.refs.video.value },
+    //   mission: this.refs.mission.value,
+    //   status: status,
+    //   userId: this.refs.userId.value,
+    // }
+
+    var capture = this.state.capture
+    console.log(this.state.capture)
+    capture.coord.lat = Number(this.refs.lat.value)
+    capture.coord.long = Number(this.refs.long.value)
+    capture.createdAt = Number(this.state.timeCreatedAt / 1000.0)
+    capture.evidence.photo = this.refs.photo.value
+    capture.evidence.sound = this.refs.sound.value
+    capture.evidence.text = this.refs.text.value
+    capture.evidence.video = this.refs.video.value
+    capture.mission = this.refs.mission.value
+    capture.status = status
+    capture.userId = this.refs.userId.value
+
     this.setState({
       ...this.state,
       savingChanges: true
@@ -264,7 +278,6 @@ class CaptureDetails extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  console.log(state)
   const id = ownProps.match.params.id;
   const captures = state.firestore.data.captures;
   const capture = captures ? captures[id] : null;
