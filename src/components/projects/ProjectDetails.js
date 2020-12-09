@@ -355,7 +355,7 @@ class ProjectDetails extends Component {
     // mission.missionType =  { es: missionType }
     // mission.objective =  { [lang]: this.refs.objective.value, [otherLang]: this.state.mission.objective[otherLang] }
     // mission.reward =  { GP: parseInt(this.refs.rewardGP.value), points: parseInt(this.refs.rewardPoints.value), money: parseInt(this.refs.rewardMoney.value) }
-    // mission.tartDate =  Number(this.state.timeInit/1000.0)
+    // mission.startDate =  Number(this.state.timeInit/1000.0)
     // mission.endDate =  Number(this.state.timeFinish/1000.0)
     // mission.title =  { [lang]: this.refs.title.value, [otherLang]: this.state.mission.title[otherLang] }
     // mission.type =  this.refs.type.value
@@ -388,7 +388,7 @@ class ProjectDetails extends Component {
     mission.reward.GP = parseInt(this.refs.rewardGP.value)
     mission.reward.points = parseInt(this.refs.rewardPoints.value)
     mission.reward.money = parseInt(this.refs.rewardMoney.value)
-    mission.tartDate =  Number(this.state.timeInit/1000.0)
+    mission.startDate =  Number(this.state.timeInit/1000.0)
     mission.endDate =  Number(this.state.timeFinish/1000.0)
     mission.title[lang] = this.refs.title.value
     mission.type =  this.refs.type.value
