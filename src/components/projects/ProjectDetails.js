@@ -278,7 +278,8 @@ class ProjectDetails extends Component {
       _mission.pinned = mission.pinned != null ? mission.pinned : false
       _mission.validatorProperties = mission.validatorProperties != null ? mission.validatorProperties : ""
 
-      _mission.microtask = mission.microtask != null ? mission.microtask : [""]
+      //_mission.microtask = mission.microtask != null ? mission.microtask : [""]
+      if(mission.microtask != null) _mission.microtask = mission.microtask 
       _mission.hashtags = mission.hashtags != null ? mission.hashtags : [""]
 
       _mission.typeform = mission.typeform != null ? mission.typeform : ""
