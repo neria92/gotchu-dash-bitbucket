@@ -329,48 +329,6 @@ class ProjectDetails extends Component {
     for(var i =0;i<ddEv.length;i++)
       evidenceType = evidenceType*ddEv[i].value
 
-    // var fixed = false;
-    // if(this.refs.fixed.value=="true")
-    //   fixed = true;
-
-    // var isRally = false;
-    // if (this.refs.rallyIsRally.value == "true")
-    //   isRally = true;
-
-    // var pinned = false;
-    // if (this.refs.pinned.value == "true")
-    //   pinned = true;
-
-    // var mission = this.state.mission
-    // mission.complexity = { es: complexity }
-    // mission.description=  { [lang]: this.refs.description.value, [otherLang]: this.state.mission.description[otherLang] }
-    // mission.durationSecs =  Number(this.state.timeDuration)
-    // mission.fixed =  this.refs.fixed.checked
-    // mission.hideCapture =  this.refs.hideCapture.checked
-    // mission.hasLocation =  this.refs.hasLocation.checked
-    // mission.needRevision =  this.refs.needRevision.checked
-    // mission.language =  lang
-    // mission.locationName =  { [lang]: this.refs.locationName.value, [otherLang]: this.state.mission.locationName[otherLang] }
-    // mission.locationType =  locationType
-    // mission.locationPoints =  mlp
-    // mission.missionType =  { es: missionType }
-    // mission.objective =  { [lang]: this.refs.objective.value, [otherLang]: this.state.mission.objective[otherLang] }
-    // mission.reward =  { GP: parseInt(this.refs.rewardGP.value), points: parseInt(this.refs.rewardPoints.value), money: parseInt(this.refs.rewardMoney.value) }
-    // mission.startDate =  Number(this.state.timeInit/1000.0)
-    // mission.endDate =  Number(this.state.timeFinish/1000.0)
-    // mission.title =  { [lang]: this.refs.title.value, [otherLang]: this.state.mission.title[otherLang] }
-    // mission.type =  this.refs.type.value
-    // mission.generic =  this.refs.generic.value
-    // mission.images = [this.refs.image1.value,this.refs.image2.value]
-    // mission.imagesRef =  [this.refs.imageRef1.value, this.refs.imageRef2.value]
-    // mission.evidenceType =  Number(evidenceType)
-    // mission.hashtags =  hashtags
-    // mission.rally =  { prevMission: this.refs.rallyPrevMission.value, nextMission: this.refs.rallyNextMission.value, position: parseInt(this.refs.rallyPosition.value), total: parseInt(this.refs.rallyTotal.value), isRally: this.refs.rallyIsRally.checked }
-    // mission.pinned =  this.refs.pinned.checked
-    // mission.validatorProperties =  this.refs.validatorProperties.value
-    // mission.typeform =  this.refs.typeform.value
-    // mission.mapIcon =  this.refs.mapIcon.value
-
     var mission = this.state.mission
     mission.complexity.es = complexity
     mission.description[lang] = this.refs.description.value
@@ -409,36 +367,6 @@ class ProjectDetails extends Component {
     mission.typeform =  this.refs.typeform.value
     mission.mapIcon =  this.refs.mapIcon.value
 
-    // var mission = {
-    //   complexity: { [lang]: complexity, [otherLang]: this.state.mission.complexity[otherLang] },
-    //   description: { [lang]: this.refs.description.value, [otherLang]: this.state.mission.description[otherLang] },
-    //   durationSecs: Number(this.state.timeDuration),
-    //   fixed: this.refs.fixed.checked,
-    //   hideCapture: this.refs.hideCapture.checked,
-    //   hasLocation: this.refs.hasLocation.checked,
-    //   needRevision: this.refs.needRevision.checked,
-    //   language: lang,
-    //   locationName: { [lang]: this.refs.locationName.value, [otherLang]: this.state.mission.locationName[otherLang] },
-    //   locationType: locationType,
-    //   locationPoints: mlp,
-    //   missionType: { es: missionType },
-    //   objective: { [lang]: this.refs.objective.value, [otherLang]: this.state.mission.objective[otherLang] },
-    //   reward: { GP: parseInt(this.refs.rewardGP.value), points: parseInt(this.refs.rewardPoints.value), money: parseInt(this.refs.rewardMoney.value) },
-    //   startDate: Number(this.state.timeInit/1000.0),
-    //   endDate: Number(this.state.timeFinish/1000.0),
-    //   title: { [lang]: this.refs.title.value, [otherLang]: this.state.mission.title[otherLang] },
-    //   type: this.refs.type.value,
-    //   generic: this.refs.generic.value,
-    //   images:[this.refs.image1.value,this.refs.image2.value],
-    //   imagesRef: [this.refs.imageRef1.value, this.refs.imageRef2.value],
-    //   evidenceType: Number(evidenceType),
-    //   hashtags: hashtags,
-    //   rally: { prevMission: this.refs.rallyPrevMission.value, nextMission: this.refs.rallyNextMission.value, position: parseInt(this.refs.rallyPosition.value), total: parseInt(this.refs.rallyTotal.value), isRally: this.refs.rallyIsRally.checked },
-    //   pinned: this.refs.pinned.checked,
-    //   validatorProperties: this.refs.validatorProperties.value,
-    //   typeform: this.refs.typeform.value,
-    //   mapIcon: this.refs.mapIcon.value
-    // }
     this.setState({
       ...this.state,
       savingChanges: true
