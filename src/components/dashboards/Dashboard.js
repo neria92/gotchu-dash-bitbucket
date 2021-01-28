@@ -33,11 +33,7 @@ class Dashboard extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        // const adminUID = document.querySelector('#admin-uid').value;
-        // const addAdminRole = functions().httpsCallable('addAdminRole');
-        // addAdminRole({ uid: adminUID }).then(result => {
-        //     console.log(result);
-        // });
+        
     }
 
     handleSubmitUploadJson = (e) => {
@@ -51,32 +47,7 @@ class Dashboard extends Component {
         //var uploadError = false
         var i
         for ( i = 0; i < size; i++) {
-            // if (uploadError) {
-            //     console.log("break")
-            //     break;
-            // }
-            // if (!obj[i]){
-            //     console.log("error obj " + obj[i])
-            //     var es = this.state.jsonErrorString
-            //     es = es.concat("\nError obj " + obj[i] )
-            //     this.setState({ jsonErrorString: es })
-            // } else {
-            //     console.log("subiendo " + obj[i].title.es)
-            //     firestore.collection('missions').add(obj[i]).then((res) => {
-            //         var es = this.state.jsonErrorString
-            //         es = es.concat("\nMission " + obj[i].title.es + " uploaded successfully.")
-            //         console.log("subio " + obj[i].title.es)
-            //         this.setState({ jsonErrorString: es })
-            //     })
-            //     .catch(error => {
-            //         var es = this.state.jsonErrorString
-            //         es = es.concat("\nERROR: Mission " + obj[i].title.es + " not uploaded.")
-            //         es = es.concat("\nFirestore error: " + error)
-            //         es = es.concat("\nAborting ")
-            //         this.setState({ jsonErrorString: es })
-            //         uploadError = true
-            //         console.log("no subio " + obj[i].title.es)
-            //     });
+            
             var captureTitle
             //console.log("subiendo a firebase" + obj[i].title.es)
             firestore.collection('missions').add(obj[i]).then((res) => {
@@ -108,20 +79,7 @@ class Dashboard extends Component {
             });
             
         }
-        // if (uploadError){
-        //     console.log("error")
-        //     this.setState({ uploadJsonError: true, missionsUploaded: i + 1 })
-        // } else {
-        //     console.log("no error")
-        //     this.setState({ uploadJsonError: false, missionsUploaded: i + 1 })
-        // }
-        //window.location.reload();
-        //this.props.addMultipleProjects(obj);
-        // const adminUID = document.querySelector('#admin-uid').value;
-        // const addAdminRole = functions().httpsCallable('addAdminRole');
-        // addAdminRole({ uid: adminUID }).then(result => {
-        // console.log(result);
-        // });
+        
     }
 
     handleChange = (e) => {
